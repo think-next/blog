@@ -196,6 +196,11 @@ body {
 
 .masthead .menu a {
   direction: ltr;
+  border-bottom: none;
+}
+
+.masthead .menu .active a {
+  border-bottom: 1px solid;
 }
 
 .masthead .menu ul ul {

@@ -1,0 +1,6 @@
+<h1 class="headimg">
+    <!--<a href="">{{ .Site.Title }}</a>-->
+    <a href="{{ relURL "/" }}"><img src="{{ "/img/headimg.png" | relURL }}" alt="Fuhui "></a>
+</h1>
+
+{{ with .Site.Params.Description }}<p class="tagline">{{ . }}</p>{{ end }}

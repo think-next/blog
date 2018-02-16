@@ -1,10 +1,4 @@
 ---
-title: About Hugo Ivy
-author: Yihui Xie
-date: '2017-08-06'
+title: 蜗牛保持乐观才会爬的更远
 ---
-This Hugo theme was ported from [Ivy](https://github.com/dmulholland/ivy), a minimalist website generator built in Python. I don't have time to document this theme. You have to read the source code to understand what it can do. All I can say for now is that I love it. It is clean, minimal, and responsive.
-
-I hope you will enjoy this theme. The source code is [on Github](https://github.com/yihui/hugo-ivy). Happy hacking!
-
-这是付辉的个人主页。2014年毕业于山西农业大学，终于拿到了本科生学士学位。
+这是付辉的个人主页。14年毕业于山西农业大学，学士学位，目前就职于奇虎360。

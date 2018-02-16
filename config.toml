@@ -30,7 +30,7 @@ footnotereturnlinkcontents = "↩"
     weight = 4
 
 [params]
-    description = "蜗牛保持乐观才会爬的更远"
+    description = ""
 	author = "付辉"
     footer = "&copy; [Fu Hui](http://neojos.com) 2017 | [Github](https://github.com/GitHubSi) | [CSDN](http://blog.csdn.net/whynottrythis)"
 
