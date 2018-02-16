@@ -1,0 +1,202 @@
+---
+title: Git分支模型 
+
+date: 2018-01-14 20:10:33 
+
+categories: translate
+
+tags: cache
+
+author: 付辉
+
+---
+
+# Git分支模型
+
+文章将围绕下图来描述我们所使用的分支模型。主要包括master和develop两个主线分支以及feature、release、hotfixes分支。
+
+![](http://nvie.com/img/git-model@2x.png)
+
+##为什么选择Git
+
+针对[“centralized”和“distributed”版本管理工具](https://www.atlassian.com/blog/software-teams/version-control-centralized-dvcs)的争论，可以在[GitSvnComparsion](http://git.or.cz/gitwiki/GitSvnComparsion)查看。就我个人而言，我更喜欢Git。Git改变了开发者对merge操作和branch操作的思考方式，而且两者也是Git日常工作流中的最常用的操作。
+
+## 不集中式又集中式
+
+Git是分布式版本管理系统，不存在集中式版本管理系统的中央存储库。这在技术角度上确实不存在，但在观念上，我们可以将origin看作整个版本管理的中央存储库。
+
+如下图所示，开发者除了可以从origin中push或pull代码，还可以从别的分支中pull代码。当多个同事共同开发产品的新功能时，彼此间的代码同步显得尤为重要。
+
+![img](http://nvie.com/img/centr-decentr@2x.png)
+
+## 主要分支 
+
+Git中央存储库中包含两个重要的分支，它们在项目的生命周期中都一直存在：
+
+- master
+- develop
+
+两个分支有如下特性：
+
+- origin/master分支的HEAD 指针反映的一直都是发布就绪的状态。master分支上的代码也是生产服务的代码。
+- origin/develop分支的HEAD指针反映当前项目的修改，该分支集成其他分支所做的一切修改。甚至可以运行一个自动化脚本，每天晚上将各个分支的修改merge到develop分支。
+
+当develop分支中的代码趋于稳定，准备发新版的时候，应该将其merger到master分支，并标记本次发布的版本号。稍后详细讨论。
+
+原则上，master分支的代码都是可发布的，所以我们对merge到master的代码有严格的要求。理论上，我们可以运行一个脚本，一旦检测到master的代码有提交，自动执行编译、并同步代码到生产服务器。
+
+![img](http://nvie.com/img/main-branches@2x.png)
+
+## 支承分支
+
+如master和develop旁边的其他分支，它们的生命周期有限，最终会从代码库中被移除。而我们使用分支主要来实现：
+
+1. 来帮助各个团队之间并行开发
+2. 为新版本发布做准备
+3. 修复当前生产环境的bug。
+
+我们使用的分支有以下几种:
+
+- Feature branches
+- Release branches
+- Hotfix branches
+
+各个分支根据不同的目的被创建，对它们的操作也遵循严格的规则。比如分支如何创建、开发完成之后merge到的对象等。
+
+另外，这些分支其实都是普通的git分支。只是根据我们使用的目的策略给他们赋予了不同的功能。
+
+### Feature 分支 
+
+Feature 分支主要用来开新功能。一般来说，只要功能还没有开发完善，它就应该一直存在。但最终应该被merge回develop分支或者丢弃。feature分支遵循以下规则：
+
+1. 从develop分支上创建feature分支
+2. feature分支最终merge回develop分支
+3. 分支的命名规则：除了master, develop, release-*, or hotfix-*的任何名字
+
+
+feature分支通常只存在于开发人员的版本库中，而不应该存在于origin仓库中。但考虑到团队成员协作开发的情况，彼此之间需要定期merge对方的代码，这是就需要借助develop分支来实现了。
+
+![img](http://nvie.com/img/fb@2x.png)
+
+#### 创建feature分支
+
+```git
+git checkout -b myfeature develop
+```
+#### 合并feature 分支
+
+```git 
+git check develop
+git merge --no-off myfeature
+git branch -d myfeature
+git push origin develop
+```
+### release分支
+
+release分支主要用来为代码发布做准备。在合并代码之前，它允许做小的bug修改、为版本发布做准备工作（指定版本号、建数据表等）。通过在release分支上做这些操作，可以保证develop分支是干净的，不影响当前新功能的开发。release分支遵循下面的规则：
+
+1. 从develop上创建release分支
+2. release必须merge回develop和master
+3. 分支需要以release-*来命令
+
+当完成本次发版计划的所有功能，并且新功能也到达了预期的状态，那么就是时候创建release分支了。这个时候，本次计划发版的所有功能分支，都应该被merge回develop分支。其他的不在本次版本计划中，需要等到下次创建release分支的时候再进行merge。
+
+在创建release分支的时候，即已经确定了本次发版的版本号。
+
+#### 创建release 分支
+
+release分支从develop分支中创建。举例说明：当前生产环境的版本是1.1.5，接下来我们计划要发新版。当开发状态基本满足发版的需求时，我们决定本次的版本号为1.2。因为我们创建release分支，并给分支指定一个版本号：
+```
+git checkout -b release-1.2 develop
+./bump-version.sh 1.2
+git commit -a -m "Bumped version number to 1.2"
+```
+
+这里`bump-version.sh`是我虚构的一个shell脚本，用来修改部分文件，以反映当前新的版本号（这当然也可以手工来修改这些文件）。
+
+直到新版上线之前，release分支都始终应该存在。在这段期间里，还可以继续修改bug（当然是在relase分支上修改，而不是develop）。这个时候，给release分支增加新的功能是被明确禁止的，新的功能必须merge到develop分支，等到下一次版本发布。
+
+#### 完成release分支
+
+当release分支的状态已经完全可以发版时，我们还需要执行以下操作：
+1. release分支需要merge到master分支上。因为master分支上的提交才真正表示一个新的发布版本。
+2. 给master分支上的这次提交打tag，方便未来参考该历史版本。
+3. 代码还需要merge回develop分支，这样可以保证未来的版本也包含了release中的修改
+
+```
+git checkout master
+git merge --no-ff release-1.2
+git tag -a 1.2
+```
+
+为了保存release中所作的修改，我们还需要将release分支merge到develop：
+```
+git checkout develop
+git merge --no-ff release-1.2 
+```
+这的merge操作可能会导致冲突（因为我们在release中做了修改）。如果真是这样，修复它，然后重新提交。
+
+现在所有工作已经完成，release分支已经不再被需要了。
+```
+git branch -d release-1.2
+```
+### Hotfix 分支
+
+
+
+![img](http://nvie.com/img/hotfix-branches@2x.png)
+
+Hotfix分支主要用来修复当前线上出现的Bug。和release分支的相同点在于，也是为新的发布版本做准备。但对于该版本，前期却是没有任何计划的。当生成环境的版本出现不期望的状况并需要立即修复时，Hotfix应运而生。
+
+当生产环境出现严重的bug，必须立即去解决。hotfix是从当前生还环境的master分支上的tag标签生成的。hotfix分支遵循下面的规则：
+
+1. 从master分支上创建
+2. 最终merge到master和develop分支
+3. 分支命名规则为：hotfix-*
+
+Hotfix分支的核心在于：当前开发团队仍然可以继续开发，由另外一个人来快速修复bug。
+
+#### 创建hotfix 分支
+
+Hotfix从master分支上创建。举个例子，当前生产服务的运行版本是1.2。比较麻烦的是，服务上出现了一个bug，我们需要立即修复。 我们就可以创建一个hotfix分支，着手修改这个bug：
+
+```git
+git checkout -b hotfix-1.2.1 master 
+./bump-version.sh 1.2.1
+git commit -a -m 'Bumped version number to 1.2.1'
+```
+
+创建分支之后，不要忘记去做版本修改。然后我们就可以在hotfix分支上一步一步修复这个bug了。
+
+```
+git commit -m 'Fixed server production problem'
+```
+
+#### Hotfix分支修复完成
+
+当修复完成后，代码需要merge到master分支和develop分支，这样后续的版本中也会包含该修改。这跟release分支的操作是完全相同的。
+
+首先，切换到master分支，merge做的修改，然后打标签。
+```
+git checkout master
+git merge --no-ff hotfix-1.2.1
+git tag -a 1.2.1
+```
+
+接下来，将修复merge到develop分支
+```
+git checkout develop
+git merge --no-ff hotfix-1.2.1
+```
+
+对于这个规则，存在一个例外情况：当前有一个待发布的release分支已经存在了。如果可以延迟到伴随这个release发版，才修复这个问题，hotfix分支就需要merge到release分支上，而不是develop。因为当release分支完成之后，最终修改还是会merge到develop分支上（如果当前的服务非常需要这个修复，不能等到下次发版，你就还需要merge到develop分支上了，**也就是始终要保证develop包含master分支**）。
+
+最终从代码库中移除分支：
+```
+git brancn -d hotfix-1.2.1
+```
+
+原文地址：[http://nvie.com/posts/a-successful-git-branching-model/](http://nvie.com/posts/a-successful-git-branching-model/)
+
+
+

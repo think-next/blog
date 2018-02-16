@@ -1,0 +1,17 @@
+{{ partial "header.html" . }}
+
+{{ .Content }}
+
+<!--self note:主页的时候不显示列表 20180215-->
+{{ if not .IsHome }}
+<ul>
+  {{ range (where .Data.Pages "Section" "!=" "") }}
+  <li>
+    <span class="date">{{ .Date.Format "2006/01/02" }}</span>
+    <a href="{{ .URL }}">{{ .Title }}</a>
+  </li>
+  {{ end }}
+</ul>
+{{ end }}
+
+{{ partial "footer.html" . }}
