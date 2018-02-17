@@ -15,9 +15,9 @@ author: 付辉
 
 文章将围绕下图来描述我们所使用的分支模型。主要包括master和develop两个主线分支以及feature、release、hotfixes分支。
 
-![](http://nvie.com/img/git-model@2x.png)
+![img](http://nvie.com/img/git-model@2x.png)
 
-##为什么选择Git
+## 为什么选择Git
 
 针对[“centralized”和“distributed”版本管理工具](https://www.atlassian.com/blog/software-teams/version-control-centralized-dvcs)的争论，可以在[GitSvnComparsion](http://git.or.cz/gitwiki/GitSvnComparsion)查看。就我个人而言，我更喜欢Git。Git改变了开发者对merge操作和branch操作的思考方式，而且两者也是Git日常工作流中的最常用的操作。
 

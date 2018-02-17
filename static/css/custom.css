@@ -101,3 +101,8 @@ pre .nohighlight {
     padding-left: 10px
   }
 }
+
+/* 自定义图片 */
+img {
+  max-height:400px;
+}
