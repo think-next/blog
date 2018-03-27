@@ -32,7 +32,8 @@ footnotereturnlinkcontents = "↩"
 [params]
     description = ""
 	author = "付辉"
-    footer = "&copy; [Fu Hui](http://neojos.com) 2017 | [Github](https://github.com/GitHubSi) | [CSDN](http://blog.csdn.net/whynottrythis)"
+    footer = "&copy; [Fu Hui](http://neojos.com) 2017 | [Github](https://github.com/GitHubSi) | [CSDN](http://blog.csdn.net/whynottrythis) 
+	| [segmentfault](https://segmentfault.com/u/neojos)"
 
   highlightjsVersion = "9.12.0"
   highlightjsCDN = "//cdn.bootcss.com"

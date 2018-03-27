@@ -88,7 +88,47 @@ location ^~ /fuhui/twenty {
 } 
 ```
 
+## error_page 返回状态码
+语法： 
+```
+error_page code [code...] [=|=answer-code] url | @named_location
+```
 
+当对于某个请求返回错误码时，如果匹配上了error_page中设置的code,则重定向到新的url中，例如：
+```
+error_page 404 /404.html
+error_page 502 503 /50x.html
+```   
 
+注意，虽然重定向了url，但是返回的http错误码还是与原来的相同，用户可以通过=号来更改返回的错误码
+```
+    error_page 404 =200 /empty.gif
+```
+
+也可以不指定确切的返回错误码，而由重定向后实际处理的真实结果来决定，这是，只要把=后面的错误码去掉即可
+```
+    error_page 404 = /empty.gif
+```
+
+### 举个例子
+禁用外网IP访问内网服务器，返回`403 forbidden`。
+```
+location / {
+    # 允许内网ip访问
+    allow 10.xx.xx.xx/24;
+    
+    # 禁止其他所有ip访问
+    deny all;
+}
+
+error_page 403 @403error
+
+location @403error {
+    rewrite /403.html;
+    
+    # 重要
+    allow all;
+}
+```
 
 未完待续，敬请期待.....
