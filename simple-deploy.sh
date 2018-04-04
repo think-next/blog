@@ -28,7 +28,7 @@ if [ -z $comment ]; then
 fi
 git commit -m "$comment"
 
-git config credential.helper 'store ~/'
+git config credential.helper 'store --file=~/'
 git push
 echo "Finish Part 1"
 
