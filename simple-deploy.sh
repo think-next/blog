@@ -17,7 +17,10 @@ if [ $next != "Y" ]; then
 fi
 
 git add *
+
 git status
+echo "========================="
+echo "Please input comment to this modify"
 
 read comment
 if [ -z $comment ]; then
@@ -27,5 +30,12 @@ git commit -m "$comment"
 
 git config credential.helper 'store ~/'
 git push
+echo "Finish Part 1"
+
+cd public
+git add *
+git commit -m "$comment"
+git push
+echo "Finish Part 2"
 
 
