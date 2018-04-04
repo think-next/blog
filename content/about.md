@@ -5,4 +5,9 @@ title: About
 
 简单了解[hugo](http://gohugo.io/getting-started/)之后，发现它更简单、更方便，所以就将自己的博客也做了迁移。
 
-联系方式：QQ : 1520107395 
+
+
+近期博客计划更细任务：
+
+1. 完善IAP支付的部分
+2. hugo博客搭建+自动化发布
