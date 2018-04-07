@@ -5,13 +5,22 @@ date: 2018-04-05
 
 categories: summarize
 
-tags: [2018,npm,]
+tags: [2018,php,]
 
 author: 付辉
 
 ---
 
+## 随笔
+
 突然想了解一下`Laravel`，然后发现：它没有我想象的那么简单，很多的调用都找不到入口。加载`view`的逻辑，看了很长时间，还是没有搞明白：一个值传递的参数，怎么好好的就变了呢？下面都是看别的的文章的总结，我还要继续完善，直到搞清楚这个`view`是怎么实现的。
+
+看了两篇文章，介绍了如何使用[`xdebug`](https://xdebug.org/)断点调试`php`及测试性能。作为了解`Laravel`的必要工具，也介绍进来。
+
+1. [`How to Install Xdebug with PHPStorm and Vagrant`](https://www.sitepoint.com/install-xdebug-phpstorm-vagrant/)
+2. [`Debugging and Profiling PHP with Xdebug`](https://www.sitepoint.com/debugging-and-profiling-php-with-xdebug/)
+
+## 概要
 
 使用`use Illuminate\Container\Container;`作为参考的例子。
 
@@ -24,8 +33,6 @@ author: 付辉
 通过`config/app.php`可以查看`Laravel`的`Service container`。`Service`下的`register`便是用来创建`binding`的。通过`php artisan make:provider CustomServiceProvider`创建自定义的`ServiceProvider`。
 
 >There is no need to bind classes into the container if they do not depend on any interfaces. The container does not need to be instructed on how to build these objects, since it can automatically resolve these objects using reflection.
-
-
 
 ## `type hint`
 

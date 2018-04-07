@@ -11,3 +11,4 @@ title: About
 
 1. 完善IAP支付的部分
 2. hugo博客搭建+自动化发布
+
