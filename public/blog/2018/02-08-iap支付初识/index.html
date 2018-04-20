@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>IAP支付初识 - 付辉</title>
+    <meta property="og:title" content="IAP支付初识 - 付辉">
+    
+
+    
+      
+    
+
+    
+
+    
+    
+
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
+    <link rel="stylesheet" href="/css/custom.css" />
+    <link rel="stylesheet" href="/css/custom.css" />
+
+  </head>
+
+  
+  <body class="blog">
+    <header class="masthead">
+      <h1 class="headimg">
+    
+    <a href="/"><img src="/img/headimg.png" alt="Fuhui "></a>
+</h1>
+
+
+
+      <nav class="menu">
+        <input id="menu-check" type="checkbox" />
+        <label id="menu-label" for="menu-check" class="unselectable">
+          <span class="icon close-icon">✕</span>
+          <span class="icon open-icon">☰</span>
+          <span class="text">Menu</span>
+        </label>
+        <ul>
+        
+        
+        <li><a href="/blog/">Blog</a></li>
+        
+        <li><a href="/categories/">Categories</a></li>
+        
+        <li><a href="/tags/">Tags</a></li>
+        
+        <li><a href="/about/">About</a></li>
+        
+        
+        </ul>
+      </nav>
+    </header>
+
+    <article class="main">
+      <header class="title">
+      <h1>IAP支付初识</h1>
+
+
+<h3>付辉
+
+    
+    
+     /  2018-02-28
+    
+</h3>
+<hr>
+
+      </header>
+
+
+
+
+
+<p><code>IAP</code>全称<code>In-App Purchase</code>，也可以叫内购。查看<a href="https://baike.baidu.com/item/IAP/16700121">百度百科</a>，IAP是一种智能移动终端应用程序的付费模式。大概的意思：用户在APP内通过付费，来享受APP内提供的服务或体验。</p>
+
+<p>我不仅仅想总结一下苹果的<code>IAP</code>，还想反思一下支付要注意的细节。</p>
+
+<p>从问题入手：如何确认苹果交易的唯一标识。想要做到支付的幂等性，每一笔订单都应该有一个唯一的标识。来避免出现类似这样的现象：用户支付了一次，服务端却创建了多个订单。</p>
+
+<h2 id="交易的唯一标识">交易的唯一标识</h2>
+
+<p>我们使用服务端校验支付流程，每笔交易都通过服务器请求苹果服务器来完成校验。</p>
+
+<h3 id="iap支付的流程">IAP支付的流程</h3>
+
+<ol>
+<li>苹果IAP支付有一个“事务”的概念。当用户支付完成，苹果会回调APP，传递一个<code>receipt</code>的凭证。</li>
+<li>APP端本地校验<code>receipt</code>或者APP回传到自己Server端对其校验</li>
+<li>校验通过后，APP端主动<code>finish</code>调该<code>transaction</code></li>
+</ol>
+
+<h3 id="transaction理解">transaction理解</h3>
+
+<p>对于每一次支付，都会产生一个新的<code>transaction</code>，用来唯一标识该订单。客户端每次<code>finish</code>的对象也是它。</p>
+
+<p>对于它是不是唯一的疑问，查阅了部分文档，有很多<strong>订阅型的产品</strong>的开发反馈：<code>transaction</code>在一段时间后可能会发生变化。但我查询的结果认为：<code>transaction</code>可以唯一确定一笔交易。</p>
+
+<p>如下摘录<a href="https://forums.developer.apple.com/welcome">苹果论坛</a>的一段描述：</p>
+
+<blockquote>
+<p>There are two transactionIdentifiers - the one that comes with the particular purchase and the one in the purchase receipt. Any call to updatedTransactions, including the call when you originally purchase the IAP, has a transaction.transactionIdentifier that is always unique. When you originally purchase an IAP or when you repurchase an IAP for free or when you restore an IAP the receipt will also contain the &ldquo;unique&rdquo; transaction_id of the original purchase transaction.transactionIdentifier.</p>
+</blockquote>
+
+<h3 id="receipt校验">receipt校验</h3>
+
+<p>服务端需要<code>receipt-data</code>去苹果服务器校验，但苹果网络响应可能不会很及时，有时候还会出现多个请求超时的情况。</p>
+
+<p>未完待续&hellip;</p>
+
+
+  <footer>
+  
+<nav class="post-nav">
+  <span class="nav-prev">&larr; <a href="/blog/2018/websocket%E5%9F%BA%E7%A1%80%E5%BC%80%E5%8F%911/">WebSocket基础开发</a></span>
+  <span class="nav-next"><a href="/blog/2018/03-01-nginx%E6%80%BB%E7%BB%93/">Nginx总结</a> &rarr;</span>
+</nav>
+
+
+
+
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+  
+
+  
+  <hr>
+  <div class="copyright">&copy; <a href="http://neojos.com">Fu Hui</a> 2017 | <a href="https://github.com/GitHubSi">Github</a> | <a href="http://blog.csdn.net/whynottrythis">CSDN</a> | <a href="https://segmentfault.com/u/neojos">segmentfault</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

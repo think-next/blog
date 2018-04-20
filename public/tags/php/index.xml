@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Php on 付辉</title>
+    <link>/tags/php/</link>
+    <description>Recent content in Php on 付辉</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 05 Apr 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/php/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>了解Laravel依赖注入</title>
+      <link>/blog/2018/04-05-%E4%BA%86%E8%A7%A3laravel%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/</link>
+      <pubDate>Thu, 05 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018/04-05-%E4%BA%86%E8%A7%A3laravel%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/</guid>
+      <description>随笔 突然想了解一下Laravel，然后发现：它没有我想象的那么简单，很多的调用都找不到入口。加载view的逻辑，看了很长时间，还是没有搞明白：一个值传递的参数，怎么好好的就变了呢？下面都是看别的的文章的总结，我还要继续完善，直到搞清楚这个view是怎么实现的。
+看了两篇文章，介绍了如何使用xdebug断点调试php及测试性能。作为了解Laravel的必要工具，也介绍进来。
+ How to Install Xdebug with PHPStorm and Vagrant Debugging and Profiling PHP with Xdebug  概要 使用use Illuminate\Container\Container;作为参考的例子。
+可以浏览原创：Laravel Container (容器) 深入理解 (下)。
+摘抄Laravel
+ The Laravel service container is a powerful tool for managing class dependencies and performing dependency injection.
+ 通过config/app.php可以查看Laravel的Service container。Service下的register便是用来创建binding的。通过php artisan make:provider CustomServiceProvider创建自定义的ServiceProvider。
+ There is no need to bind classes into the container if they do not depend on any interfaces.</description>
+    </item>
+    
+  </channel>
+</rss>

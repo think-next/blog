@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Go on 付辉</title>
+    <link>/tags/go/</link>
+    <description>Recent content in Go on 付辉</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 20 Apr 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>xorm使用reverse指令创建模版</title>
+      <link>/blog/2018/04-20-xorm%E4%BD%BF%E7%94%A8reverse%E6%8C%87%E4%BB%A4%E5%88%9B%E5%BB%BA%E6%A8%A1%E7%89%88/</link>
+      <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018/04-20-xorm%E4%BD%BF%E7%94%A8reverse%E6%8C%87%E4%BB%A4%E5%88%9B%E5%BB%BA%E6%A8%A1%E7%89%88/</guid>
+      <description>这只能算作一次小的功能介绍
+结合我们使用过的go数据操作类的库，执行的逻辑基本都是：将数据库返回的数据，转换成我们提前声明的结构体对象，然后返回。
+今天要介绍的就是如何自动创建每个table对应的结构体。
+查看 xorm tool的介绍：
+xorm reverse mysql root:@/xorm_test?charset=utf8 templates/goxorm  初看这个介绍，让我费了一段时间才理解。你可以在命令行查看它的具体含义：
+xorm help reverse  命令中templates/goxorm其实是xorm提供好的模版路径。我错误的理解成了：执行命令生成结果的存储路径。
+tmplPath Template dir for generated. the default templates dir has provide 1 template  其次就是mysql的连接语句：一般来说，都是这样写的：
+username:pwd@ip:port/db?charset=utf8  但是使用上述方式却无法正常执行命令，正确的方式是：
+xorm reverse &amp;quot;username:pwd@tcp(ip:port)/db?charset=utf&amp;quot; templates/goxorm  </description>
+    </item>
+    
+  </channel>
+</rss>

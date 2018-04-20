@@ -1,6 +1,3 @@
-[submodule "public"] 
-  path = public 
-  url = https://github.com/GitHubSi/githubsi.github.io.git
 [submodule "publicw"]
 	path = publicw
 	url = https://github.com/GitHubSi/githubsi.github.io.git

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Translate on 付辉</title>
+    <link>/categories/translate/</link>
+    <description>Recent content in Translate on 付辉</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 30 Jan 2018 20:10:33 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/translate/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Protobufs在Logstash中的应用</title>
+      <link>/blog/2018/protobufs%E5%9C%A8logstash%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/</link>
+      <pubDate>Tue, 30 Jan 2018 20:10:33 +0000</pubDate>
+      
+      <guid>/blog/2018/protobufs%E5%9C%A8logstash%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/</guid>
+      <description>ELK 分别是Elasticsearch、Logstash、Kibana技术栈的结合。主要解决的问题在于：系统服务器多，日志数据分散难以查找，日志数据量大，查询速度慢，或者不够实时。
+ 在trivago，我们主要依靠ELK来处理日志。我们通过使用Kafaka，将服务器的访问日志、错误日志、性能基准数据及各种各样的诊断日志，传递给Logstash，Logstash处理之后将日志存放到Elasticsearch。在数据传输中，我们更倾向使用protocol buffer对数据进行编码。这篇博客，我们将主要介绍如何使用Logstash来解析protobuf编码的消息。 相比无模式的JSON格式，Protobufs是一种有模式、高效的数据序列化格式。我们在Kafaka中传输的数据，很多都在使用Protocol Buffers进行编码。它的优势就在于：首先，编码后的数据size明显要比其他的编码方式要小。以JSON编码举例，消息体中不仅仅包含实际数据，还有对应的Key值及很多的中括号。对于文档结构基本不变的数据，传输中包含这些附加信息，是一种资源的浪费。当发送端和接收端对交互的文档结构达成一致后，传输过程还携带这部分结构信息就显得多余。在整个日志处理过程中，该部分消耗的资源是可以被节省下来。其次，消费者所处理的数据，数据格式都是约定好的，完全不会像JSON一样，莫名奇妙多出一个字段。同时，给数据字段的理解产生误解。
+不开心的是，Logstash不支持Protobufs编解码。目前，它支持纯文本、JSON格式和其他别的消息格式。因此，我们决定自己实现这部分功能。
+如何写Logstash的编码器 写一个Logstash插件是相对容易的，你只需要掌握一些基本的Ruby知识。Ruby语言天生直观简单，你很可能在查看示例代码的同时，就将它学会了。对初学者而言，tryruby.org是很不错的学习网站。你需要在电脑上安装Jruby，其他环境部分请参照elastic&amp;rsquo;s documentation。当你发现github上codec项目是空的时候，请不要困惑，请你clone JSON codec或plain codec来代替。通过这个过程，你将会了解到现存的插件是如何开发的，同时，你还能掌握ruby的相关知识。
+校验JAVA环境变量是否设置成功
+java -version  获取protobufs 最后，你下载logstash-codec-protobuf插件来解码protobuf消息。要使用这个插件，你需要一些proto文件和使用该proto格式编码的数据。如果这个proto文件已经在别的工程中使用了，那么你就仅仅需要创建proto文件的Ruby版本。如果这完全是一个新的项目，那么你可能需要先从Google&amp;rsquo;s developer pages了解一下proto 文件的语法规则，找到适合你项目的工具链，然后编译proto文件。
+列举一个proto文件的sample，使用Go编码：
+//使用proto3， 不支持optional选项 syntax = &amp;quot;proto3&amp;quot;; package tutorial; message Person { string name = 1; int32 id = 2; // Unique ID number for this person. string email = 3; }  安装插件 从rubygems下载logstash的插件，执行如下命令：
+bin/plugin install PATH_TO_DOWNLOADED FILE  这个解码器支持Logstash 1.x和2.x版本。
+创建Ruby版本的protobufs文件 假设下面的 unicorn.pb文件是我们定义的proto文件，我们将要使用它去解码消息：
+package Animal; message Unicorn { // colour of unicorn optional string colour = 1; // horn length optional int32 horn_length = 2; // unix timestamp for last observation optional int64 last_seen = 3; }  下载ruby-protoc的编译器，然后运行:</description>
+    </item>
+    
+    <item>
+      <title>Memcached遇到的json_decode问题</title>
+      <link>/blog/2018/memcached%E9%81%87%E5%88%B0%E7%9A%84json_decode%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Sun, 21 Jan 2018 15:48:33 +0000</pubDate>
+      
+      <guid>/blog/2018/memcached%E9%81%87%E5%88%B0%E7%9A%84json_decode%E9%97%AE%E9%A2%98/</guid>
+      <description>Memcached 是一个高性能的分布式缓存系统，使用Key-Value存储字符串和对象。通常来说，它主要用于缓存从数据库中检索到的数据以及第三方服务的数据等。简单的说，它可以提升服务器的性能。几乎所有的程序语言都可以接入它的API。如下例子所示：
+public function getYouData(string $key) { $yourData = $memcached-&amp;gt;get($key); if (!$yourData) { $yourData = $yourDb-&amp;gt;getAll(); $memcached-&amp;gt;set($key, $yourData); } return $yourData; }  在trivago， 我们使用Memcached做缓存层，而且我们对外仅提供缓存接口。开发过程中，程序员不需要考虑缓存的内部实现，仅仅知道如何调用接口就可以了。目前，该API在PHP的代码库中几乎都有使用。我们使用Memchached的场合已经相当多了，随着每次新版本发布，使用量还在增加。
+一天，系统日志文件里几乎全是Memcached的报错，get方法调用失败，导致所有的请求直接打到了数据库上。当然，在巨大负载的情况下，这些请求最终也失败了。最终，我们遇到了影响trivago整个平台能正常运行的问题。
+那么到底发生了什么？为什么Memcached开始出问题了？
+ Botnet也就是我们所说的僵尸网络，是指采用一种或多种传播手段，将大量主机感染bot程序（僵尸程序），从而在控制者和被感染主机之间所形成的一个可一对多控制的网络。
+ 原因是来至于200个国家，70K独立IP的网络攻击，直接导致当时负载飙升到平时的40倍。10分钟后我们的蛛网节流机制被触发，攻击的影响被慢慢减弱。
+攻击造成Memcache的网络带宽饱和，直接原因是其中一个库的get/hit请求引起的。查看发现，这个库已经使用了大约4GB内存。很明显，这里有一些问题。
+之后，我们对缓存记录了更加详细的日志。当然，我们之前也记日志，只是无法从现有日志中发现，究竟是哪些key消耗了大部分内存。因此，我们特别对value的占用内存大小做了额外的记录。
+一天后，通过log记录，我们终于发现了这‘怪物’：ItemRepository 下的静态方法getAllItemData ，缓存的数据平均有10M左右。
+仅仅只是名字，听起来就怪吓人的吧？更可怕的是，这个方法是2014年写的，从2015年起就再也没有被改动过。根据Blackfire的性能剖析，每加载一个页面就会调用30次getAllItemdata 方法。
+接下来，我们单独对这个方法debug，为什么缓存的值会这么大？结论是：我们正在使用默认的Memcached serialization方法，更精确的讲，是原生的PHP serialize / unserialize方法（自从我们迁移到PHP7，我们就停止使用igbinary 的扩展，因为两者结合的时候会出现问题，因此序列化的工作又重新交给了php）。这也就意味着除了存储必要的数据之外，还需要额外存储对象的类名、属性等信息。
+问题很明显了，这调整起来应该也非常简单。将php serizlization 成某种更加紧凑的数据存储格式。
+当前的环境，使用igbinary的话，改动会非常大。因此我们考虑使用JSON或Protobuf，但是基于灵活性、快速实现的考虑，我们最终决定使用json，它是一种简单、轻量的数据存储格式。
+JSON是无模式的数据结构，对数据进行编码非常方便，但解码的时候，需要将数据映射到对应的类上。
+//people是一个类，json_encode不会编码对象的私有变量 $zhangsan = new people(&#39;zhangsan&#39;, &#39;boy&#39;, &#39;23&#39;) $json = array(&#39;people&#39; =&amp;gt; $zhangsan); $jsonEncode = json_encode($json); $jsonDecode = json_decode($jsonEncode);  我们考虑是否要使用一个外部的扩展：Symfony组件Serializer，然而经过一系列基准测试之后，我们还是决定手动实现数据编码和对象的映射关系。主要还是出于对PHP性能的考虑，对我们而言，手动实现也仅仅只是额外调用一次内部实例对象，并且，我们还可以灵活的对它进行调整。
+ 实现json_ecode方法，编码从数据库检索到数据 改变缓存中key的前缀，确保跟之前的不存在冲突 增加json_decode方法，用于从Memcached中获取数据 将数据转换成对应的PHP实体或对象  听起来很简单，是吧？但我们运行测试时，json_decode持续地返回错误：语法错误、控制字符错误、或者错误的UTF-8格式。</description>
+    </item>
+    
+    <item>
+      <title>Git分支模型</title>
+      <link>/blog/2018/git%E5%88%86%E6%94%AF%E6%A8%A1%E5%9E%8B/</link>
+      <pubDate>Sun, 14 Jan 2018 20:10:33 +0000</pubDate>
+      
+      <guid>/blog/2018/git%E5%88%86%E6%94%AF%E6%A8%A1%E5%9E%8B/</guid>
+      <description>Git分支模型 文章将围绕下图来描述我们所使用的分支模型。主要包括master和develop两个主线分支以及feature、release、hotfixes分支。
+为什么选择Git 针对“centralized”和“distributed”版本管理工具的争论，可以在GitSvnComparsion查看。就我个人而言，我更喜欢Git。Git改变了开发者对merge操作和branch操作的思考方式，而且两者也是Git日常工作流中的最常用的操作。
+不集中式又集中式 Git是分布式版本管理系统，不存在集中式版本管理系统的中央存储库。这在技术角度上确实不存在，但在观念上，我们可以将origin看作整个版本管理的中央存储库。
+如下图所示，开发者除了可以从origin中push或pull代码，还可以从别的分支中pull代码。当多个同事共同开发产品的新功能时，彼此间的代码同步显得尤为重要。
+主要分支 Git中央存储库中包含两个重要的分支，它们在项目的生命周期中都一直存在：
+ master develop  两个分支有如下特性：
+ origin/master分支的HEAD 指针反映的一直都是发布就绪的状态。master分支上的代码也是生产服务的代码。 origin/develop分支的HEAD指针反映当前项目的修改，该分支集成其他分支所做的一切修改。甚至可以运行一个自动化脚本，每天晚上将各个分支的修改merge到develop分支。  当develop分支中的代码趋于稳定，准备发新版的时候，应该将其merger到master分支，并标记本次发布的版本号。稍后详细讨论。
+原则上，master分支的代码都是可发布的，所以我们对merge到master的代码有严格的要求。理论上，我们可以运行一个脚本，一旦检测到master的代码有提交，自动执行编译、并同步代码到生产服务器。
+支承分支 如master和develop旁边的其他分支，它们的生命周期有限，最终会从代码库中被移除。而我们使用分支主要来实现：
+ 来帮助各个团队之间并行开发 为新版本发布做准备 修复当前生产环境的bug。  我们使用的分支有以下几种:
+ Feature branches Release branches Hotfix branches  各个分支根据不同的目的被创建，对它们的操作也遵循严格的规则。比如分支如何创建、开发完成之后merge到的对象等。
+另外，这些分支其实都是普通的git分支。只是根据我们使用的目的策略给他们赋予了不同的功能。
+Feature 分支 Feature 分支主要用来开新功能。一般来说，只要功能还没有开发完善，它就应该一直存在。但最终应该被merge回develop分支或者丢弃。feature分支遵循以下规则：
+ 从develop分支上创建feature分支 feature分支最终merge回develop分支 分支的命名规则：除了master, develop, release-*, or hotfix-*的任何名字  feature分支通常只存在于开发人员的版本库中，而不应该存在于origin仓库中。但考虑到团队成员协作开发的情况，彼此之间需要定期merge对方的代码，这是就需要借助develop分支来实现了。
+创建feature分支 git checkout -b myfeature develop  合并feature 分支 git check develop git merge --no-off myfeature git branch -d myfeature git push origin develop  release分支 release分支主要用来为代码发布做准备。在合并代码之前，它允许做小的bug修改、为版本发布做准备工作（指定版本号、建数据表等）。通过在release分支上做这些操作，可以保证develop分支是干净的，不影响当前新功能的开发。release分支遵循下面的规则：</description>
+    </item>
+    
+    <item>
+      <title>Redis学习的惨痛经历</title>
+      <link>/blog/2018/redis%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%83%A8%E7%97%9B%E7%BB%8F%E5%8E%86/</link>
+      <pubDate>Sun, 31 Dec 2017 20:10:33 +0000</pubDate>
+      
+      <guid>/blog/2018/redis%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%83%A8%E7%97%9B%E7%BB%8F%E5%8E%86/</guid>
+      <description>我们开发的产品类似于 trivago hotel search，Redis也多用来缓存临时数据。比如将操作频繁的流水数据先存储到redis，之后迁移到关系型数据库做持久化。
+旅店查找的功能，前端主要是靠PHP和Symfony Framework开发，后端是Java。本章我们主要强调PHP和Redis的协作，目前它运行的非常稳定，但我们为实现这一步却花费了很大的精力。下面来说我们学习Redis的经历。
+前言 起初我们使用的库是 Predis，一直到2013年我们开始使用phpredis (C实现)，主要因为二者的性能差异。
+在2014年，我们给平台开发了新的特性，导致http 请求短时间内翻了一倍，结果有40%的请求HTTP 500: Internal Server Error.
+之后查看日志，发现错误多是redis的连接问题： read error on connection 和 Redis server went away。
+| WARN | ... Redis\ConnectException: Unable to connect: read error on connection ... #0 /.../vendor/.../Redis/RedisPool.php(106): ...\Redis\RedisPool-&amp;gt;connect(Object(Redis), Object(...\Redis\RedisServerConfiguration)) #1 /.../vendor/.../Redis/RedisClient.php(130): ...\Redis\RedisPool-&amp;gt;get(&#39;default&#39;, true) #2 /.../vendor/.../Redis/RedisClient.php(94): ...\Redis\RedisClient-&amp;gt;setMode(false) ... #17 /.../app/bootstrap.php.cache(551): Symfony\Bundle\FrameworkBundle\HttpKernel-&amp;gt;handle(Object(Symfony\Component\HttpFoundation\Request), 1, true) #18 /.../web/app.php(15): Symfony\Component\HttpKernel\Kernel-&amp;gt;handle(Object(Symfony\Component\HttpFoundation\Request)) #19 {main} | 12.34.56.78 | www.trivago.de | /?aDateRange%5Barr%5D=2014-05-20&amp;amp;aDateRange%5Bdep%5D=2014-05-21&amp;amp;iRoomType=1&amp;amp;iPathId=44742... | Mozilla/5.0 (WindowsNT 6.</description>
+    </item>
+    
+  </channel>
+</rss>

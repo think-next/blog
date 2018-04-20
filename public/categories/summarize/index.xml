@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Summarize on 付辉</title>
+    <link>/categories/summarize/</link>
+    <description>Recent content in Summarize on 付辉</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 20 Apr 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/summarize/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>xorm使用reverse指令创建模版</title>
+      <link>/blog/2018/04-20-xorm%E4%BD%BF%E7%94%A8reverse%E6%8C%87%E4%BB%A4%E5%88%9B%E5%BB%BA%E6%A8%A1%E7%89%88/</link>
+      <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018/04-20-xorm%E4%BD%BF%E7%94%A8reverse%E6%8C%87%E4%BB%A4%E5%88%9B%E5%BB%BA%E6%A8%A1%E7%89%88/</guid>
+      <description>这只能算作一次小的功能介绍
+结合我们使用过的go数据操作类的库，执行的逻辑基本都是：将数据库返回的数据，转换成我们提前声明的结构体对象，然后返回。
+今天要介绍的就是如何自动创建每个table对应的结构体。
+查看 xorm tool的介绍：
+xorm reverse mysql root:@/xorm_test?charset=utf8 templates/goxorm  初看这个介绍，让我费了一段时间才理解。你可以在命令行查看它的具体含义：
+xorm help reverse  命令中templates/goxorm其实是xorm提供好的模版路径。我错误的理解成了：执行命令生成结果的存储路径。
+tmplPath Template dir for generated. the default templates dir has provide 1 template  其次就是mysql的连接语句：一般来说，都是这样写的：
+username:pwd@ip:port/db?charset=utf8  但是使用上述方式却无法正常执行命令，正确的方式是：
+xorm reverse &amp;quot;username:pwd@tcp(ip:port)/db?charset=utf&amp;quot; templates/goxorm  </description>
+    </item>
+    
+    <item>
+      <title>了解Laravel依赖注入</title>
+      <link>/blog/2018/04-05-%E4%BA%86%E8%A7%A3laravel%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/</link>
+      <pubDate>Thu, 05 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018/04-05-%E4%BA%86%E8%A7%A3laravel%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/</guid>
+      <description>随笔 突然想了解一下Laravel，然后发现：它没有我想象的那么简单，很多的调用都找不到入口。加载view的逻辑，看了很长时间，还是没有搞明白：一个值传递的参数，怎么好好的就变了呢？下面都是看别的的文章的总结，我还要继续完善，直到搞清楚这个view是怎么实现的。
+看了两篇文章，介绍了如何使用xdebug断点调试php及测试性能。作为了解Laravel的必要工具，也介绍进来。
+ How to Install Xdebug with PHPStorm and Vagrant Debugging and Profiling PHP with Xdebug  概要 使用use Illuminate\Container\Container;作为参考的例子。
+可以浏览原创：Laravel Container (容器) 深入理解 (下)。
+摘抄Laravel
+ The Laravel service container is a powerful tool for managing class dependencies and performing dependency injection.
+ 通过config/app.php可以查看Laravel的Service container。Service下的register便是用来创建binding的。通过php artisan make:provider CustomServiceProvider创建自定义的ServiceProvider。
+ There is no need to bind classes into the container if they do not depend on any interfaces.</description>
+    </item>
+    
+    <item>
+      <title>包管理工具</title>
+      <link>/blog/2018/03-31-%E5%8C%85%E7%AE%A1%E7%90%86/</link>
+      <pubDate>Fri, 30 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018/03-31-%E5%8C%85%E7%AE%A1%E7%90%86/</guid>
+      <description>反思之前的过程，一直没有试图跟上技术的发展。恍然觉得，其实技术比买股票更能让我找到快乐。新的技术越来越多，能做的便是，持续保持蜗牛锲而不舍的精神，慢慢爬！
+首先感谢这篇文章2018 年了，你还是只会 npm install 吗？，让我重新开始审视包管理工具。因为在PHP开发中有Composer，在Go的开发中有glide。但却没有尝试思考它们背后的那些为什么。
+npm包管理 我一直不理解package.json和package-lock.json这两个文件的作用。直观上看，前者是我们项目所依赖的包，后者是各个包自身的明细依赖。但这样的设计却是经过多个版本迭代最终确定的形式。
+当我们执行install或者update的时候，package-lock.json会根据nodemodules的更新而进行相应更新。当前就理解到这里，请看Composer
+包的版本 包的版本号采用semver约束，由3个数字组成，格式必须为 MAJOR.MINOR.PATCH, 意为： 主版本号.小版本号.修订版本号。
+约束还有一条：主版本号相同的升级版本必须提供向下兼容，但这仅仅是口头约束。测试版本的匹配，可以访问网址：https://semver.npmjs.com/。
+ ^开头的版本：主版本号相同，大于等于小版本号的所有版本。 ~开头的版本：主版本、小版本号相同，大于等于修正版本的版本。 *或者x的版本：两者表示通配符。 在常规仅包含数字的版本号之外：表示不稳定的发布版本。  管理依赖 有时候，项目和项目之间存在引用依赖关系。比如将多个项目间共同使用的类在common项目下维护，然后其他项目project-1和project-2分别引用项目common。当project项目变得越来越多时，每次新的项目都需要手动拷贝common代码。
+可以将common做为一个包来管理。创建package.json文件，将common项目托管到git仓库。执行npm install git_url就可以将common作为依赖包进行安装了。
+npm除了安装git仓库的代码，也可以安装本地的代码。
+npm install file:local-package-path  版本管理 svn或者git只需要提交package.json, package-lock.json, 不需要提交node_modules目录。
+每次升级或降级版本，执行如下代码，相应的package.json，package-lock.json会自动更新：
+npm install &amp;lt;package-name&amp;gt;@&amp;lt;version&amp;gt;  删除依赖包：
+npm uninstall &amp;lt;package&amp;gt;  Composer管理 Composer生成的包管理目录叫vendor，它也是生成两个文件composer.lock和composer.json。composer.lock描述了项目的依赖以及其它的一些元信息。
+composer.lock用来明确锁定安装包的具体版本信息，包证所有人安装的版本都是一致的。具体的原因在于：
+ composer.json中指定的安装包版本，比如^2.0，只能确定该包的主版本号一定是2，当Composer在install的过程中，具体安装了该包符合条件的哪个版本，是无法从.json中看出来的。 同理，还是上面的例子，如果一个同事，数月前执行install安装的版本是2.0.0，后来这个包在2版本下发布了一个小版本2.1.0。另一个同事后来执行install，很可能就安装成了2.1.0  综上所述，composer.lock用来保证安装包的一致性，避免安装到不同的版本包，给生产环境带来的不确定性。
+install/update install主要用来安装新包。当安装新包的时候，需要首先查看.lock文件是否存在，如果存在，安装.lock中指定的具体版本。如果不存在，直接安装。同时更新.json和.lock两个文件。
+update主要用来更新.lock中安装的包。随着时间的推移，.json中的包可能又发布了新版本，所以update就是用来检查.json中包的新版本，更新.lock文件用的。
+我在使用的过程中，比较倾向于使用下面的单个包操作的方式：
+php composer.phar update monolog/monolog [...]  版本管理 在git环境中.json和.lock都需要被提交的版本控制。vendor目录就不需要啦。
+glide版本管理 glide是go的版本管理工具。其实glide也是参考composer设计的，所以上面对composer的说法也同样有效。
+vendor目录默认会在项目下生成。需要特别注意的是：go的项目必须在gopath路径下的src目录下。
+govendor</description>
+    </item>
+    
+    <item>
+      <title>HTTP总结-状态码</title>
+      <link>/blog/2018/03-15-http%E6%80%BB%E7%BB%93-%E7%8A%B6%E6%80%81%E7%A0%81/</link>
+      <pubDate>Sat, 17 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018/03-15-http%E6%80%BB%E7%BB%93-%E7%8A%B6%E6%80%81%E7%A0%81/</guid>
+      <description>405 方法不被允许 (Method not allowed)。用来访问本页面的谓词不被允许，有时将POST请求修改为GET请求之后异常就解决了。
+比如：Web端通过Ajax异步提交数据，并且是POST的方式。莫名奇妙的的发现返回的状态码是405。很有可能是服务端在处理请求时出错了，在Nginx返回时，返回了404.html或者500.html导致的。
+500 服务器内部错误。比如：服务端处理出现异常。同时，在PHP错误日志中可以查看异常发生的调用栈信息。
+502 作为网关或者代理工作的服务器尝试执行请求时，从上游服务器接收到无效的响应。
+比如：服务端尝试连接mysql，但长时间链接不上，就会返回502错误。这篇 http 502 和 504 的区别 介绍的比较好，推荐大家浏览。
+504 网关超时。为了完成您的 HTTP 请求， 该服务器访问一个上游服务器， 但没得到及时的响应
+比如：nginx超过了自己设置的超时时间，不等待php-fpm的返回结果，直接给客户端返回504错误。但是此时php-fpm依然还在处理请求（在没有超出自己的超时时间的情况下）。</description>
+    </item>
+    
+    <item>
+      <title>Nginx总结</title>
+      <link>/blog/2018/03-01-nginx%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Sat, 10 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018/03-01-nginx%E6%80%BB%E7%BB%93/</guid>
+      <description>location 指令 工作中经常用到的一个指令，用来对某个路径的请求做特殊处理。比如同样的链接在PC和Web显示不同的页面。
+location修饰符 location block匹配request url中domain name 或者ip/por之后的请求部分，即请求资源的路径。
+形式如下：
+location optional_modifier location_match { }  如下是optional_modifier的类型：
+  ​ optional_modifier ​ 含义   ​  =  ​ 请求的url必须严格匹配被location指定的路径，必须完全相同   ​ none ​  如果没有修饰符，将对url做前缀匹配 ​   ​ ^~  ​ 最佳的非正则表达式前缀匹配    ​ ~  ​ 大小写敏感的正则匹配    ​ ~*  ​ 大小写不敏感的正则匹配    location匹配规则  nginx会查找一个精确匹配。如果匹配到了 = modifier，匹配会立即终止，该location就会被选择处理这个请求。 如果没有精确匹配（= modifier），nginx继续进行前缀匹配，对于给定的url，选择最长的前缀匹配。然后依据下列规则，继续匹配。 如果最长的前缀匹配有（^~ modifier），nginx会立即结束查询，选择该location。如果没有 ^~ modifier，该匹配会被暂时存起来，以便搜索可以继续。 最长的匹配被存起来后，nginx会继续匹配正则表达式。nginx移动到 location list 的顶部，然后试着去匹配正则表达式，第一个被匹配的正则表达式会立即被选择处理请求，结束匹配。 如果没有正则表达式被匹配，则之前存储的最长location被选择用来处理请求。  特别需要理解的：nginx正则匹配结果优先于前缀匹配。但是前缀匹配在先，同时允许通过 ^~ 和 = 来改变这种趋势。</description>
+    </item>
+    
+    <item>
+      <title>IAP支付初识</title>
+      <link>/blog/2018/02-08-iap%E6%94%AF%E4%BB%98%E5%88%9D%E8%AF%86/</link>
+      <pubDate>Wed, 28 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018/02-08-iap%E6%94%AF%E4%BB%98%E5%88%9D%E8%AF%86/</guid>
+      <description>IAP全称In-App Purchase，也可以叫内购。查看百度百科，IAP是一种智能移动终端应用程序的付费模式。大概的意思：用户在APP内通过付费，来享受APP内提供的服务或体验。
+我不仅仅想总结一下苹果的IAP，还想反思一下支付要注意的细节。
+从问题入手：如何确认苹果交易的唯一标识。想要做到支付的幂等性，每一笔订单都应该有一个唯一的标识。来避免出现类似这样的现象：用户支付了一次，服务端却创建了多个订单。
+交易的唯一标识 我们使用服务端校验支付流程，每笔交易都通过服务器请求苹果服务器来完成校验。
+IAP支付的流程  苹果IAP支付有一个“事务”的概念。当用户支付完成，苹果会回调APP，传递一个receipt的凭证。 APP端本地校验receipt或者APP回传到自己Server端对其校验 校验通过后，APP端主动finish调该transaction  transaction理解 对于每一次支付，都会产生一个新的transaction，用来唯一标识该订单。客户端每次finish的对象也是它。
+对于它是不是唯一的疑问，查阅了部分文档，有很多订阅型的产品的开发反馈：transaction在一段时间后可能会发生变化。但我查询的结果认为：transaction可以唯一确定一笔交易。
+如下摘录苹果论坛的一段描述：
+ There are two transactionIdentifiers - the one that comes with the particular purchase and the one in the purchase receipt. Any call to updatedTransactions, including the call when you originally purchase the IAP, has a transaction.transactionIdentifier that is always unique. When you originally purchase an IAP or when you repurchase an IAP for free or when you restore an IAP the receipt will also contain the &amp;ldquo;unique&amp;rdquo; transaction_id of the original purchase transaction.</description>
+    </item>
+    
+    <item>
+      <title>WebSocket基础开发</title>
+      <link>/blog/2018/websocket%E5%9F%BA%E7%A1%80%E5%BC%80%E5%8F%911/</link>
+      <pubDate>Sun, 25 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018/websocket%E5%9F%BA%E7%A1%80%E5%BC%80%E5%8F%911/</guid>
+      <description>WebSocket是一种网络通讯协议。在服务器端可以将HTTP请求升级为WebSocket请求。区别于普通的HTTP请求，WebSocket中存在特殊的字段标识：
+GET /chat HTTP/1.1 Host: server.example.com Upgrade: websocket Connection: Upgrade Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw== Sec-WebSocket-Protocol: chat, superchat Sec-WebSocket-Version: 13 Origin: http://example.com  这种协议升级，是在应用层实现的。所以一个服务器本身既可以提供WebSocket服务，也可以提供正常的HTTP服务。
+我们下面对服务做区分。/ws负责对外提供WebSocket服务。
+http.HandleFunc(&amp;quot;/&amp;quot;, serveForHttp) http.HandleFunc(&amp;quot;/ws&amp;quot;, serveForWs)  将HTTP请求升级为WebSocket请求,处理连接的读写操作：
+func serveForWs(w http.ResponseWriter, r *http.Request) { if r.Method != &amp;quot;GET&amp;quot; { http.Error(w, &amp;quot;Method not allowed&amp;quot;, http.StatusMethodNotAllowed) return } conn, err := upgrader.Upgrade(w, r, nil) if err != nil { log.Println(err) return } go client.write() go client.read() }  Upgrader负责连接升级，同时指定连接的部分属性。包括ReadBufferSize，WriteBufferSize，CheckOrigin等。Upgrader默认会检查header头中Origin是否有效，如果你要使用这个默认函数的话，需要确保客户端请求头中包含Origin。
+var upgrader = websocket.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Nginx总结 - 付辉</title>
+    <meta property="og:title" content="Nginx总结 - 付辉">
+    
+
+    
+      
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
+    <link rel="stylesheet" href="/css/custom.css" />
+    <link rel="stylesheet" href="/css/custom.css" />
+
+  </head>
+
+  
+  <body class="blog">
+    <header class="masthead">
+      <h1 class="headimg">
+    
+    <a href="/"><img src="/img/headimg.png" alt="Fuhui "></a>
+</h1>
+
+
+
+      <nav class="menu">
+        <input id="menu-check" type="checkbox" />
+        <label id="menu-label" for="menu-check" class="unselectable">
+          <span class="icon close-icon">✕</span>
+          <span class="icon open-icon">☰</span>
+          <span class="text">Menu</span>
+        </label>
+        <ul>
+        
+        
+        <li><a href="/blog/">Blog</a></li>
+        
+        <li><a href="/categories/">Categories</a></li>
+        
+        <li><a href="/tags/">Tags</a></li>
+        
+        <li><a href="/about/">About</a></li>
+        
+        
+        </ul>
+      </nav>
+    </header>
+
+    <article class="main">
+      <header class="title">
+      <h1>Nginx总结</h1>
+
+
+<h3>付辉
+
+    
+    
+     /  2018-03-10
+    
+</h3>
+<hr>
+
+      </header>
+
+
+
+
+
+<h2 id="location-指令">location 指令</h2>
+
+<p>工作中经常用到的一个指令，用来对某个路径的请求做特殊处理。比如同样的链接在<code>PC</code>和<code>Web</code>显示不同的页面。</p>
+
+<h3 id="location修饰符">location修饰符</h3>
+
+<p>location block匹配request url中domain name 或者ip/por之后的请求部分，即请求资源的路径。</p>
+
+<p>形式如下：</p>
+
+<pre><code>location optional_modifier location_match {
+
+}
+</code></pre>
+
+<p>如下是<code>optional_modifier</code>的类型：</p>
+
+<table>
+  <tr>
+​    <th>optional_modifier</th>
+​    <th>含义</th>
+  </tr>
+  <tr>
+​    <td> = </td>
+​    <td>请求的url必须严格匹配被location指定的路径，必须完全相同</td>
+  </tr>
+  <tr>
+​    <td>none</td>
+​    <td> 如果没有修饰符，将对url做前缀匹配</td>
+​  </tr>  
+  <tr>
+​    <td>^~ </td>
+​    <td>最佳的非正则表达式前缀匹配 </td>
+  </tr>
+  <tr>
+​    <td>~ </td>
+​    <td>大小写敏感的正则匹配 </td>
+  </tr>
+  <tr>
+​    <td>~* </td>
+​    <td>大小写不敏感的正则匹配 </td>
+  </tr>
+</table>
+
+<h3 id="location匹配规则">location匹配规则</h3>
+
+<ol>
+<li>nginx会查找一个精确匹配。如果匹配到了 =  modifier，匹配会立即终止，该location就会被选择处理这个请求。</li>
+<li>如果没有精确匹配（= modifier），nginx继续进行前缀匹配，对于给定的url，选择最长的前缀匹配。然后依据下列规则，继续匹配。</li>
+<li>如果最长的前缀匹配有（^~ modifier），nginx会立即结束查询，选择该location。如果没有 ^~ modifier，该匹配会被暂时存起来，以便搜索可以继续。</li>
+<li>最长的匹配被存起来后，nginx会继续匹配正则表达式。nginx移动到 location list 的顶部，然后试着去匹配正则表达式，第一个被匹配的正则表达式会立即被选择处理请求，结束匹配。</li>
+<li>如果没有正则表达式被匹配，则之前存储的最长location被选择用来处理请求。</li>
+</ol>
+
+<p>特别需要理解的：nginx正则匹配结果优先于前缀匹配。但是前缀匹配在先，同时允许通过 ^~ 和 = 来改变这种趋势。</p>
+
+<p>前缀匹配一般选择最长，最精确的匹配，而正则匹配在第一个匹配发现时，匹配就会终止。也就是说，正则匹配跟配置文件中规则的定义位置有很大关系。
+如果匹配上该location，请求会跳出匹配。</p>
+
+<h3 id="举个例子">举个例子</h3>
+
+<p>当前想修改一下，针对某个请求<code>/fuhui/twenty/index.html</code>静态文件的根路径，即所以请求该路径的静态资源，统一到<code>/src/www/fuhui/twenty</code>目录下查找。</p>
+
+<p>在<code>nginx</code>中做了如下配置。所以<code>nginx</code>按照流程，前缀匹配到<code>/fuhui/twenty</code>之后，判断它其实就是前缀匹配中最长的匹配。同时，它的修饰符为<code>^~</code>，<code>location</code>匹配完成。</p>
+
+<p>假设②将修饰符修改为普通的前缀匹配（none），则①的<code>location</code>会匹配成功。</p>
+
+<pre><code># 1
+location ~* \.html$ {
+    add_header Pragma &quot;no-cache&quot;;
+    try_files $uri /resource/html/$uri =404;
+}
+
+# 2
+location ^~ /fuhui/twenty {
+    root /src/www/fuhui/twenty;
+} 
+</code></pre>
+
+<h2 id="error-page-返回状态码">error_page 返回状态码</h2>
+
+<p>语法：</p>
+
+<pre><code>error_page code [code...] [=|=answer-code] url | @named_location
+</code></pre>
+
+<p>当对于某个请求返回错误码时，如果匹配上了error_page中设置的code,则重定向到新的url中，例如：</p>
+
+<pre><code>error_page 404 /404.html
+error_page 502 503 /50x.html
+</code></pre>
+
+<p>注意，虽然重定向了url，但是返回的http错误码还是与原来的相同，用户可以通过=号来更改返回的错误码</p>
+
+<pre><code>    error_page 404 =200 /empty.gif
+</code></pre>
+
+<p>也可以不指定确切的返回错误码，而由重定向后实际处理的真实结果来决定，这是，只要把=后面的错误码去掉即可</p>
+
+<pre><code>    error_page 404 = /empty.gif
+</code></pre>
+
+<h3 id="举个例子-1">举个例子</h3>
+
+<p>禁用外网IP访问内网服务器，返回<code>403 forbidden</code>。</p>
+
+<pre><code>location / {
+    # 允许内网ip访问
+    allow 10.xx.xx.xx/24;
+    
+    # 禁止其他所有ip访问
+    deny all;
+}
+
+error_page 403 @403error
+
+location @403error {
+    rewrite /403.html;
+    
+    # 重要
+    allow all;
+}
+</code></pre>
+
+<p>未完待续，敬请期待&hellip;..</p>
+
+
+  <footer>
+  
+<nav class="post-nav">
+  <span class="nav-prev">&larr; <a href="/blog/2018/02-08-iap%E6%94%AF%E4%BB%98%E5%88%9D%E8%AF%86/">IAP支付初识</a></span>
+  <span class="nav-next"><a href="/blog/2018/03-15-http%E6%80%BB%E7%BB%93-%E7%8A%B6%E6%80%81%E7%A0%81/">HTTP总结-状态码</a> &rarr;</span>
+</nav>
+
+
+
+
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+  <hr>
+  <div class="copyright">&copy; <a href="http://neojos.com">Fu Hui</a> 2017 | <a href="https://github.com/GitHubSi">Github</a> | <a href="http://blog.csdn.net/whynottrythis">CSDN</a> | <a href="https://segmentfault.com/u/neojos">segmentfault</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+
