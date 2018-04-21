@@ -13,7 +13,7 @@ author: 付辉
 
 知道一点比完全不知道要好，对问题有深入了解比仅知道皮毛要好。作为`docker`的一个初学者，现在对`docker`做简单记录。希望随着工作、生活，更深入的了解学习`docker`。这也是一件很有意义的事。
 
-`docker`是提供了一个容器，有几个相关的概念：
+`docker`有几个相关的概念：
 
 1. `image` 镜像
 2. `container` 容器
@@ -55,14 +55,12 @@ services:
 docker-composer -f db.yml up
 ```
 
-可以通过执行如下命令查看，确实有两个容器在运行。
+可以通过执行如下命令查看，确认是否有两个容器在运行。
 ```
 docker container ls
 ```
 
-这样很好，但当我想进去`MySQL`的容器内执行一些命令时，该怎么办呢？
-
-比如，我想确认一下我这样写`MySQL`的连接是否正确,我想进去容器内执行下面的指令：
+这样很好，但当我想进去`MySQL`的容器内执行一些命令时，该怎么办呢？比如，我想确认下面的`MySQL`连接语句是否正确,而且我还一定要进去容器内执行`MySQL`命令行语句：
 
 ```
 mysql -h 127.0.0.1 -P 3306 -u neojos -p'neojos-pwd' paytest
@@ -74,7 +72,7 @@ mysql -h 127.0.0.1 -P 3306 -u neojos -p'neojos-pwd' paytest
 docker container exec -it 9008f76b728d mysql -h 127.0.0.1 -P 3306 -u neojos -pneojos-pwd paytest
 ```
 
-上面的这个可呢个看不太明白，所以我复杂一下命令的说明：
+上面的命令可能看不太明白，所以我复制一下命令的说明：
 
 ```
 See 'docker container exec --help'.
