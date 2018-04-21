@@ -1,7 +1,7 @@
 ---
 title: xorm使用reverse指令创建模版
 
-date: 2018-04-20
+date: 2018-04-19
 
 categories: summarize
 
@@ -44,3 +44,4 @@ username:pwd@ip:port/db?charset=utf8
 ```
 xorm reverse "username:pwd@tcp(ip:port)/db?charset=utf" templates/goxorm 
 ```
+
