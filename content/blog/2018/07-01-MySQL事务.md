@@ -21,16 +21,15 @@ author: 付辉
 
 代码做了如下处理：
 ```go
-//简化的代码
 func sessPart() {
 
-    //开启事务
-    session := engine.NewSession()
-    sess.Begin()
-    defer session.Close()
+	//开启事务
+	session := engine.NewSession()
+	sess.Begin()
+	defer session.Close()
 	defer sess.Rollback()
 
-    //插入价钱100分的权益交付记录
+	//插入价钱100分的权益交付记录
 	exchange := models.Exchange{Money: 100, Uid: 1}
 	_, err := sess.Insert(exchange)
 	if err != nil {
@@ -38,25 +37,25 @@ func sessPart() {
 		return
 	}
 
-    //更新status为1
-    //并且使用乐观锁，防止因没有匹配到数据，直接返回成功
+	//更新status为1
+	//并且使用乐观锁，防止因没有匹配到数据，直接返回成功
 	testModel := Test{
 		Status: 1,
 	}
 	affectRows, err := sess.Where("transaction_id = ? AND status = 0", 1).
-	Cols("status").Update(&testModel)
+		Cols("status").Update(&testModel)
 	if err != nil || affectRows == 0 {
 		sess.Rollback()
 		return
 	}
-	
+
 	sess.Commit()
 }
 
 //测试事务的并发情况
 func BenchmarkLock(b *testing.B) {
-    
-    //控制并发，保证并发完成
+
+	//控制并发，保证并发完成
 	var wg sync.WaitGroup
 	for i := 0; i < 500; i++ {
 
@@ -70,3 +69,7 @@ func BenchmarkLock(b *testing.B) {
 	wg.Wait()
 }
 ```
+**结论**：无论我怎么模拟并发，事务都很好的保证了：整个过程，只成功插入了一条记录。这倒是跟我预期一样。**但为什么我们线上环境，这样的代码能插入两条权益记录？**
+
+
+
