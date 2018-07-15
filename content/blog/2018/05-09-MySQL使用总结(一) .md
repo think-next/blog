@@ -61,3 +61,13 @@ on table_a.id = table_out.id
 where table_out.id > 2018
 ```
 
+## 时间格式
+
+MySQL提供了两个函数来转换`unix时间戳`和日期
+```sql
+-- 把 unix 时间戳转换为日期
+from_unixtime()
+
+-- 把日期转换为 unix 时间戳
+unix_timestamp()
+```
