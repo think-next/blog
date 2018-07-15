@@ -85,7 +85,7 @@ func BenchmarkLock(b *testing.B) {
 
 4. `Serializable`，与可重复读的唯一区别是，默认把普通的SELECT语句修改为`SELECT...LOCK IN SHARE MODE`，即查询语句返回的数据加上共享锁，阻碍其他事务修改真实数据。**解决了`Phantom Read`问题**。
 
-### 查询数据库的隔离级别
+## 查询数据库的隔离级别
 
 ```sql
 -- 返回：READ-COMMITTED

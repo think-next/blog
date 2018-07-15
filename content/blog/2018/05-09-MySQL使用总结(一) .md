@@ -3,9 +3,9 @@ title: MySQL使用总结(一)
 
 date: 2018-05-09
 
-categories: summarize
+categories: [2018-05]
 
-tags: [2018,]
+tags: [MySQL,]
 
 author: 付辉
 
