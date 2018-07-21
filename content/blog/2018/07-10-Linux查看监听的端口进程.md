@@ -5,7 +5,7 @@ date: 2018-07-10
 
 categories: [2018-07]
 
-tags: [tools]
+tags: [Linux]
 
 author: 付辉
 

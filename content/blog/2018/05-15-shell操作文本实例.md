@@ -3,9 +3,9 @@ title: shell操作文本实例
 
 date: 2018-05-15
 
-categories: summarize
+categories: [2018-05]
 
-tags: [2018]
+tags: [Linux]
 
 author: 付辉
 
