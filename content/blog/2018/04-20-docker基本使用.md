@@ -79,3 +79,44 @@ See 'docker container exec --help'.
 
 Usage:  docker container exec [OPTIONS] CONTAINER COMMAND [ARG...] [flags]
 ```
+
+## `Dockerfile`指令
+
+`Dockerfile`是一个文本文件，其内包含了一条条的指令(`Instruction`)，每一条指令构建一层，每一条指令的内容，就是描述该层应如何构建。
+
+### `FROM`
+
+所谓定制镜像，一定是以一个镜像为基础，在其上进行定制。而`FROM`就是用于指定基础镜像。因为`Dockerfile`中`FROM`是必备的指令，而且必须是第一条指令。
+
+### `RUN`
+
+新建一层，在其上执行命令。执行结束后，`commit`这一层的修改，构成新的镜像。
+
+### `ENV`
+
+用于设置环境变量：`ENV KEY VALUE`或者`ENV KEY=VALUE`
+
+### `COPY`
+
+将从构建**上下文目录**中源路径的文件/目录复制到新的一层的镜像内的目标路径的位置。
+
+### `CMD`
+
+指定默认的容器**主进程**的启动命令。容器就是进程，那么在启动容器的时候，需要指定所运行的程序及参数。
+
+```
+docker run image command
+```
+跟在镜像名后的是`command`，运行时会替换`CMD`的默认值。
+
+### `ENTRYPOINT`
+
+和`CMD`一样，都是指定容器启动程序和参数。当指定了`ENTRYPOINT`之后，`CMD`的含义就发生了改变，不再是直接运行其命令，而是将`CMD`作为参数传递给`ENTRYPOINT`指令。
+
+### `EXPOSE`
+
+声明运行时容器提供服务端口
+
+### `WORKDIR`
+
+用于指定工作目录，以后各层的当前目录就被改为指定的目录。如果目录不存在，系统会创建目录。
