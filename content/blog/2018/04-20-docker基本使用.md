@@ -3,9 +3,9 @@ title: docker基本使用
 
 date: 2018-04-20
 
-categories: summarize
+categories: [2018-04]
 
-tags: [2018,tools,]
+tags: [tools]
 
 author: 付辉
 
@@ -120,3 +120,46 @@ docker run image command
 ### `WORKDIR`
 
 用于指定工作目录，以后各层的当前目录就被改为指定的目录。如果目录不存在，系统会创建目录。
+
+## 多阶段构建
+
+原理：事先在一个`Dockerfile`将项目及其依赖编译测试打包好后，再将其拷贝到运行环境中。
+
+主要使用的指令：
+
+```
+# 方便后续构建阶段引用
+FROM image[:tag | @digest] AS stage
+
+# 指明引用前面哪一个构建阶段的成果
+COPY --from=stage ...
+```
+
+### `Example`
+下面是精简版示例：
+```
+FROM registry.cn-beijing.aliyuncs.com/golang:1.10 AS build-env
+ADD . /go/src/baby
+WORKDIR /go/src/baby
+
+RUN go build -x -o /build/baby main.go \
+    && go build -x -o /build/task_monitor scripts/task_monitor/task_monitor.go \
+    && go build -x -o /build/task_notify scripts/task_notify/task_notify.go 
+
+
+FROM registry-internal.cn-beijing.aliyuncs.com/alpine:3.7
+COPY --from=build-env /build/baby /data/src/baby
+COPY --from=build-env /build/task_monitor /data/src/task_monitor
+COPY --from=build-env /build/task_notify /data/src/iap_notify
+
+COPY conf.simulation.toml /data/src/conf.simulation.toml
+COPY conf.online.toml /data/src/conf.online.toml
+COPY conf.test.toml /data/src/conf.test.toml
+
+COPY docker/entrypoint.sh /data/src/
+
+EXPOSE 3600
+
+ENTRYPOINT ["/data/src/entrypoint.sh"]
+CMD ["bash", "-c", "/data/src/${RUN_PROG:=baby} --log_dir=/data/logs/$RUN_PROG -c /data/src/conf.toml"]
+```
