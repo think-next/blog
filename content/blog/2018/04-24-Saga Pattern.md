@@ -3,19 +3,25 @@ title: Saga Pattern
 
 date: 2018-04-24
 
-categories: summarize
+categories: [2018-04]
 
-tags: [2018,]
+tags: [Think]
 
 author: 付辉
 
 ---
 
-在微服务中，用的比较多的分布式事务模式：[`SAGA`](https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf)。
+在微服务中，用的比较多的分布式事务模式：[`SAGA`](https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf)。下面是`lysu/go-saga`库中的描述：
 
-插播：在你觉得英文很难读懂的时候，别人却只是觉得有些英文论文很难读懂。所以，有时间就看一点这篇论文，总会看完的。
+> Saga is a long-lived transaction came up with many small sub-transaction.ExecutionCoordinator(SEC) is coordinator for sub-transactions execute and saga-log written.Sub-transaction is normal business operation, it contain a Action and action's Compensate. Saga-Log is used to record saga process, and SEC will use it to decide next step and how to recovery from error.Log presents Saga Log. Saga Log used to log execute status for saga, and SEC use it to compensate and retry.
 
+## 引言
 `saga`是一个本地事务的序列，每个事务都在各个微服务内部完成。通过外部的请求来开始第一个事务，且当前面的事务完成后，后面的事务就会被触发。
+
+它的核心思想：
+
+1. 将事务进行拆分，划分成更小的事务粒度。
+2. 补偿逻辑。对失败的事务进行补偿
 
 简要描述一下：
 
