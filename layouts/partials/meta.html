@@ -10,11 +10,9 @@
         {{ if .Params.author }} / {{ end }} {{ .Date.Format "2006-01-02" }}{{ end }}
         {{ end }}
     </span>
-    <ul id="tags" class="post-meta clear-ul">
-        {{ range .Params.tags }}
-        <li><a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}">{{ . }}</a> </li>
-        {{ end }}
-    </ul>
+    {{ range .Params.tags }}
+    <a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}">{{ . }}</a>
+    {{ end }}
 </section>
 
 <hr>

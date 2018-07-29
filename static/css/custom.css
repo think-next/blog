@@ -132,7 +132,7 @@ img {
     color: #9EABB3;
 }
 
-.post-meta li a {
+.post-meta a {
     background: transparent;
     padding: 2px 7px;
     text-decoration: none;
@@ -144,7 +144,7 @@ img {
     transition: color 0.3s ease;
 }
 
-.post-meta li a:hover {
+.post-meta a:hover {
   text-decoration: underline;
 }
 
