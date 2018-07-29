@@ -14,7 +14,7 @@ footnotereturnlinkcontents = "↩"
 
 [[menu.main]]
     name = "Blog"
-    url = "/blog/"
+    url = "/blog/2018/"
     weight = 1
 [[menu.main]]
     name = "Categories"
