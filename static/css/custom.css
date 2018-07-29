@@ -106,3 +106,51 @@ pre .nohighlight {
 img {
   max-height:400px;
 }
+
+/* 定义Tag标签的样式 */
+.post-meta {
+    text-align: center;
+    margin: 0;
+    height: 20px;
+    margin-top: 14px;
+    display: block;
+    line-height: 2.2rem;
+    word-wrap: break-word;
+    font-size: 1.3rem;
+    text-rendering: geometricPrecision;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.post-meta .post-author {
+    padding: 0;
+    margin: 0;
+    border: none;
+    display: inline-block;
+    text-transform: uppercase;
+    font-size: 1.3rem;
+    white-space: nowrap;
+    color: #9EABB3;
+}
+
+.post-meta li a {
+    background: transparent;
+    padding: 2px 7px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.3rem;
+    margin-right: 3px;
+    color: #9EABB3;
+    border: #E3E9ED 1px solid;
+    transition: color 0.3s ease;
+}
+
+.post-meta li a:hover {
+  text-decoration: underline;
+}
+
+/* 清除ul、li的默认样式*/
+.clear-ul {
+    list-sytle: none;
+    list-style-type: none;
+    display: inline-block;
+}

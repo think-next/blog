@@ -5,6 +5,8 @@ date: 2018-03-10
 
 categories: summarize
 
+tags : [nginx]
+
 author: 付辉
 
 ---
@@ -98,7 +100,7 @@ error_page code [code...] [=|=answer-code] url | @named_location
 ```
 error_page 404 /404.html
 error_page 502 503 /50x.html
-```   
+```
 
 注意，虽然重定向了url，但是返回的http错误码还是与原来的相同，用户可以通过=号来更改返回的错误码
 ```

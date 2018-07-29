@@ -5,7 +5,7 @@ date: 2018-02-25
 
 categories: summarize
 
-tags: protocol
+tags: [protocol]
 
 author: 付辉
 

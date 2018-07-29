@@ -5,7 +5,7 @@ date: 2018-01-01 20:10:33
 
 categories: translate
 
-tags: cache
+tags: [cache]
 
 author: 付辉
 ---
