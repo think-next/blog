@@ -5,7 +5,7 @@ date: 2018-05-15
 
 categories: [2018-05]
 
-tags: [Linux]
+tags: [linux]
 
 author: 付辉
 
