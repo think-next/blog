@@ -3,9 +3,9 @@ title: timewait状态解读
 
 date: 2018-06-15
 
-categories: summarize
+categories: [2018-06]
 
-tags: [TCP/IP]
+tags: [tcp/ip,net]
 
 author: 付辉
 
