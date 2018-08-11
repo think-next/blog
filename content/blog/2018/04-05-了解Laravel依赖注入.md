@@ -5,7 +5,7 @@ date: 2018-04-05
 
 categories: summarize
 
-tags: [2018,php,]
+tags: [php,]
 
 author: 付辉
 

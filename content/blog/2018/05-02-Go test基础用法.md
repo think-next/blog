@@ -5,7 +5,7 @@ date: 2018-05-02
 
 categories: summarize
 
-tags: [2018,golang]
+tags: [golang]
 
 author: 付辉
 
