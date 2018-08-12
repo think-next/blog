@@ -3,7 +3,7 @@ title: Nginx总结
 
 date: 2018-03-10
 
-categories: summarize
+categories: [2018-03]
 
 tags : [nginx]
 
