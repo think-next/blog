@@ -3,8 +3,7 @@ title: Protobufs在Logstash中的应用
 
 date: 2018-01-30 20:10:33 
 
-categories: 
-- translate
+categories: [2018-01]
 
 tags: [protobufs]
 

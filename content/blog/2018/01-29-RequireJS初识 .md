@@ -3,7 +3,7 @@ title: RequireJS初识
 
 date: 2018-01-29 20:10:33 
 
-categories: front-end
+categories: [2018-01]
 
 tags: [js]
 
