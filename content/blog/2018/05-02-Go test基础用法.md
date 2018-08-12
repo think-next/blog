@@ -3,7 +3,7 @@ title: Go test基础用法
 
 date: 2018-05-02
 
-categories: summarize
+categories: [2018-05]
 
 tags: [golang]
 
