@@ -24,3 +24,16 @@ author: 付辉
 ```
 
 对于`linux`的命令，其实`man`查看就足够了。
+
+## `example`
+
+提交`json`格式的数据请求到服务器。`POST`后跟数据内容，不需要使用引号处理。
+```
+# linux下执行命令
+siege -f ./url.txt  -H "Content-Type: application/json"
+
+# url.txt中的内容
+HOST=neojos.com
+$(HOST)/v1/buy POST {"bid": 0, "type": 13 }
+```
+
