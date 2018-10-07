@@ -11,9 +11,19 @@ author: 付辉
 
 ---
 
-`BigCache`的作者做了详细的阐述，尽在这里：[`Writing a very fast cache service with millions of entries in Go`](https://allegro.tech/2016/03/writing-fast-cache-service-in-go.html)。不得不说，作者的表述非常完美，给它点赞。`GitHub`地址在：[github.com/allegro/bigcache](https://github.com/allegro/bigcache)。`Usage`非常简单，相信一看就会用了。
 
-## `Concurrency`的理解
+`BigCache`的作者做了详细的阐述，尽在这里：[`Writing a very fast cache service with millions of entries in Go`](https://allegro.tech/2016/03/writing-fast-cache-service-in-go.html)。不得不说，作者的表述非常完美，给它点赞。`GitHub`地址在：[github.com/allegro/bigcache](https://github.com/allegro/bigcache)。`Usage`非常简单。
+
+## `Omitting GC`
+
+当`map`中存储过百万的`object`时，`Go`语言自身的`GC`甚至会影响不相关的请求，即使是对一个空对象做`Marsh`操作，响应时间也可能在`1s`以上。所以，如何避免`Go`默认对`map`做的`Garbage Collector`至关重要。
+
+1. `GC`回收`heap`中对象，所以我们不把对象创建在`heap`中就可以避过垃圾回收。查阅[`offheap`](https://godoc.org/github.com/glycerine/offheap)。
+2. 使用[`freecache`](https://github.com/coocood/freecache).
+3. 在`map`结构的`key`和`value`中不存储`pointer`，这样便可以将`map`创建在堆上，同时忽略`GC`的影响。这来源于`Go`的[优化](https://github.com/golang/go/issues/9477).
+
+
+## `Concurrency`
 
 为了避免加锁成为系统的瓶颈，`BigTable`采用了`Shared`的方式来解决，确实也有点`Redis`单线程的感觉。将一块大的数据划分成多块小的数据，为小数据块加锁，确实很好的缓解了加锁的瓶颈。这体现出了`拆分`的思想，突然想到了曾经被面试的问题：“请将2G的数据进行排序”。
 
