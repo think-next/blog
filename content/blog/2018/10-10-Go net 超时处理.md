@@ -228,8 +228,6 @@ if err != nil {
 req = req.WithContext(ctx)
 ```
 
-Contexts have the advantage that if the parent context (the one we passed to `context.WithCancel`) is canceled, ours will be, too, propagating the command down the entire pipeline.
-
 `Contexts`有很多优，比如一个`parent`（传递给`context.WithCancel`的对象）被取消，那么命令会沿着传递的路径一直向下传递，直到关闭所有子`context`。
 
 阅读原文：[`The complete guide to Go net/http timeouts`](https://blog.cloudflare.com/the-complete-guide-to-golang-net-http-timeouts/)
