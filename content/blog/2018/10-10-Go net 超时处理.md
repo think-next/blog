@@ -5,7 +5,7 @@ date: 2018-10-10
 
 categories: [2018-10]
 
-tags: [tcp/ip,translate]
+tags: [golang,translate]
 
 author: 付辉
 
