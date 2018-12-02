@@ -1,5 +1,5 @@
 ---
-title: Timewait状态解读
+title: TIME_WAIT状态解读
 
 date: 2018-06-15
 
@@ -11,7 +11,13 @@ author: 付辉
 
 ---
 
-突然想梳理一下`time_wait`,毕竟自己遇到它好多次了。
+***版本：0.01***
+
+突然想梳理一下`TIME_WAIT`,毕竟自己遇到它好多次了。经常一块出现的问题：`too many open file`，当然，这个问题本身跟`TIME_WAIT`状态没啥必然的关系。
+
+截取一下官方对`TIME_WAIT`的描述：
+
+> `The socket connection has been closed by the local application, the remote peer has closed its half of the connection, and the system is waiting to be sure that the remote peer received the last acknowledgement.`
 
 ## `time_wait status`
 
@@ -21,19 +27,20 @@ author: 付辉
 
 关闭连接包含4次握手，`TCP`是全双工的，有一端需要主动提出关闭。相应的，对端来被动来关闭。对于我们常见的`CS`模式，主动和被动的角色是没有明确界限的。
 
-```
-client[FIN_WAIT_1] ---(FIN M)---> server[CLOSE_WAIT]
-client[FIN_WAIT_2] <---(ack M+1)--- server
-client[TIME_WAIT] <---(FIN N)--- server[LAST_ACK]
-client ---(ack N+1)---> server[CLOSED]
-```
+<center>
+
+![image](https://note.youdao.com/yws/public/resource/3d6862c45f647283a5312d81e986f0d2/xmlnote/WEBRESOURCEcadceb27fa75276763cf9db49e61ee60/67581)
+
+</center>
+
 `active close`端的系统中才会出现`time_wait`的状态。拿请求`https://google.com`来举例，客户端在创建连接时，其实并不关心连接的端口号，它是系统随机创建的。`google`服务存在一个`443`端口,一直处于`listen`状态。当客户端断开连接时，客户端系统其实就会出现`time_wait`。当服务端主动断开连接时，客户端会出现`close_wait`状态。
 
 ## `2MLS`
 
 `time_wait`也被称为`2MLS wait`。全名`maximum segment lifetime`, 表示一个数据块在被丢弃之前，在网络中能存在的最长时间。`TCP`的数据包是作为`IP`数据传输的，而`IP`数据包是否有效受限于设置的`TTL`，所以该`MSL`存在上限。
 
-在`2MLS`内，该连接不会处理那些迟到的请求，占用的端口号也无法被系统的其他程序使用。`2MLS`还可以保证，当服务端没有收到`ack`时，客户端重新发送一次`ack`。
+1. 在`2MLS`内，该连接不会处理那些迟到的请求，占用的端口号也无法被系统的其他程序使用。
+2. 在`TCP`连接中,`ACK`消息本身是不安全，因为`peer`不需要对`ACK`回复`ACK`。所以，`2MLS`保证了当被动关闭的一端没有收到`ACK`时，重新发送一次`FIN`报文。
 
 可以通过`tcp_tw_reuse`来重用`time_wait`状态的端口号。
 
