@@ -135,7 +135,49 @@ func (t *Transport) putOrCloseIdleConn(pconn *persistConn) {
 
 客户端对每个主机最多可以保持`Transport.MaxIdleConnsPerHost`个长链接。对于长链接而言，一般是由服务端主动关闭的，而连接维持的时间也由服务端来决定。如果对于请求的域名，对应的`Host`足够多，在服务端关闭这些连接之前，可能会存在大量的空闲连接，造成资源浪费。
 
+## `Test Case`
 
+下面是测试使用的例子，但很多细节都跟猜想不一致，也不敢妄下断言。后续确定了再来完善
+
+```go
+func PrintLocalDial(ctx context.Context, network, addr string) (net.Conn, error) {
+	dial := net.Dialer{
+		Timeout:   30 * time.Second,
+		//指定的这个时间并没有生效，即使在请求完成后Sleep 30s连接仍然有效
+		KeepAlive: 5 * time.Second,
+	}
+	conn, err := dial.Dial(network, addr)
+	if err != nil {
+		return conn, err
+	}
+
+	fmt.Println("connect done, use ", conn.LocalAddr().String(), conn.RemoteAddr().String())
+	return conn, err
+}
+
+var client = &http.Client{
+	Transport: &http.Transport{
+		DialContext: PrintLocalDial,
+	},
+}
+
+func TestRequestBaiDu(t *testing.T) {
+	for i := 0; i < 30; i ++ {
+		go func() {
+			resp, err := client.Get("http://baidu.com")
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			_, err = ioutil.ReadAll(resp.Body)
+			if err := resp.Body.Close(); err != nil {
+				fmt.Println(err)
+			}
+		}()
+	}
+}
+```
 
 参考文章：
 
