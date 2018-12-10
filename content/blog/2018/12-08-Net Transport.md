@@ -11,7 +11,7 @@ author: 付辉
 
 ---
 
-*<u>版本 0.00</u>*
+*<u>版本 0.01</u>*
 
 在调用第三方请求时，正确使用[`Client`](https://godoc.org/net/http#Client)也不是一件非常容易的事。
 
@@ -137,13 +137,26 @@ func (t *Transport) putOrCloseIdleConn(pconn *persistConn) {
 
 ## `Test Case`
 
-下面是测试使用的例子，但很多细节都跟猜想不一致，也不敢妄下断言。后续确定了再来完善
+下面是测试使用的例子，首先判断客户端和服务器之间是否支持长链接，然后通过抓包可以分析服务端长链接的持续时间。上文也阐述了，长链接一般是服务端主动断开连接，而这个时间的长短需要服务端自己决定。
+
+首先我们声明一个`Dialer`用于创建连接。这里特别注意`Dialer`下的`KeepAlive`字段，这是`Client`为了维持长连接，主动发送`TCP keep-alive segment`的时间间隔，类比`ping-pong`模式。官方的解释是：`KeepAlive specifies the keep-alive period for an active network connection. If zero, keep-alives are not enabled. Network protocols that do not support keep-alives ignore this field.`。
+
+下面是设置`keep-alive`的代码：
+
+```
+if tc, ok := c.(*TCPConn); ok && d.KeepAlive > 0 {
+	setKeepAlive(tc.fd, true)
+	setKeepAlivePeriod(tc.fd, d.KeepAlive)
+	testHookSetKeepAlive()
+}
+```
+
+我们在每次创建连接的时候，都将本地`socket`地址和服务端`socket`地址打印出来。如果没有新的地址生成，说明当前连接复用了前面创建的连接。这也侧面证明了是否服务端支持`Keep-Alive`。但需要强调的是，默认情况下只存在`DefaultMaxIdleConnsPerHost`个长连接。
 
 ```go
 func PrintLocalDial(ctx context.Context, network, addr string) (net.Conn, error) {
 	dial := net.Dialer{
 		Timeout:   30 * time.Second,
-		//指定的这个时间并没有生效，即使在请求完成后Sleep 30s连接仍然有效
 		KeepAlive: 5 * time.Second,
 	}
 	conn, err := dial.Dial(network, addr)
@@ -154,7 +167,11 @@ func PrintLocalDial(ctx context.Context, network, addr string) (net.Conn, error)
 	fmt.Println("connect done, use ", conn.LocalAddr().String(), conn.RemoteAddr().String())
 	return conn, err
 }
+```
 
+紧接着我们声明`Client`用于发送请求，`Transport`中使用上面声明的方法创建连接。并写测试用例用于测试。同时打开抓包工具，分析整个网络请求。
+
+```
 var client = &http.Client{
 	Transport: &http.Transport{
 		DialContext: PrintLocalDial,
@@ -162,22 +179,27 @@ var client = &http.Client{
 }
 
 func TestRequestBaiDu(t *testing.T) {
-	for i := 0; i < 30; i ++ {
-		go func() {
-			resp, err := client.Get("http://baidu.com")
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
+	for i := 0; i < 3; i ++ {
+		resp, err := client.Get("http://xxxx.com")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 
-			_, err = ioutil.ReadAll(resp.Body)
-			if err := resp.Body.Close(); err != nil {
-				fmt.Println(err)
-			}
-		}()
+		_, err = ioutil.ReadAll(resp.Body)
+		if err := resp.Body.Close(); err != nil {
+			fmt.Println(err)
+		}
+
+		time.Sleep(time.Second * 20)
 	}
 }
+
 ```
+
+通过截取到的请求可以得出：首先，`client`端每间隔`5s`发送`keep-alive segment`，其次，如果连接在`15s`内不活跃，服务端会关闭连接。通过分析图中的时间轴就可以得出。
+
+![img](https://i.loli.net/2018/12/11/5c0e8e5bb0067.png)
 
 参考文章：
 
