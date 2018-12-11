@@ -11,7 +11,7 @@ author: 付辉
 
 ---
 
-*<u>版本 0.01</u>*
+*<u>版本 0.02</u>*
 
 在调用第三方请求时，正确使用[`Client`](https://godoc.org/net/http#Client)也不是一件非常容易的事。
 
