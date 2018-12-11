@@ -141,22 +141,13 @@ func (t *Transport) putOrCloseIdleConn(pconn *persistConn) {
 
 首先我们声明一个`Dialer`用于创建连接。这里特别注意`Dialer`下的`KeepAlive`字段，这是`Client`为了维持长连接，主动发送`TCP keep-alive segment`的时间间隔，类比`ping-pong`模式。官方的解释是：`KeepAlive specifies the keep-alive period for an active network connection. If zero, keep-alives are not enabled. Network protocols that do not support keep-alives ignore this field.`。
 
-下面是设置`keep-alive`的代码：
-
-```
-if tc, ok := c.(*TCPConn); ok && d.KeepAlive > 0 {
-	setKeepAlive(tc.fd, true)
-	setKeepAlivePeriod(tc.fd, d.KeepAlive)
-	testHookSetKeepAlive()
-}
-```
-
 我们在每次创建连接的时候，都将本地`socket`地址和服务端`socket`地址打印出来。如果没有新的地址生成，说明当前连接复用了前面创建的连接。这也侧面证明了是否服务端支持`Keep-Alive`。但需要强调的是，默认情况下只存在`DefaultMaxIdleConnsPerHost`个长连接。
 
 ```go
 func PrintLocalDial(ctx context.Context, network, addr string) (net.Conn, error) {
 	dial := net.Dialer{
 		Timeout:   30 * time.Second,
+		//指定的这个时间并没有生效，即使在请求完成后Sleep 30s连接仍然有效
 		KeepAlive: 5 * time.Second,
 	}
 	conn, err := dial.Dial(network, addr)
@@ -170,7 +161,6 @@ func PrintLocalDial(ctx context.Context, network, addr string) (net.Conn, error)
 ```
 
 紧接着我们声明`Client`用于发送请求，`Transport`中使用上面声明的方法创建连接。并写测试用例用于测试。同时打开抓包工具，分析整个网络请求。
-
 ```
 var client = &http.Client{
 	Transport: &http.Transport{
@@ -199,9 +189,29 @@ func TestRequestBaiDu(t *testing.T) {
 
 通过截取到的请求可以得出：首先，`client`端每间隔`5s`发送`keep-alive segment`，其次，如果连接在`15s`内不活跃，服务端会关闭连接。通过分析图中的时间轴就可以得出。
 
-![img](https://i.loli.net/2018/12/11/5c0e8e5bb0067.png)
+![image](https://i.loli.net/2018/12/11/5c0e8e5bb0067.png)
+
+## `TCP KeepAlive Timer`
+
+上图`Wireshark`抓取的数据报文中，那些红字体黑背景的报文给人一种貌似出错的感觉。而他本身就是`TCP`保活机制。在创建连接后，`TCP`两端都会启动一个`Timer`计时器，用于检测连接是否有效。
+
+保活探测报文为一个空报文段（或只含有一个字节）它的序列号等于对方主机发送的ACK报文的最大的序列号减1，因为这一序列号的数据段已经被成功接受，所以不会对到达的报文段产生影响。
+
+如图所示，第一个`keep-alive segment`的`Seq=302`，而它最近一次的`Seq=303`。这样整个保活过程都不会对`data transfer`产生影响。
+
+下面便是设置`keep-alive`时间间隔的代码：
+
+```
+if tc, ok := c.(*TCPConn); ok && d.KeepAlive > 0 {
+	setKeepAlive(tc.fd, true)
+	setKeepAlivePeriod(tc.fd, d.KeepAlive)
+	testHookSetKeepAlive()
+}
+```
 
 参考文章：
 
 1. [`Go HTTP Client 持久连接`](https://serholiu.com/go-http-client-keepalive)
 2. [`Don’t use Go’s default HTTP client (in production)`](https://medium.com/@nate510/don-t-use-go-s-default-http-client-4804cb19f779)
+3. [`Are TCP Keep Alive Messages Bad? (By Chris Greer)`](https://www.lovemytool.com/blog/2014/11/are-tcp-keep-alive-messages-bad-by-chris-greer.html#comment-6a00e008d957708834022ad3808ea0200c)
+
