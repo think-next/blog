@@ -11,6 +11,8 @@ author: 付辉
 
 ---
 
+***版本：0.01***
+
 > 当直接使用`IDE`进行单元测试时，有没有好奇它时如何实现的？比如`GoLand`写的测试用例。
 
 所有的代码都需要写测试用例。这不仅仅是对自己的代码负责，也是对别人的负责。
@@ -18,12 +20,15 @@ author: 付辉
 最近工作中使用`glog`这个库，因为它对外提供的方法都很简单，想封装处理一下。但却遇到了点麻烦：这个包需要在命令行传递`log_dir`参数，来指定日志文件的路径。
 
 所以，正常运行的话，首先需要编译可执行文件，然后命令行指定参数执行。如下示例：
+
 ```
 go build main.go
 ./main -log_dir="/data"    //当前目录作为日志输出目录
 ```
 
 但在`go test`的时候，如何指定这个参数了？
+
+## `Test`
 
 调查发现，发现`go test`也可以生成可执行文件。需要使用`-c`来指定。示例如下：
 ```
@@ -46,8 +51,50 @@ func TestGetRootLogger2(t *testing.T) {
 ```
 go test -v -run Logger2 ./util/     //-v表示verbose，输出相信信息
 ```
-
 但是，我发现，在指定了`c`参数之后，`run`参数无法生效！这样的话，还真是没有好的办法来处理这种情况。
+
+## 性能测试`pprof`
+
+性能测试涉及如下方面：
+
+1. `CPU Profiling`：`CPU`分析，按照一定的频率采集所监听的应用程序`CPU`（含寄存器）的使用情况，可确定应用程序在主动消耗`CPU` 周期时花费时间的位置
+2. `Memory Profiling`：内存分析，在应用程序进行堆分配时记录堆栈跟踪，用于监视当前和历史内存使用情况，以及检查内存泄漏
+3. `Block Profiling`：阻塞分析，记录 `goroutine` 阻塞等待同步（包括定时器通道）的位置
+4. `Mutex Profiling`：互斥锁分析，报告互斥锁的竞争情况
+
+在程序中引入如下包，便可以通过web方式查看性能情况，访问的路径为：`/debug/pprof/`，该路径下会显示多个查看项。该路径下还有其他子页面。
+
+```go
+_ "net/http/pprof"
+```
+
+关于`/debug/pprof/`下的子页面：
+
+1. `$HOST/debug/pprof/profile`
+2. `$HOST/debug/pprof/block`
+3. `$HOST/debug/pprof/goroutine`
+4. `$HOST/debug/pprof/heap`
+5. `$HOST/debug/pprof/mutex`
+6. `$HOST/debug/pprof/threadcreate`
+
+### 在终端查看性能
+
+只要服务器在启动时，引入`pprof`包，便可在终端获取`profile`文件。如下所示：
+```
+pprof -seconds=10 http://192.168.77.77:3900/debug/pprof/profile
+```
+
+如果获取到`cpu.prof `文件，可以通过如下命令可视化查看运行结果，这是另一种格式的火焰图，也是挺帅的：
+
+```bash
+## 通过在浏览器中localhost:1313可以在web端查看
+## 
+pprof -http=:1313 cpu.prof
+
+## 或直接在终端查看
+go tool pprof cpu.prof
+$ web | top
+```
 
 ## `Benchmark`测试
 
@@ -55,7 +102,7 @@ go test -v -run Logger2 ./util/     //-v表示verbose，输出相信信息
 ```
 go test -bench=.
 
-// 明确指定要运行那个测试，传递一个正则表达式给run属性
+// 明确指定要运行那个测试，传递一个正则表达式给run属性，XXX=BenchmarkReceiveGift_GetGiftReceiveList
 go test -run=XXX -bench=.
 ```
 
@@ -65,6 +112,30 @@ go test -run=XXX -bench=.
 
 ```go
 go test -bench=Fib40 -benchtime=20s
+```
+
+## `Run Example`
+
+获取线上的`pprof`数据到本地，这里是另一个工具：
+```
+go-torch -u http://192.168.77.77:3900/debug/pprof/profile -t 10
+```
+
+在`Go代码调优利器-火焰图`这篇文章中，对例子介绍的挺精彩的。
+
+```shell
+## 对函数GetGiftReceiveList进行Benchmark测试 因为只想压测GetGiftReceiveList这个函数
+## 所以指定了run参数
+go test -bench . -run=GetGiftReceiveList -benchmem -cpuprofile prof.cpu
+
+## 其中present.test是压测的二进制文件，prof.cpu也是生产的文件
+## (pprof) top10
+## (pprof) list Marshal 单独查看这个函数的耗时，这里应该是正则匹配的
+go tool pprof present.test prof.cpu
+
+## 查看内存使用情况
+go test -bench . -benchmem -memprofile prof.mem
+go tool pprof --alloc_objects  present.test prof.mem
 ```
 
 ## 覆盖率
@@ -82,7 +153,23 @@ go tool cover -html=c.out -o=tag.html
 
 即可生成一个名字为tag.html的HTML格式的测试覆盖率报告，这里有详细的信息告诉我们哪一行代码测试到了，哪一行代码没有测试到。
 
+## `火焰图`
+
+学习了解火焰图，分析函数调用栈的信息。主要是相关的工具：
+
+```shell
+## tool1
+git clone https://github.com/brendangregg/FlameGraph.git
+cp flamegraph.pl /usr/local/bin
+flamegraph.pl -h
+
+go get -v github.com/uber/go-torch
+go-torch -h
+```
+
+
 参考文章：
 
 1. [Go 单元测试](http://www.flysnow.org/2017/05/16/go-in-action-go-unit-test.html)
-
+2. [Go代码调优利器-火焰图](https://lihaoquan.me/2017/1/1/Profiling-and-Optimizing-Go-using-go-torch.html)
+3. [Golang 大杀器之性能剖析 PProf](https://github.com/EDDYCJY/blog/blob/master/golang/2018-09-15-Golang%20%E5%A4%A7%E6%9D%80%E5%99%A8%E4%B9%8B%E6%80%A7%E8%83%BD%E5%89%96%E6%9E%90%20PProf.md)
