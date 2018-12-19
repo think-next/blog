@@ -67,8 +67,7 @@ type Interface interface {
 
 ### `hiding implement detail`
 
-当函数返回一个具体类型的`interface`，那么你就能调用`interface`实现的方法，而内部的具体实现可以一无所知。
-
+当函数返回一个具体类型的`interface`，那么你就能调用`interface`实现的方法，而内部的具体实现可以一无所知。尤其是提供一个默认的接口实现时，就显得更加方便了。
 
 
 ### `providing interception points`
@@ -90,6 +89,13 @@ type Interface interface {
 // Unmarshalers implement UnmarshalJSON([]byte("null")) as a no-op.
 type Unmarshaler interface {
 	UnmarshalJSON([]byte) error
+}
+```
+
+当然还有`Marshaler`接口，按照自己的想法去解析`json`
+```
+ type Marshaler interface {
+    MarshalJSON() ([]byte, error)
 }
 ```
 
