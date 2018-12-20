@@ -55,6 +55,16 @@ go test -v -run Logger2 ./util/     //-v表示verbose，输出相信信息
 
 ## 性能测试`pprof`
 
+定位服务是否存在资源泄漏或者滥用`API`的行为，光靠`review`代码是不行的，最好能借助工具。
+
+### `Profile`
+
+引用[`godoc for pprof`](https://golang.org/pkg/runtime/pprof/#Profile)描述:
+
+> `A Profile is a collection of stack traces showing the call sequences that led to instances of a particular event, such as allocation. Packages can create and maintain their own profiles; the most common use is for tracking resources that must be explicitly closed, such as files or network connections.`
+
+
+
 性能测试涉及如下方面：
 
 1. `CPU Profiling`：`CPU`分析，按照一定的频率采集所监听的应用程序`CPU`（含寄存器）的使用情况，可确定应用程序在主动消耗`CPU` 周期时花费时间的位置
