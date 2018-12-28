@@ -11,7 +11,7 @@ author: 付辉
 
 ---
 
-***版本：0.03***
+***版本：0.04***
 
 > 当直接使用`IDE`进行单元测试时，有没有好奇它时如何实现的？比如`GoLand`写的测试用例。
 
@@ -52,6 +52,55 @@ func TestGetRootLogger2(t *testing.T) {
 go test -v -run Logger2 ./util/     //-v表示verbose，输出相信信息
 ```
 但是，我发现，在指定了`c`参数之后，`run`参数无法生效！这样的话，还真是没有好的办法来处理这种情况。
+
+### 使用`map`的测试
+
+可以结合使用闭包，设置期望值，来写测试用例。`Run`函数内部是阻塞的，所以`TestSum`方法依次执行测试。
+
+同时`testSumFunc`返回了`test`方法使用了闭包的特性，对返回函数内部的值是无法确定的。
+
+```
+func TestSum(t *testing.T) {
+	t.Run("A", testSumFunc([]int{1, 2, 3}, 7))
+	t.Run("B", testSumFunc([]int{2, 3, 4}, 8))
+}
+
+func Sum(numbers []int) int {
+	total := 0
+	for _, v := range numbers {
+		total += v
+	}
+
+	return total
+}
+
+func testSumFunc(numbers []int, expected int) func(t *testing.T) {
+	return func(t *testing.T) {
+		actual := Sum(numbers)
+		if actual != expected {
+			t.Error(fmt.Sprintf("Expected the sum of %v to be %d but instead got %d!", numbers, expected, actual))
+		}
+	}
+}
+```
+## `Main`
+
+非常简单，看如下示例。这样在执行任何`test case`时都首先执行准备，在测试用例执行完毕后，会运行清理工作。需要特别说明的是：`flag.Parse()`以及`os.Exit(m.Run())`是不可缺少的两步。
+
+```go
+func TestMain(m *testing.M) {
+    //准备工作
+	fmt.Println("start prepare")
+
+	flag.Parse()
+	exitCode := m.Run()
+    
+    //清理工作
+	fmt.Println("prepare to clean")
+	
+	os.Exit(exitCode)
+}
+```
 
 ## 性能测试`pprof`
 
