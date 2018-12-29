@@ -118,9 +118,8 @@ BeforeSuite: runs before a suite of scenarios is run.
 
 ----
 参考文章：
-1. [`How to Use Godog for Behavior-driven Development in Go
-  `](https://semaphoreci.com/community/tutorials/how-to-use-godog-for-behavior-driven-development-in-go)
+
+1. [`How to Use Godog for Behavior-driven Development in Go`](https://semaphoreci.com/community/tutorials/how-to-use-godog-for-behavior-driven-development-in-go)
 2. [`Behavior-driven Development`](https://semaphoreci.com/community/tutorials/behavior-driven-development)
 3. [`writing features - gherkin language`](http://docs.behat.org/en/v2.5/guides/1.gherkin.html)
 4. [`http://docs.behat.org/en/v2.5/quick_intro.html`](http://docs.behat.org/en/v2.5/quick_intro.html)
-
