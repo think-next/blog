@@ -23,4 +23,4 @@ subtitle: DO IT REGULARLY
 
 
 
-PS：如果喜欢博客风格，请查看博客源码：[`github`](https://github.com/GitHubSi/blog)
+**PS**：<small>如果喜欢博客风格，请查看博客源码：[`github`](https://github.com/GitHubSi/blog)。内容均为原创，转载请注明出处。</small>
