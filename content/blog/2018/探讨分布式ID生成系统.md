@@ -1,0 +1,113 @@
+---
+title: 探讨分布式ID生成系统
+
+date: 2019-01-10
+
+categories: 2019-01
+
+tags: [translate,golang]
+
+author: 付辉
+
+---
+
+全称`Universally Unique Identifier`，`UUID`占128`bit`，也就是16个英文字符的长度（16`byte`），需要强调的是，它的生成无需中心处理程序。
+
+`UUID`被用来标识`URN(Uniform Resource Names)`，对于`Transaction ID`以及其他需要唯一标志的场景都可以使用它。
+
+`UUID`是空间和时间上的唯一标识，它长度固定，内部中包含时间信息。如果服务器时间存在不同步的情况，`UUID`可能会出现重复。
+
+## `UUID`构成
+
+基本格式，由6部分组成：
+
+```
+time-low - time-mide - time-high-and-version - clock-seq-and-reserved & clock-seq-low - node
+```
+
+一个`URN`示例：`f81d4fae-7dec-11d0-a765-00a0c91e6bf6`。
+
+因为`UUID`占128`bit`，16进制数占4`bit`，所以转换成16进制`0-f`的字符串总共有32位。组成的各个部分具体由几位16进制表示，请查阅 [`Namespace Registration Template`](https://www.ietf.org/rfc/rfc4122.txt)
+
+因为`UUID`太长且无序，导致其不适合做`MySQL`的主键索引。而且`MySQL`自带的`auto-increment`功能，选择`bigint`的话也只占用`64bit`。
+
+> All indexes other than the clustered index are known as [secondary indexes](https://dev.mysql.com/doc/refman/5.7/en/glossary.html#glos_secondary_index). In `InnoDB`, each record in a secondary index contains the primary key columns for the row, as well as the columns specified for the secondary index. `InnoDB` uses this primary key value to search for the row in the clustered index.
+>
+> If the primary key is long, the secondary indexes use more space, so it is advantageous to have a short primary key.
+
+## `MongoDB's ObjectId`
+
+[`ObjectId`](https://docs.mongodb.com/manual/reference/method/ObjectId/#description)由占4-`byte`的时间戳、3-`byte`的机器标识、2-`byte`的进程`ID`以及3-`byte`的计数组成，总共还是占用`96bit`。
+
+这些`ID`组成包括时间、机器标识、随机数，在`UUID`生成时还使用到`MAC`地址。这些参数中时间是关键，保证集群服务器的时钟准确非常重要。
+
+## `Twitter Snowflake`
+
+`Twitter Snowflake`生成的`ID`占64`bit`，跟`bigint`大小一致。由`41 bit`毫秒精度的时间戳、`10bit`的机器`ID`以及`12 bit`的序列号组成（计数每4096就重新开始一轮），剩下的`1 bit`奉献给未来。
+
+作者修改了它的原始设定，将剩下的`1 bit`给了时间戳。使用机器`MAC`地址的`HASH`值作为当前机器的`ID`。
+
+服务全局保存最近一次生成`ID`的时间戳`lastTimestamp`，作为生成新`ID`的判断依据，避免时间回溯。详细代码请参照`[1]`。
+
+```java
+// Block and wait till next millisecond
+private long waitNextMillis(long currentTimestamp) {
+    while (currentTimestamp == lastTimestamp) {
+        currentTimestamp = timestamp();
+    }
+    return currentTimestamp;
+}
+```
+
+同时将`sequence`也声明为全局变量，每间隔4096次就重新开始计数。主要用于应对：当时间戳相同时保证生成的`ID`是不同的。
+
+```java
+if (currentTimestamp == lastTimestamp) {
+    sequence = (sequence + 1) & maxSequence;
+    if(sequence == 0) {
+        // Sequence Exhausted, wait till next millisecond.
+        currentTimestamp = waitNextMillis(currentTimestamp);
+    }
+} else {
+    // reset sequence to start with zero for the next millisecond
+    sequence = 0;
+}
+```
+
+
+
+
+## `Database Ticket Servers`
+
+该方式通过中心的`DB`服务来生成唯一自增`ID`，但`DB`服务的写操作会成为系统的瓶颈。如果后台是单个`DB`服务的话，存在单点问题。
+
+参考`Flickr`的方法，后台使用两个`DB`来生成`ID`，其中`auto-increment`一个按照奇数步长增长，另一个按照偶数步长增长。`MySQL`内部使用`REPLACE`来实现，通过一条冲突的记录，来持续生成自增的主键`ID`。
+
+> [`REPLACE`](https://dev.mysql.com/doc/refman/5.5/en/replace.html) makes sense only if a table has a `PRIMARY KEY` or `UNIQUE` index. Otherwise, it becomes equivalent to [`INSERT`](https://dev.mysql.com/doc/refman/5.5/en/insert.html), because there is no index to be used to determine whether a new row duplicates another.
+
+结合`Twitter Snowflake`对`ID`做如下调整：41-`bit`的毫秒时间戳、13-`bit`的数据逻辑分区以及10-`bit`的自增序列。自增序列对1024取余，每个分区每毫秒内能生成`1024`个自增`ID`。
+
+`Flickr`中各个数据表按照不同的步长增长，当需要分表的时候就会存在巨复杂的数据迁移问题。为了解决这个问题，便引入了逻辑分区`Shard ID`。通过逻辑上的`Shard`，将数据分散在不同的数据表中。这样后续的分库分表都可以通过操作逻辑上`Shard`来实现，将`DB`从具体的实现中解脱出来。
+
+关于获取`MySQL`自增`ID`，代码无法批量获取插入的全部自增`ID`列表，`MySQL`只会返回第一条记录的自增`ID`。因为自增`ID`是连续的，所以可以通过计算的方式来计算出`ID`列表。
+
+> If you insert multiple rows using a single [`INSERT`](https://dev.mysql.com/doc/refman/8.0/en/insert.html) statement, [`LAST_INSERT_ID()`](https://dev.mysql.com/doc/refman/8.0/en/information-functions.html#function_last-insert-id) returns the value generated for the *first* inserted row *only*. The reason for this is to make it possible to reproduce easily the same [`INSERT`](https://dev.mysql.com/doc/refman/8.0/en/insert.html) statement against some other server.
+
+关于`Shard`可以查看[`本地缓存BigCache`](http://neojos.com/blog/2018/08-19-%E6%9C%AC%E5%9C%B0%E7%BC%93%E5%AD%98bigcache/)，很有参考意义（我觉得）。
+
+## 总结
+
+文中介绍了`ID`的两种生成方式，核心的区别在于：整个系统的`ID`是否支持单调递增。`Twitter Snowflake`以及`UUID`可以保证生成的数据唯一，但多台服务器的话，无法保证生成的数据有序。而`Ticket Servers`通过结合`MySQL`的`auto-increment`解决了这个问题。
+
+---
+
+参考文章：
+
+1. [`Generating unique IDs in a distributed environment at high scale`](https://www.callicoder.com/distributed-unique-id-sequence-number-generator/)
+2. [`A Universally Unique IDentifier (UUID) URN Namespace`](https://www.ietf.org/rfc/rfc4122.txt)
+3. [`Clustered and Secondary Indexes`](https://dev.mysql.com/doc/refman/5.6/en/innodb-index-types.html)
+4. [`Sharding & IDs at Instagram`](https://instagram-engineering.com/sharding-ids-at-instagram-1cf5a71e5a5c)
+5. [`Ticket Server: Distributed Unique Primary Keys on the Cheap`](http://code.flickr.net/2010/02/08/ticket-servers-distributed-unique-primary-keys-on-the-cheap/)
+6. [`MySQL批量插入返回自增ID的问题`](http://mzorro.me/2017/08/18/mysql-batch-insert-generated-id-problem/)
+7. [`Leaf——美团点评分布式ID生成系统`](https://tech.meituan.com/MT_Leaf.html)
+
