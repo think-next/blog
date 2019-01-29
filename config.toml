@@ -1,6 +1,6 @@
 baseurl = "/"
 languageCode = "en-us"
-title = "付辉"
+title = "道道法"
 theme = "hugo-ivy"
 googleAnalytics = ""
 disqusShortname = ""
@@ -31,7 +31,7 @@ footnotereturnlinkcontents = "↩"
 
 [params]
     description = ""
-	author = "付辉"
+	author = "道道法"
     footer = "&copy; [Fu Hui](http://neojos.com) 2017 | [Github](https://github.com/GitHubSi) | [CSDN](http://blog.csdn.net/whynottrythis) | [segmentfault](https://segmentfault.com/u/neojos)"
 
   highlightjsVersion = "9.12.0"
