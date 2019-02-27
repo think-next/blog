@@ -5,7 +5,7 @@ date: 2019-02-22
 
 categories: 2019-02
 
-tags: [translate,golang]
+tags: [think]
 
 author: 付辉
 
