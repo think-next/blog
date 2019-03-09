@@ -16,6 +16,8 @@ author: 付辉
 
 可以简单地认为`Sharding`就是对数据进行分组的过程，即将整个大的数据集按照某种规则分割成多个小数据集。类似于网站服务，针对不同的服务，提供服务的链接地址也不相同，而这其实也是一个`Sharding`的过程。在业务层实现的`Sharding`，关键就在`Route`的过程，即将具体的数据请求，发送到对的数据集上。
 
+![img](https://raw.githubusercontent.com/GitHubSi/blog/master/static/img/database-sharding/sharding-router.png)
+
 ## `Why Sharding`
 
 在一些本地缓存的开发中，如果以`map`的形式存储数据集，因为该类型不支持并发操作。所以，在读写操作时就需要对`map`进行加锁，。可想而知，每次操作都加锁、解锁，而读写缓存又是一个高频操作，性能当然上不去。**解决的思路**就是对数据集进行`Sharding`操作，将整个数据集拆分成多个小块数据集，这样分别对小块数据集进行加锁、解锁，性能就提高了不少。
