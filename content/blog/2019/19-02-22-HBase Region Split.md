@@ -11,7 +11,7 @@ author: 付辉
 
 ---
 
-> Tables are automatically partitioned horizontally by HBase into regions. Each region comprises a subset of a table's rows
+> `Tables are automatically partitioned horizontally by HBase into regions. Each region comprises a subset of a table's rows`
 
 ## 引言
 
