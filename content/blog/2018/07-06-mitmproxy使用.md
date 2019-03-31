@@ -30,8 +30,11 @@ author: 付辉
 ## 常用的过滤表达式
 
 列表界面,按`f`进入过滤模式。详细的过滤表达式，可以查看：[`Filter expressions`](https://docs.mitmproxy.org/stable/concepts-filters/)。
+
+
+
 1. `~h regex	Header`
-	. `~u regex	URL`
+2. `~u regex	URL`
 3. `~m regex    Method`
 
 ## 原理
