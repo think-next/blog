@@ -60,6 +60,10 @@ iframe, twitterwidget, video {
   padding: .5em
 }
 
+#TableOfContents ul:first-child {
+    list-style: none;
+}
+
 table {
   min-width: 50%;
   max-width: 100%;
