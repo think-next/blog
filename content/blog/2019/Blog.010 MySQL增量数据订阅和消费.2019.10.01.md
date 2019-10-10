@@ -1,0 +1,49 @@
+---
+title: MySQL增量数据订阅和消费
+
+date: 2019-10-01
+
+categories: [2019-10]
+
+tags: [linux]
+
+author: 付辉
+
+---
+
+在订单交付系统中，做到保证权益数据的实时一致性非常难，很多都选择保证数据的最终一致性。在我们的生产环境中，为了保证数据的最终一致性，专门有一个微服务来处理检验异常订单、发告警通知、及时补偿修复异常订单。
+
+我们开发了一个独立的微服务，它主要用来做遍历整个订单数据，校验每一个订单的交付流程都正常闭环的工作。如果没有完全闭环，它需要选择对应的异常处理策略进行补偿。
+
+问题是，该微服务如何获取整个订单数据呢？方法有很多，比如：
+
+1. 定期扫描订单系统的全部订单表数据。
+2. 订单系统创建一条数据总线，所有创建的订单都发布到数据总线中，微服务订阅该数据总线。
+3. 直接订阅订单系统数据表的`binlog`日志
+
+## 概述
+
+我们最终确定了使用方法三。这样微服务只处理增量的变更记录，忽略历史已经处理过的记录；同时，`binlog`就相当于一个数据总线，我们只需要订阅就可以。
+
+这里引入文章要介绍的重点[`canal`](https://github.com/alibaba/canal/wiki)，主要用途是基于 MySQL 数据库增量日志解析，提供增量数据订阅和消费。以及[`canal-go`](https://github.com/withlin/canal-go)，它是`canal`的`go`语言客户端。具体细节可以直接去链接查看。
+
+## `canal`的工作原理
+
+![](https://github.com/bucketli/simpletools/raw/master/main_func_v2.png?raw=true)
+
+- `canal` 模拟 MySQL slave 的交互协议，伪装自己为 MySQL slave ，向 MySQL master 发送 dump 协议
+- MySQL master 收到 dump 请求，开始推送 binary log 给 slave (即 `canal` )
+- `canal` 解析 binary log 对象(原始为 `byte` 流)
+
+## `canal-go`的工作原理和流程
+
+![](https://github.com/withlin/canal-go/raw/master/assets/668104-20180925182816462-2110152563.png)
+
+- `Canal`连接到mysql数据库，模拟slave
+- `canal-go`与`Canal`建立连接
+- 数据库发生变更写入到binlog
+- `Canal`向数据库发送dump请求，获取binlog并解析
+- `canal-go`向`Canal`请求数据库变更
+- `Canal`发送解析后的数据给canal-go
+- `canal-go`收到数据，消费成功，发送回执。（可选）
+- `Canal`记录消费位置。
