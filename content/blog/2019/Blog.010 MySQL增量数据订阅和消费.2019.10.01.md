@@ -5,7 +5,7 @@ date: 2019-10-01
 
 categories: [2019-10]
 
-tags: [linux]
+tags: [golang]
 
 author: 付辉
 
