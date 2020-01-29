@@ -3,8 +3,6 @@ title: Memcached遇到的json_decode问题
 
 date: 2018-01-21 15:48:33 
 
-categories: [2018-01]
-
 tags: [cache]
 
 author: 付辉

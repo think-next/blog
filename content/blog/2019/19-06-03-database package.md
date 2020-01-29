@@ -3,8 +3,6 @@ title: database package
 
 date: 2019-06-03
 
-categories: 2019-06
-
 tags: [golang]
 
 author: 付辉

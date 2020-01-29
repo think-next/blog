@@ -1,44 +1,29 @@
-baseurl = "/"
-languageCode = "en-us"
+baseURL = "https://gohugo.io/"
+author = "Steve Francia"
+paginate = 20
+languageCode = "en"
+DefaultContentLanguage = "en"
+enableInlineShortcodes = true
+footnoteReturnLinkContents = "^"
+# Above are configs from hugoBasicExample
+
 title = "渐行渐远"
-theme = "hugo-ivy"
-googleAnalytics = ""
-disqusShortname = ""
-ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
-preserveTaxonomyNames = true
-footnotereturnlinkcontents = "↩"
-
-[permalinks]
-    post = "/post/:year/:month/:day/:slug/"
-    note = "/note/:year/:month/:day/:slug/"
-
-[[menu.main]]
-    name = "Blog"
-    url = "/blog/"
-    weight = 1
-[[menu.main]]
-    name = "Life"
-    url = "/life/"
-    weight = 2
-[[menu.main]]
-    name = "Categories"
-    url = "/categories/"
-    weight = 3
-[[menu.main]]
-    name = "Tags"
-    url = "/tags/"
-    weight = 4
-[[menu.main]]
-    name = "About"
-    url = "/about/"
-    weight = 5
+theme = "hugo-primer"
+hasCJKLanguage = true
+summaryLength = 70
+pygmentsCodeFences = true
+pygmentsUseClasses = true
+googleAnalytics = "UA-12345678-0"
+disqusShortname=""
+copyright = "&copy;Qiushi Pan 2018-2019"
 
 [params]
-    description = ""
-	author = "道道法"
-    footer = "&copy; [DDF](http://neojos.com) 2017 | [Github](https://github.com/GitHubSi) | [CSDN](http://blog.csdn.net/whynottrythis) | [segmentfault](https://segmentfault.com/u/neojos)"
-
-  highlightjsVersion = "9.14.1"
-  highlightjsCDN = "//cdn.bootcss.com"
-  highlightjsLang = ["r", "yaml", "tex", "go"]
-  highlightjsTheme = "googlecode"
+description = "Hugo-Primer theme's example site"
+twitter = ""
+useIcon = false
+useTwitterCard = true
+# exampleSite must not have js share widget: #36
+# shareTo = ["Twitter", "Hatena", "Facebook", "Pocket"]
+shareTo = []
+showFooterCredits = true
+math = true

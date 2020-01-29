@@ -3,8 +3,6 @@ title: Saga Pattern
 
 date: 2018-04-24
 
-categories: [2018-04]
-
 tags: [transaction]
 
 author: 付辉

@@ -3,8 +3,6 @@ title: 变异性的数值特征-方差
 
 date: 2019-10-14
 
-categories: [2019-10]
-
 tags: [统计]
 
 author: 付辉

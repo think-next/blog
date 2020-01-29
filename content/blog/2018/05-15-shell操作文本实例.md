@@ -3,8 +3,6 @@ title: shell操作文本实例
 
 date: 2018-05-15
 
-categories: [2018-05]
-
 tags: [linux]
 
 author: 付辉

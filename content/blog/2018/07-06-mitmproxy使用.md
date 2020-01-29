@@ -3,8 +3,6 @@ title: mitmproxy使用
 
 date: 2018-07-06
 
-categories: [2018-07]
-
 tags: [tools,net]
 
 author: 付辉

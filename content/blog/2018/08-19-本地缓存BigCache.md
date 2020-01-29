@@ -3,8 +3,6 @@ title: 本地缓存BigCache
 
 date: 2018-08-19
 
-categories: [2018-08]
-
 tags: [golang]
 
 author: 付辉

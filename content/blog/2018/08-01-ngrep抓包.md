@@ -3,8 +3,6 @@ title: ngrep抓包
 
 date: 2018-08-01
 
-categories: [2018-08]
-
 tags: [linux,tools,net]
 
 author: 付辉

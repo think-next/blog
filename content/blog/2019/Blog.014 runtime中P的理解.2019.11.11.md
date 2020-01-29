@@ -3,8 +3,6 @@ title: runtime中P的理解
 
 date: 2019-11-11
 
-categories: [2019-11]
-
 tags: [golang]
 
 author: 付辉

@@ -3,8 +3,6 @@ title: Go net 超时处理
 
 date: 2018-10-10
 
-categories: [2018-10]
-
 tags: [golang,translate]
 
 author: 付辉

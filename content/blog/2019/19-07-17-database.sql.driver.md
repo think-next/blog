@@ -3,8 +3,6 @@ title: database.sql.driver
 
 date: 2019-07-17
 
-categories: [2019-17]
-
 tags: [MySQL, golang]
 
 author: 付辉

@@ -3,12 +3,7 @@ title: mongo EOF
 
 date: 2019-04-27
 
-categories: 2019-04
-
-tags: [golang]
-
 author: 付辉
-
 ---
 > `很多事情仅仅的是严肃的提出问题都感觉很难，更何况还得要先发现它。`
 

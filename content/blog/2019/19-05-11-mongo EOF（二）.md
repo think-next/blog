@@ -1,11 +1,7 @@
-
-
 ---
 title: mongo EOF（二）
 
 date: 2019-05-11
-
-categories: 2019-05
 
 tags: [golang, docker]
 

@@ -3,8 +3,6 @@ title: Linux查看监听的端口进程
 
 date: 2018-07-10
 
-categories: [2018-07]
-
 tags: [linux]
 
 author: 付辉

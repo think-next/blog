@@ -3,8 +3,6 @@ title: xorm使用reverse指令创建模版
 
 date: 2018-04-19
 
-categories: [2018-04]
-
 tags: [golang]
 
 author: 付辉

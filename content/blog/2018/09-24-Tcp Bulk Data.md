@@ -3,8 +3,6 @@ title: Tcp Bulk Data
 
 date: 2018-09-24
 
-categories: [2018-09]
-
 tags: [tcp/ip,net]
 
 author: 付辉

@@ -3,8 +3,6 @@ title: siege压测
 
 date: 2018-07-19
 
-categories: [2018-07]
-
 tags: [tools,net]
 
 author: 付辉

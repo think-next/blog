@@ -3,8 +3,6 @@ title: singleton pattern
 
 date: 2018-11-03
 
-categories: [2018-11]
-
 tags: [golang]
 
 author: 付辉

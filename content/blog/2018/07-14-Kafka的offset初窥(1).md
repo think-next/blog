@@ -3,8 +3,6 @@ title: Kafka的offset初窥(1)
 
 date: 2018-07-14
 
-categories: [2018-07]
-
 tags: [MQ]
 
 author: 付辉

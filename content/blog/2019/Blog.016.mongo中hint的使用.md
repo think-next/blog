@@ -3,8 +3,6 @@ title: mongo中hint的使用
 
 date: 2019-11-13
 
-categories: [2019-11]
-
 tags: [mongo]
 
 author: 付辉

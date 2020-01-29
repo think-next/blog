@@ -3,8 +3,6 @@ title: Tcp Server Design
 
 date: 2018-07-28
 
-categories: [2018-07]
-
 tags: [tcp/ip,net]
 
 author: 付辉

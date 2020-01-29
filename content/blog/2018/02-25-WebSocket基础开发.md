@@ -3,8 +3,6 @@ title: WebSocket基础开发
 
 date: 2018-02-25
 
-categories: [2018-02]
-
 tags: [protocol]
 
 author: 付辉

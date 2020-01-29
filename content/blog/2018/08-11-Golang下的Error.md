@@ -3,8 +3,6 @@ title: Golang下的Error
 
 date: 2018-08-11
 
-categories: [2018-08]
-
 tags: [golang]
 
 author: 付辉

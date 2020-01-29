@@ -3,8 +3,6 @@ title:  protocol stack
 
 date: 2019-12-08
 
-categories: [2019-12]
-
 tags: [net]
 
 author: 付辉

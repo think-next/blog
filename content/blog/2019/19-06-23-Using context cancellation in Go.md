@@ -1,9 +1,8 @@
 ---
 title: Using context cancellation in Go
 
-date: 2019-06-22
-
-categories: 2019-06
+date: 
+- 2019-06-22
 
 tags: [golang]
 

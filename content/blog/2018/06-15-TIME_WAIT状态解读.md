@@ -3,8 +3,6 @@ title: TIME_WAIT状态解读
 
 date: 2018-06-15
 
-categories: [2018-06]
-
 tags: [tcp/ip,net]
 
 author: 付辉

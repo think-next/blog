@@ -3,8 +3,6 @@ title: Mark-sweep GC
 
 date: 2019-02-15
 
-categories: 2019-02
-
 tags: [translate]
 
 author: 付辉

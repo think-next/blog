@@ -3,8 +3,6 @@ title: Go Interface 类型
 
 date: 2018-10-12
 
-categories: [2018-10]
-
 tags: [golang]
 
 author: 付辉

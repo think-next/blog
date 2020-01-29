@@ -3,8 +3,6 @@ title: 如何工作和学习
 
 date: 2019-10-08
 
-categories: [2019-10]
-
 tags: [translate]
 
 author: 付辉

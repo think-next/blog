@@ -3,8 +3,6 @@ title: IP Routing
 
 date: 2018-08-04
 
-categories: [2018-08]
-
 tags: [tcp/ip,net]
 
 author: 付辉

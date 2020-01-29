@@ -3,8 +3,6 @@ title: mongo中ObjectId
 
 date: 2019-06-03
 
-categories: 2019-06
-
 tags: [mongo]
 
 author: 付辉

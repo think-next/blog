@@ -3,8 +3,6 @@ title: How to use godog
 
 date: 2018-12-29
 
-categories: 2018-12
-
 tags: [translate,golang]
 
 author: 付辉

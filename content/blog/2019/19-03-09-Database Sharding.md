@@ -3,8 +3,6 @@ title: Database Sharding
 
 date: 2019-03-09
 
-categories: 2019-03
-
 tags: [MySQL,]
 
 author: 付辉

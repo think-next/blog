@@ -3,8 +3,6 @@ title: MySQL事务
 
 date: 2018-07-01
 
-categories: [2018-07]
-
 tags: [MySQL]
 
 author: 付辉

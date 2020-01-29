@@ -3,8 +3,6 @@ title: Deafult Decimal
 
 date: 2018-12-01
 
-categories: [2018-12]
-
 tags: [MySQL]
 
 author: 付辉

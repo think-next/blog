@@ -3,8 +3,6 @@ title: go.1.13中的Modules
 
 date: 2019-11-12
 
-categories: [2019-11]
-
 tags: [golang]
 
 author: 付辉

@@ -3,8 +3,6 @@ title: MySQL使用总结(一)
 
 date: 2018-05-09
 
-categories: [2018-05]
-
 tags: [MySQL,]
 
 author: 付辉

@@ -3,8 +3,6 @@ title: 了解Laravel依赖注入
 
 date: 2018-04-05
 
-categories: [2018-04]
-
 tags: [php,]
 
 author: 付辉

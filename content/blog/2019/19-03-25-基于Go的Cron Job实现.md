@@ -3,8 +3,6 @@ title: 基于Go的Cron Job实现
 
 date: 2019-03-25
 
-categories: 2019-03
-
 tags: [golang]
 
 author: 付辉
