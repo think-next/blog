@@ -3,7 +3,7 @@ title: docker基本使用
 
 date: 2018-04-20
 
-tags: [tools]
+tags: [docker]
 
 author: 付辉
 
@@ -11,14 +11,61 @@ author: 付辉
 
 知道一点比完全不知道要好，对问题有深入了解比仅知道皮毛要好。作为`docker`的一个初学者，现在对`docker`做简单记录。希望随着工作、生活，更深入的了解学习`docker`。这也是一件很有意义的事。
 
+## 安装redis
+
+在容器中启动redis服务的基本步骤。
+```
+➜  one-case docker pull redis:latest
+➜  one-case docker images
+➜  one-case docker run -itd --name redis-test -p 6379:6379 redis
+```
+
+docker run中的属性`-i`表示启动交互模式；`-d`表示后台运行容器；`-t`经常和`-i`一起使用，表示为容器分配一个伪输入终端；
+
+### bitmap 使用
+
+查看bitmap占用空间的大小，设置一个最大的offset。然后，通过统计大key来查看所占用空间。
+```
+setbit biguid 4294967296 1
+-ERR bit offset is not an integer or out of range
+setbit biguid 4294967295 1
+:0
+```
+
+通过输出结果，biguid 占用512M的存储空间。也验证了一个结论：bitmap占用的空间，完全取决于最大的offset值。
+```
+➜  one-case docker exec -it redis-test /bin/bash
+root@2661fdf6847f:/data# redis-cli -p 6379 --bigkeys
+
+# Scanning the entire keyspace to find biggest keys as well as
+# average sizes per key type.  You can use -i 0.1 to sleep 0.1 sec
+# per 100 SCAN commands (not usually needed).
+
+[00.00%] Biggest string found so far 'biguid' with 536870912 bytes
+
+-------- summary -------
+
+Sampled 1 keys in the keyspace!
+Total key length in bytes is 6 (avg len 6.00)
+
+Biggest string found 'biguid' has 536870912 bytes
+
+1 strings with 536870912 bytes (100.00% of keys, avg size 536870912.00)
+0 lists with 0 items (00.00% of keys, avg size 0.00)
+0 hashs with 0 fields (00.00% of keys, avg size 0.00)
+0 streams with 0 entries (00.00% of keys, avg size 0.00)
+0 sets with 0 members (00.00% of keys, avg size 0.00)
+0 zsets with 0 members (00.00% of keys, avg size 0.00)
+```
+
+## `Example`
+
 `docker`有几个相关的概念：
 
 1. `image` 镜像
 2. `container` 容器
 
 我觉得之所以说`docker`好用，是因为[`Docker Hub`](https://hub.docker.com/explore/)提供了很多镜像，比如`MySQL`、`Redis`等。对它们安装、卸载异常方便。
-
-## `Example`
 
 我们想搭建测试服务，安装`MySQL`，`Redis`等依赖。我们将他们当作一个项目的依赖，声明一个配置文件·`db.yml`，然后将这些依赖，类似于`composer`编辑：
 
