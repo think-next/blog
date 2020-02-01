@@ -1,6 +1,6 @@
 baseURL = "https://neojos.com/"
 author = "Steve Francia"
-paginate = 20
+paginate = 48
 languageCode = "en"
 DefaultContentLanguage = "en"
 enableInlineShortcodes = true
