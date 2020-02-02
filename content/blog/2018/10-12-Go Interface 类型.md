@@ -9,11 +9,9 @@ author: 付辉
 
 ---
 
-*<u>草稿 0.02</u>*
-
 ## `introduction`
 
-[`duck typing`](https://en.wikipedia.org/wiki/Duck_typing) 很形象的解释了`interface`的本意。它是一种特别的数据类型，内部声明了一组要实现的方法集合，任何实现了这些方法的数据类型都可以认为实现了这个`interface`。这跟其他语言中的`抽象类`有异曲同工之处，但却不需要去明确声明实现了这个`interface`。
+[`duck typing`](https://en.wikipedia.org/wiki/Duck_typing) 很形象的解释了`interface`的本意。它是一种特别的数据类型，内部声明了一组要实现的方法集合，任何实现了这些方法的数据类型都可以认为实现了这个`interface`。这跟其他语言中的`抽象类`有异曲同工之处，但却不需要去明确声明实现这个`interface`。
 
 空的`interface`类型没有声明任何方法，所以`GO`中所有数据类型都实现了`interface{}`。这也为我们实现`泛型编程`提供了可能，虽然使用起来并不舒服。
 
@@ -70,7 +68,7 @@ type Interface interface {
 
 ### `providing interception points`
 
-#### 1. `Unmarshal`
+#### `Unmarshal`
 
 当使用`Unmarshal`解析`json`时，为具体的类型实现[`Unmarshaler`](https://golang.org/pkg/encoding/json/#Marshaler)接口，就实现了自定义解析。
 
@@ -97,7 +95,7 @@ type Unmarshaler interface {
 }
 ```
 
-#### 2. `Handler`
+#### `Handler`
 
 通过实现`Handler`接口，来处理不同的请求。
 
@@ -134,10 +132,29 @@ func (mux *ServeMux) ServeHTTP(w ResponseWriter, r *Request) {
 
 ```
 
+## Stream IO interface
 
-### `polymorphism`
+工作中最常见的两个接口，io.Reader和io.Writer。
 
+```
+type Reader interface {
+    Read(p []byte) (n int, err error)
+}
+```
 
+Read方法通过for循，结合io.EOF的方式，将读取到的数据写入到参数p中。Write方法将p中的数据写入到实现的对象里。
+
+```
+type Writer interface {
+    Write(p []byte) (n int, err error)
+}
+```
+
+实现了Reader和Writer接口类型包括但不限于：
+- os.File
+- os.Stdout
+- os.Stdin
+- os.Stderr
 
 ---
 
