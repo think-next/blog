@@ -29,7 +29,7 @@ type error interface {
 }
 ```
 
-## `interface`用法
+## `interface`
 
 ### `generic algorithm`
 
