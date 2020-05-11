@@ -8,7 +8,7 @@ footnoteReturnLinkContents = "^"
 # Above are configs from hugoBasicExample
 
 title = "渐行渐远"
-theme = "hugo-primer"
+theme = "sam"
 hasCJKLanguage = true
 summaryLength = 70
 pygmentsCodeFences = true
