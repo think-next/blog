@@ -19,8 +19,8 @@ body
     line-height: 2rem
     letter-spacing: 1.5px
     text-shadow: none
-    display: flex
-    flex-direction: column
+    //display: flex
+    //flex-direction: column
     justify-content: space-between
     align-items: center
     opacity: 1
@@ -90,9 +90,21 @@ nav
 
 .flex-container
     display: flex
-    flex-direction: column
+    flex-direction: row
     justify-content: center
     align-items: flex-start
+    border: #4a9eff 1px solid
+    .left-part
+        border: 1px solid #00aaaa
+        width: 100px
+    .middle-part
+        border: 1px crimson solid
+        width: 500px
+    .right-part
+        width: 100px
+        border: 1px solid #784ec5
+
+/* index page */
 
 .bottom-menu
     display: flex
@@ -120,6 +132,7 @@ nav
         display: contents
 
 @import "elements"
+@import "../bootstrap/bootstrap"
 
 // Helpers
 
