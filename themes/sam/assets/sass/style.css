@@ -5,7 +5,6 @@
   box-sizing: border-box; }
 
 html {
-  background-color: #39424E;
   font-family: "Didact Gothic", "sans serif";
   font-size: 16px; }
 
@@ -18,8 +17,7 @@ body {
   text-shadow: none;
   justify-content: space-between;
   align-items: center;
-  opacity: 1;
-  padding: 6em 1em; }
+  opacity: 1; }
   @media screen and (max-width: 736px) {
     body {
       padding: 3em 1em; } }
@@ -72,7 +70,7 @@ nav {
 
 .wrap {
   margin: 0 auto;
-  width: 45%;
+  width: 4%;
   max-width: 64em; }
   @media screen and (max-width: 736px) {
     .wrap {
@@ -177,7 +175,7 @@ article {
     border-radius: 3px;
     padding: 1rem;
     overflow-x: auto;
-    background-color: #000004;
+    background-color: #e9ecef;
     width: 100%;
     margin-bottom: 1em; }
   article pre > code {
@@ -186,8 +184,7 @@ article {
     font-size: 0.9rem;
     font-family: "Source Code Pro", monospace;
     padding: 0.1rem;
-    border-radius: 3px;
-    border: 1px solid #cccccc; }
+    border-radius: 3px; }
   article img {
     width: 100%;
     max-width: 100%;
@@ -8056,5 +8053,16 @@ a.text-dark:hover, a.text-dark:focus {
 .go-center {
   justify-content: center;
   align-items: center; }
+
+.site-header {
+  background-color: rgba(0, 0, 0, 0.85);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px); }
+  .site-header a {
+    color: #999;
+    transition: ease-in-out color 0.15s; }
+    .site-header a:hover {
+      color: #fff;
+      text-decoration: none; }
 
 /*# sourceMappingURL=style.css.map */

@@ -1,5 +1,5 @@
 ---
-title: DDF's Blog
+title: Blog
 subtitle: server develop · life · translate
 ---
 
