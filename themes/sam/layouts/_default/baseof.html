@@ -17,10 +17,11 @@
 </head>
 
 <body>
+
     {{ block "main" . }}
     {{ block "section_title" . }}
     <header class="text-center container">
-        <h1>{{ .Title | markdownify }}</h1>
+        <h1 class="mb-4 mt-2">{{ .Title | markdownify }}</h1>
     </header>
     {{ end }}
     <main class="wrap">
@@ -37,7 +38,7 @@
         {{ end }}
     </main>
     {{ block "footer" . }}
-    <footer class="flex-container footer">{{ partial "footer.html" . }}</footer>
+    <footer class="container footer">{{ partial "footer.html" . }}</footer>
     {{ end }}
     {{ end }}
 </body>
