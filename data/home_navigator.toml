@@ -1,13 +1,14 @@
 # navigator bar
 [[navigator]]
     title = "我的博客"
-    href = "/index"
+    href = "/blog"
 [[navigator]]
     title = "向大神学习"
-    href = "/index"
+    href = "/greatperson"
 [[navigator]]
     title = "刻意练习"
     href = "/index"
 [[navigator]]
     title = "今日计划"
     href = "/index"
+

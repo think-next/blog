@@ -18,13 +18,12 @@ disqusShortname=""
 copyright = "&copy;Qiushi Pan 2018-2019"
 
 [params]
-description = "Hugo-Primer theme's example site"
-twitter = ""
-useIcon = false
-useTwitterCard = true
-# exampleSite must not have js share widget: #36
-# shareTo = ["Twitter", "Hatena", "Facebook", "Pocket"]
-shareTo = []
-showFooterCredits = true
-math = true
-
+    description = "Hugo-Primer theme's example site"
+    twitter = ""
+    useIcon = false
+    useTwitterCard = true
+    # exampleSite must not have js share widget: #36
+    # shareTo = ["Twitter", "Hatena", "Facebook", "Pocket"]
+    shareTo = []
+    showFooterCredits = true
+    math = true
