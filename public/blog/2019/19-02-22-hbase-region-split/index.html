@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>HBase Region Split - 渐行渐远</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo logo--mixed">
+		<a class="logo__link" href="/" title="渐行渐远" rel="home">
+			<div class="logo__item logo__imagebox">
+					<img class="logo__img" src="/img/placeholder.png">
+				</div><div class="logo__item logo__text">
+					<div class="logo__title">渐行渐远</div>
+					<div class="logo__tagline">往者不可谏，来者犹可追</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">HBase Region Split</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">Neojos</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2019-02-22T00:00:00Z">2019-02-22</time></div></div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#引言">引言</a></li>
+<li><a href="#concepts"><code>Concepts</code></a></li>
+<li><a href="#reading-data"><code>Reading Data</code></a></li>
+<li><a href="#constantsizeregionsplitpolicy"><code>ConstantSizeRegionSplitPolicy</code></a></li>
+<li><a href="#extension"><code>extension</code></a></li>
+</ul></li>
+</ul>
+</nav>
+	</div>
+</div>
+<div class="content post__content clearfix">
+			
+
+<blockquote>
+<p><code>Tables are automatically partitioned horizontally by HBase into regions. Each region comprises a subset of a table's rows</code></p>
+</blockquote>
+
+<h2 id="引言">引言</h2>
+
+<p><a href="https://hbase.apache.org/book.html"><code>HBase</code></a>对<code>Table</code>提供了自动拆分的功能，非常好奇，它的自动拆分是如何实现的呢？在工作中，我们经常会遇到<code>MySQL</code>数据分表的情况，比如一个数据表已经超过<code>20G</code>了，查询耗时相对严重，我们考虑对其进行分表。又比如，我们预测每个月的交易流水会有几十亿条数据，我们按月对表进行拆分，等等。</p>
+
+<p><code>MySQL</code>提供了分区表，市面上也有很多的<code>Sharding</code>策略。但具体问题需要具体分析，分表策略也必须结合具体的业务来考虑。比如一个博客网站，用户主页需要展示他过去发布的所有博客列表，基于此，按照用户来分表就更为合理，保证同一个用户的所有数据都存储在同一张表里。</p>
+
+<h2 id="concepts"><code>Concepts</code></h2>
+
+<p><code>HBase</code>中<code>column</code>被划分到一个<code>column family</code>里，所有的<code>column family</code>成员有一个唯一的前缀来标识。比如<code>info:190101</code>和<code>info:190102</code>就属于<code>info family</code>的的成员。有趣的是，虽然<code>column families</code>必须在表<code>schema definition</code>中被声明，但它的成员却是能够随意添加。</p>
+
+<p>关于<code>Region</code>，作为分布式<code>HBase</code>集群数据的最小单元，每个<code>RegionServer</code>管理着<code>table regions</code>的若干个子集。客户端在和<code>HBase</code>交互时，都需要请求集群的<code>ZooKeeper</code>来获取集群的服务信息，缓存相关的元信息，之后就跟具体的<code>RegionServer</code>做交互了。</p>
+
+<h2 id="reading-data"><code>Reading Data</code></h2>
+
+<p>专门去查看了<code>HBase</code>获取数据的方式，主要包括两种：</p>
+
+<ol>
+<li>获取行</li>
+<li>获取指定的列</li>
+</ol>
+
+<p>相应的，我们需要了解它写入数据的方式：</p>
+
+<pre><code class="language-go">put ’&lt;table name&gt;’,’row1’,’&lt;colfamily:colname&gt;’,’&lt;value&gt;’
+</code></pre>
+
+<h2 id="constantsizeregionsplitpolicy"><code>ConstantSizeRegionSplitPolicy</code></h2>
+
+<p><code>Region</code>有两个重要的属性<code>StartKey</code>和<code>EndKey</code>，用来表示<code>Region</code>维护的<code>RowKey</code>范围，当<code>Region Size</code>达到一定的阈值，<code>HBase</code>就会对其执行<code>split</code>操作，<code>Region</code>被划分为两个，其中一个<code>Region</code>，称呼为<strong><code>Region_1</code></strong>包含的<code>StartKey</code>到<code>MidKey</code>，另一个<strong><code>Region_2</code></strong>包含<code>MidKey</code>到<code>EndKey</code>的数据。这也引申出<code>HBase</code>的前缀范围查询的功能。</p>
+
+<p>之所以可以这样划分，是因为<code>HBase</code>中数据行是以<code>RowKey</code>的字典序排列的，并且<code>RowKey</code>是全局唯一的。这样的划分策略对<code>RowKey</code>的设计有点需求，如果<code>RowKey</code>的随机性不好，在分布式集群中，负责<code>Region_1</code>的<code>RegionServer</code>负载和负责<code>Region_2</code>的负载相差可能会很多，导致资源的利用很不均衡。</p>
+
+<p>其实也很好理解，就比如以中国的姓作为<code>RowKey</code>的前缀，那么负责“王、李”的<code>RegionServer</code>的负载就会很高，因为这些数据都会根据<code>StartKey-EndKey</code>写入到具体的<code>Region</code>上。很多时候，为了使数据分布的更加均匀，充分利用集群的资源，我们需要对原始的<code>RowKey</code>做一次<code>HASH</code>处理，在原始的<code>RowKey</code>和实际存储的<code>RowKey</code>之间生成一个固定的映射关系。</p>
+
+<h2 id="extension"><code>extension</code></h2>
+
+<p>处理问题的思想都是相通的，比如<code>HBase</code>将数据存储到不同<code>Region</code>中。本质上也是：对数据进行分片，来扩展写操作。具体点就是：将数据划分成多个完全独立的子集，客户端通过映射关系，定向到具体的数据分片进行处理。</p>
+
+<p>工作中接触最多的非<code>MySQL</code>莫属，如何对数据分片，根本还在于<strong>业务最终要实现怎样的查询</strong>。注意：设计中要尽量避免分片数据集的关联表查询，可能会有痛苦。</p>
+
+<p>参考文章：</p>
+
+<ol>
+<li><a href="https://www.tutorialspoint.com/hbase/hbase_read_data.htm">HBase - Read Data</a></li>
+</ol>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/think/" rel="tag">think</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Neojos avatar" src="/img/avatar.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">About Neojos</span>
+	</div>
+	<div class="authorbox__description">
+		John Doe&rsquo;s true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it.
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/blog/2019/19-02-15-mark-sweep-gc/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">Mark-sweep GC</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/blog/2019/19-02-28-mysql%E4%BA%8B%E5%8A%A12/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">MySQL事务（2）</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 John Doe.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

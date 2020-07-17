@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>重试 - 渐行渐远</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo logo--mixed">
+		<a class="logo__link" href="/" title="渐行渐远" rel="home">
+			<div class="logo__item logo__imagebox">
+					<img class="logo__img" src="/img/placeholder.png">
+				</div><div class="logo__item logo__text">
+					<div class="logo__title">渐行渐远</div>
+					<div class="logo__tagline">往者不可谏，来者犹可追</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">重试</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">Neojos</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2018-07-24T00:00:00Z">2018-07-24</time></div></div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#指数退避">指数退避</a></li>
+<li><a href="#重试的问题">重试的问题</a></li>
+<li><a href="#需要考虑的问题">需要考虑的问题</a></li>
+<li><a href="#example-code"><code>Example Code</code></a></li>
+</ul></li>
+</ul>
+</nav>
+	</div>
+</div>
+<div class="content post__content clearfix">
+			
+
+<p>为了克服网络问题，<strong>重试</strong>是我们常用的手段之一。但必须记住：重试的姿势非常重要。照应一句古话：“<code>差若毫厘，谬以千里</code>”。</p>
+
+<p>正确的姿势是便是：</p>
+
+<blockquote>
+<p>如果请求没有成功，以指数型延迟重试</p>
+</blockquote>
+
+<h2 id="指数退避">指数退避</h2>
+
+<blockquote>
+<p>Exponential backoff is an algorithm that uses feedback to multiplicatively decrease the rate of some process, in order to gradually find an acceptable rate</p>
+</blockquote>
+
+<p>通俗的的讲，网络上的节点在发送数据冲突之后，不应立即尝试重发，而应该等待一段时间再发送，等待时间是指数增长，从而避免频繁的触发冲突。在计算机网络中，二进制指数退避算法常常作为避免网络堵塞的一部分，用于同一数据块的重发策略。</p>
+
+<p>发生n次冲突之后，等待时间在0~2^n-1个间隙时间(<code>slot time</code>)之间随机选择。比如第一次冲突之后，每个发送方会等待0或者1个间隙；第二次冲突之后，或等待时间会在0到3个间隙任意选择，依次类推，随着冲突次数的增加，发送方等待的时间可能成倍增加。</p>
+
+<p>冲突达到一定次数，指数运算会停止，表示等待时间不会无限制增加下去。比如设置上限n=10,则最长等待时间为1023个时间间隙。同样，发送不可能永远的尝试下去，所以流程一般会在16次重试之后终止。</p>
+
+<p>具体的退避算法：</p>
+
+<pre><code>1. 确定基本退避时间：争用期
+2. 确定等待时间上限(max)。假设重传次数超过10次之后,k就不再增大。计算公式：k表示计算冲突等待时间的指数， k=min（重传次数, max）
+3. 当重传达到16次仍不成功，则数据需要丢弃，并向高层报告。
+</code></pre>
+
+<p>退避算法的应用场景：</p>
+
+<pre><code>1. 三方支付中交易结果的推送通知。
+2. 轮询，不间断的固定时间间隔的请求接口。
+</code></pre>
+
+<h2 id="重试的问题">重试的问题</h2>
+
+<p>以下面的代码说明一下：</p>
+
+<pre><code>retryTimes := 1
+for err != nil &amp;&amp; retryTimes &lt;= 3 {
+	//请求失败后，重新尝试
+	body, err = curl.GetCurlClient(curl.DefaultTimeout).PostJson(link, data)
+	retryTimes ++
+}
+</code></pre>
+
+<p>假设后端服务每个接口的上限是10000<code>QPS</code>，在超过这个上限之后，优雅降级系统会拒绝所有的额外请求(<u>503的状态码就是干这个用的</u>)。前端业务以固定的<code>QPS</code>请求服务，如果网络稍微抖动，使得100<code>QPS</code>请求失败。重试就会导致后端后续会接收到10100的<code>QPS</code>。其中的100<code>QPS</code>请求会因为<strong>服务过载</strong>而失败。</p>
+
+<p>如果它们的网络还有问题，那么后续就会有200<code>QPS</code>因为过载而失败。以此类推&hellip;</p>
+
+<h2 id="需要考虑的问题">需要考虑的问题</h2>
+
+<p><strong>放大服务负载</strong>的重试策略可能很难遇见。而且即使遇见了，也很难确定是不是重试导致的。但还是需要将重试的坏降到最小。</p>
+
+<ol>
+<li>一定要使用随机化的，指数型递增的重试周期</li>
+<li>将重试错误和非重试错误码做明确区分。这样业务端也可以依据错误码做请求策略调整​</li>
+</ol>
+
+<h2 id="example-code"><code>Example Code</code></h2>
+
+<p>指数退避的<code>Go</code>代码：</p>
+
+<pre><code>//exponential back-off
+func TryAgain(url string) error {
+    const timeout = 1 * time.Minute
+    deadline := time.Now().Add(timeout)
+    for tries := 0; time.Now().Before(deadline); tries++ {
+        //....
+        time.sleep(time.Second &lt;&lt; tries)
+    }
+}
+
+</code></pre>
+
+<p>参考文章：</p>
+
+<ol>
+<li><a href="http://hugnew.com/?p=814">http://hugnew.com/?p=814</a></li>
+</ol>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/think/" rel="tag">Think</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Neojos avatar" src="/img/avatar.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">About Neojos</span>
+	</div>
+	<div class="authorbox__description">
+		John Doe&rsquo;s true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it.
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/blog/2018/07-19-siege%E5%8E%8B%E6%B5%8B/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">siege压测</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/blog/2018/07-28-tcp-server-design/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">Tcp Server Design</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 John Doe.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

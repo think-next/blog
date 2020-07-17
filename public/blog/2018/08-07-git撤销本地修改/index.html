@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Git撤销本地修改 - 渐行渐远</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo logo--mixed">
+		<a class="logo__link" href="/" title="渐行渐远" rel="home">
+			<div class="logo__item logo__imagebox">
+					<img class="logo__img" src="/img/placeholder.png">
+				</div><div class="logo__item logo__text">
+					<div class="logo__title">渐行渐远</div>
+					<div class="logo__tagline">往者不可谏，来者犹可追</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">Git撤销本地修改</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">Neojos</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2018-08-07T00:00:00Z">2018-08-07</time></div></div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#使用-reset-回退">使用<code>reset</code>回退</a>
+<ul>
+<li><a href="#example"><code>Example</code></a></li>
+</ul></li>
+<li><a href="#checkout"><code>checkout</code></a></li>
+<li><a href="#stash-储藏"><code>stash</code>储藏</a></li>
+<li><a href="#使用-clean-清空">使用<code>clean</code>清空</a></li>
+<li><a href="#使用-revert">使用<code>revert</code></a>
+<ul>
+<li><a href="#revert-a-merge"><code>Revert a merge</code></a></li>
+<li><a href="#revert-vs-reset"><code>Revert vs Reset</code></a></li>
+<li><a href="#revert-the-revert"><code>Revert the revert</code></a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+	</div>
+</div>
+<div class="content post__content clearfix">
+			
+
+<blockquote>
+<p><code>懂得了好多大道理，但还是过不好这一生！</code></p>
+</blockquote>
+
+<p>用了git就会发现，再也不想用svn了。</p>
+
+<p><code>Note</code>：在<strong>执行<code>push</code>操作前</strong>，所有的修改都发生在本地，可以使用<code>reset</code>随便回滚本地的提交。但要注意：本地修改一旦回滚，无法找回。<strong>在<code>push</code>后</strong>，想要回滚到指定的版本，便需要使用<code>revert</code>，这样的代价就是：你的回滚记录被记录在了<code>log</code>中，所有人都可以看见。</p>
+
+<h2 id="使用-reset-回退">使用<code>reset</code>回退</h2>
+
+<p>本质上是<code>commit</code>操作的回退。<code>Git</code>工作流可以简化为三个部分：<code>Working Directory</code>、<code>index</code>、<code>HEAD</code>。后两部分对应的<code>git</code>命令便是<code>add</code>和<code>commit</code>。如果使用的是<code>Sourcetree</code>工具，那么这三部分就更直观了。</p>
+
+<p>该命令的具体功能是移动<code>HEAD</code>，即移动分支的指针。将当前的<code>HEAD</code>重新指向之前的版本，本地工作环境也会跟着切换。适用场景：本地已经<code>commit</code>，但尚未<code>push</code>到远端仓库的回滚操作。</p>
+
+<p>该命令提供了三个属性：分别是<code>soft</code>、<code>mixed</code>、和<code>hard</code>。</p>
+
+<ol>
+<li><code>soft</code>撤销上一次的<code>commit</code>命令，返回到<code>HEAD</code>前的<code>index</code>状态。</li>
+<li><code>mixed</code>撤销了上一次的<code>git add</code>和<code>git commit</code>命令，将<code>index</code>的修改回滚到<code>Working Directory</code>。</li>
+<li><code>hard</code>撤销了最后<code>git add</code> 和 <code>git commit</code> 命令以及工作目录中的所有修改。</li>
+</ol>
+
+<p>所以<code>reset</code>重写的顺序如下：</p>
+
+<ol>
+<li>移动 HEAD 指向的分支（如果是<code>soft</code>，则到此停止）。</li>
+<li>使索引看起来像 HEAD（如果是<code>mixed</code>，则到此停止）。</li>
+<li>使工作目录看起来像索引。</li>
+</ol>
+
+<h3 id="example"><code>Example</code></h3>
+
+<p>当执行pull命令发生冲突时时，本地代码需要做merge操作。但本地代码只是临时调试修改，并不需要保存提交。执行如下命令，便会清空本地的修改，hard相当于一个版本的指针，origin/master可以替换为具体的版本号</p>
+
+<pre><code class="language-git">git reset --hard origin/master
+git reset --hard version-number
+git reset --hard HEAD
+</code></pre>
+
+<p>获取版本号可以通过<code>git log</code>直接查看。</p>
+
+<p>更多详细介绍，可以查看： <a href="https://git-scm.com/book/zh/v2/Git-%E5%B7%A5%E5%85%B7-%E9%AB%98%E7%BA%A7%E5%90%88%E5%B9%B6">高级合并</a>及 <a href="https://git-scm.com/book/zh/v2/Git-%E5%B7%A5%E5%85%B7-%E9%87%8D%E7%BD%AE%E6%8F%AD%E5%AF%86">重置揭密</a></p>
+
+<h2 id="checkout"><code>checkout</code></h2>
+
+<h2 id="stash-储藏"><code>stash</code>储藏</h2>
+
+<p>将工作区的修改进行存储，使本地重新成为一个干净的环境，同时方便在之后应用这些改动。可以用于存储已被索引的文件、或者未跟踪的文件。执行<code>git stash -a</code>来暂存所有改动的文件。常见的包括如下命令：</p>
+
+<ol>
+<li><code>git stash</code> 储藏修改</li>
+<li><code>git stash list</code> 查看储藏的列表</li>
+<li>将储藏重新应用到当前分支：<code>git statsh apply stash@{1}</code>或者<code>git stash pop stash@{1}</code>。后者会在应用暂存之后从堆栈上删除</li>
+<li><code>git stash drop stash@{1}</code> 移除暂存</li>
+<li><code>git stash clear</code> 清除本地所有的贮藏历史</li>
+</ol>
+
+<h2 id="使用-clean-清空">使用<code>clean</code>清空</h2>
+
+<p>用于从==工作区==移除==未被追踪的文件==，执行<code>git clean -d -f</code>来移除所有未被追踪的文件或目录。</p>
+
+<ol>
+<li><code>git clean -d -n</code> 可以用来做一次删除前的演示</li>
+<li><code>git clean -d -i</code> 用于交互式的删除文件</li>
+</ol>
+
+<h2 id="使用-revert">使用<code>revert</code></h2>
+
+<p>我们工作区看到的内容，是所有版本修改合并的结果。如果觉得某个版本的提交有问题，使用<code>revert</code>便可以直接撤销这个版本的修改。本质上通过提交新的版本来撤销修改。</p>
+
+<pre><code>--&gt; (modify version 1) --&gt; (modify version 2) --&gt; (modify version3)
+</code></pre>
+
+<p>执行<code>git revert 版本号</code>仅仅是撤销这个版本的修改。如果你想将版本回滚到<code>version 1</code>，你需要执行2次<code>revert</code>操作。且每次执行<code>revert</code>都会有一个新的版本生成。</p>
+
+<h3 id="revert-a-merge"><code>Revert a merge</code></h3>
+
+<p>回滚<code>merge</code>提交跟普通的提交是有区别的。我们一般都是在分支上开发，然后将修改合并到主分支上。所以<code>merge</code>的那个提交版本，存在两个<code>parent</code>分支。</p>
+
+<p>所以，执行<code>git revert MERGE_HASH</code>是不能正常工作的。原因在于这个提交存在多个<code>parent</code>，它需要有额外的信息来决定哪一个分支作为回滚的主线。参数<code>-m</code>就是用来干这个的。</p>
+
+<pre><code>git revert 0cce3a0837da60fb8ef458d98f81feaa97397363
+error: Commit 603c1333339bc9b5ad4d8b864e948d4bd950bf05 is a merge but no -m option was given.
+fatal: 还原失败
+</code></pre>
+
+<h3 id="revert-vs-reset"><code>Revert vs Reset</code></h3>
+
+<ol>
+<li><code>reset</code>是在正常的<code>commit</code>历史中,删除了指定的<code>commit</code>,这时 <code>HEAD</code> 是向后移动了,而 <code>revert</code> 是在正常的<code>commit</code>历史中再<code>commit</code>一次,只不过是反向提交,他的 <code>HEAD</code> 是一直向前的.</li>
+<li><code>git revert</code>是用一次新的<code>commit</code>来回滚之前的<code>commit</code>，<code>git reset</code>是直接删除指定的<code>commit</code></li>
+</ol>
+
+<h3 id="revert-the-revert"><code>Revert the revert</code></h3>
+
+<p>听着这个标题，就感觉很有意思！</p>
+
+<hr />
+
+<p>参考文档：</p>
+
+<ol>
+<li><a href="https://www.johbo.com/2016/how-to-revert-a-merge-commit-in-git.html">How to revert a merge commit in Git</a></li>
+</ol>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/tools/" rel="tag">tools</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/git/" rel="tag">git</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Neojos avatar" src="/img/avatar.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">About Neojos</span>
+	</div>
+	<div class="authorbox__description">
+		John Doe&rsquo;s true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it.
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/blog/2018/08-04-ip-routing/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">IP Routing</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/blog/2018/08-09-shell%E5%BF%85%E5%A4%87%E5%9F%BA%E7%A1%801/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">Shell必备基础（1）</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 John Doe.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

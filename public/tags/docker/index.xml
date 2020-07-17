@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Docker on 渐行渐远</title>
+    <link>https://neojos.com/tags/docker/</link>
+    <description>Recent content in Docker on 渐行渐远</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 11 May 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://neojos.com/tags/docker/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>mongo EOF（二）</title>
+      <link>https://neojos.com/blog/2019/19-05-11-mongo-eof%E4%BA%8C/</link>
+      <pubDate>Sat, 11 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-05-11-mongo-eof%E4%BA%8C/</guid>
+      <description>任何事情的成功都需要掐准时间</description>
+    </item>
+    
+    <item>
+      <title>docker基本使用</title>
+      <link>https://neojos.com/blog/2018/04-20-docker%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/04-20-docker%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</guid>
+      <description>知道一点比完全不知道要好，对问题有深入了解比仅知道皮毛要好。作为docker的一个初学者，现在对docker做简单记录。希望随着工作、生活，更深入的了解学习docker。这也是一件很有意义的事。</description>
+    </item>
+    
+  </channel>
+</rss>

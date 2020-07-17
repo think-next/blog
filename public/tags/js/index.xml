@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Js on 渐行渐远</title>
+    <link>https://neojos.com/tags/js/</link>
+    <description>Recent content in Js on 渐行渐远</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 29 Jan 2018 20:10:33 +0000</lastBuildDate>
+    
+	<atom:link href="https://neojos.com/tags/js/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>RequireJS初识</title>
+      <link>https://neojos.com/blog/2018/01-29-requirejs%E5%88%9D%E8%AF%86-/</link>
+      <pubDate>Mon, 29 Jan 2018 20:10:33 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/01-29-requirejs%E5%88%9D%E8%AF%86-/</guid>
+      <description>开发上想找一个时间选择控件，无意中就找到了layDate 日期与时间组件。</description>
+    </item>
+    
+  </channel>
+</rss>

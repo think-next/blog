@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>设计模式-适配器模式 - 渐行渐远</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo logo--mixed">
+		<a class="logo__link" href="/" title="渐行渐远" rel="home">
+			<div class="logo__item logo__imagebox">
+					<img class="logo__img" src="/img/placeholder.png">
+				</div><div class="logo__item logo__text">
+					<div class="logo__title">渐行渐远</div>
+					<div class="logo__tagline">往者不可谏，来者犹可追</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">设计模式-适配器模式</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">Neojos</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2019-04-07T00:00:00Z">2019-04-07</time></div></div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#adapter-pattern"><code>Adapter Pattern</code></a></li>
+<li><a href="#purpose"><code>Purpose</code></a></li>
+<li><a href="#design-pattern-diagram"><code>Design Pattern Diagram</code></a></li>
+<li><a href="#implementation"><code>Implementation</code></a></li>
+<li><a href="#verdict"><code>Verdict</code></a></li>
+</ul></li>
+</ul>
+</nav>
+	</div>
+</div>
+<div class="content post__content clearfix">
+			
+
+<blockquote>
+<p><code>当你眼里只有赚钱的时候，你就永远无法把事情本身给做好，收获的也会很有限，最后可能还赚不到钱。- From Myself</code></p>
+</blockquote>
+
+<p>下面的代码是<code>github.com/gin-gonic/gin/binding</code>中获取<code>Binding</code>实例的逻辑。我在想：这段代码体现的是什么设计模式呢？写法上肯定是工厂模式，因为它基于不同的<code>contentType</code>创建返回具体的实例。但从宏观上来看，它算不算一个适配器呢？</p>
+
+<pre><code class="language-go">func Default(method, contentType string) Binding {
+	if method == &quot;GET&quot; {
+		return Form
+	}
+
+	switch contentType {
+	case MIMEJSON:
+		return JSON
+	case MIMEXML, MIMEXML2:
+		return XML
+	case MIMEPROTOBUF:
+		return ProtoBuf
+	case MIMEMSGPACK, MIMEMSGPACK2:
+		return MsgPack
+	default: //case MIMEPOSTForm, MIMEMultipartPOSTForm:
+		return Form
+	}
+}
+</code></pre>
+
+<h2 id="adapter-pattern"><code>Adapter Pattern</code></h2>
+
+<p>适配器模式不仅仅局限于代码设计，在现实世界中也经常会看到。比如苹果手机的转接线，将新的、方形的<code>Lighting</code>接口适配到旧的、圆孔的耳机上。</p>
+
+<p><code>Adapter Pattern</code>主要被用来适配两个不兼容的接口，给两个独立或者不兼容的类提供一个兼容模式，而不需要修改两者内部的具体实现。<code>Adapter Pattern</code>可以是一个独立的新对象或者新方法，在设计中扮演一个桥梁的作用，或者是对不相互兼容的数据格式进行转换。又或者是重用系统老的既存类，来提供新的功能。</p>
+
+<h2 id="purpose"><code>Purpose</code></h2>
+
+<p>适配器主要通过转换数据格式，组合、引用不兼容的对象，最终实现我们期盼的功能。</p>
+
+<ol>
+<li>老系统到新系统的业务迁移。新老系统首先在接收数据的格式上不尽相同，其次新系统可能也需要调用老系统的内部实现。</li>
+<li>重新对对象进行封装，用来提供业务期望的新功能。或者让不兼容的对象可以一起工作。</li>
+</ol>
+
+<h2 id="design-pattern-diagram"><code>Design Pattern Diagram</code></h2>
+
+<p><img src="https://i.loli.net/2019/04/05/5ca701b84b63b.png" alt="" /></p>
+
+<ul>
+<li><code>Target</code>：<code>Client</code>端调用的新接口。</li>
+<li><code>Adapter</code>：将<code>Adaptee</code>适配到<code>Target</code>，实现两者间的转换。</li>
+<li><code>Adaptee</code>：需要去适配的既存接口</li>
+</ul>
+
+<h2 id="implementation"><code>Implementation</code></h2>
+
+<p>常见的适配实现主要有两种方式：</p>
+
+<ol>
+<li>通过类的<strong>继承</strong>来实现</li>
+<li>通过类的<strong>组合</strong>来实现</li>
+</ol>
+
+<p>很多地方都有提到：<strong>组合优于继承</strong>。因为组合结构非常灵活，而且没有继承关系中改变既有代码的负面影响。适配器作为一个独立的类，用组合的方式，也更能体现出桥梁的作用。</p>
+
+<h2 id="verdict"><code>Verdict</code></h2>
+
+<p><code>Adapter Pattern</code>可以用于新老功能的数据结构转换，或者基于既有类来实现额外的功能。如果<code>Target</code>和<code>Adaptee</code>功能相似，那么<code>Adapter</code>可能只需要委托<code>Adaptee</code>去处理。但如果不相似，我们可能就需要转换两者的数据结构，并组合其他功能类来实现具体的处理逻辑了。</p>
+
+<p><code>Adapter Pattern</code>的优势在于：通过引入一个适配类，我们无需去改变已经存在的类或者接口，也有效的限制了代码调整的范围，避免对现有业务造成一些未知的负面影响。</p>
+
+<p>参考文章：</p>
+
+<ol>
+<li><a href="http://blog.ralch.com/tutorial/design-patterns/golang-adapter/"><code>Design Patterns in Golang: Adapter</code></a></li>
+</ol>
+
+		</div>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Neojos avatar" src="/img/avatar.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">About Neojos</span>
+	</div>
+	<div class="authorbox__description">
+		John Doe&rsquo;s true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it.
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/blog/2019/19-03-30-go-%E8%B0%83%E5%BA%A6%E6%A8%A1%E5%9E%8B%E4%BA%8C/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">Go 调度模型（二）</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/blog/2019/19-04-14-go-%E8%B0%83%E5%BA%A6%E6%A8%A1%E5%9E%8B%E4%B8%89/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">Go 调度模型（三）</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 John Doe.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

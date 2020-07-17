@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Go Interface 类型 - 渐行渐远</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo logo--mixed">
+		<a class="logo__link" href="/" title="渐行渐远" rel="home">
+			<div class="logo__item logo__imagebox">
+					<img class="logo__img" src="/img/placeholder.png">
+				</div><div class="logo__item logo__text">
+					<div class="logo__title">渐行渐远</div>
+					<div class="logo__tagline">往者不可谏，来者犹可追</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">Go Interface 类型</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">Neojos</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2018-10-12T00:00:00Z">2018-10-12</time></div></div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#introduction"><code>introduction</code></a></li>
+<li><a href="#protocol"><code>protocol</code></a></li>
+<li><a href="#interface"><code>interface</code></a>
+<ul>
+<li><a href="#generic-algorithm"><code>generic algorithm</code></a></li>
+<li><a href="#hiding-implement-detail"><code>hiding implement detail</code></a></li>
+<li><a href="#providing-interception-points"><code>providing interception points</code></a>
+<ul>
+<li><a href="#unmarshal"><code>Unmarshal</code></a></li>
+<li><a href="#handler"><code>Handler</code></a></li>
+</ul></li>
+</ul></li>
+<li><a href="#stream-io-interface">Stream IO interface</a></li>
+</ul></li>
+</ul>
+</nav>
+	</div>
+</div>
+<div class="content post__content clearfix">
+			
+
+<h2 id="introduction"><code>introduction</code></h2>
+
+<p><a href="https://en.wikipedia.org/wiki/Duck_typing"><code>duck typing</code></a> 很形象的解释了<code>interface</code>的本意。它是一种特别的数据类型，内部声明了一组要实现的方法集合，任何实现了这些方法的数据类型都可以认为实现了这个<code>interface</code>。这跟其他语言中的<code>抽象类</code>有异曲同工之处，但却不需要去明确声明实现这个<code>interface</code>。</p>
+
+<p>空的<code>interface</code>类型没有声明任何方法，所以<code>GO</code>中所有数据类型都实现了<code>interface{}</code>。这也为我们实现<code>泛型编程</code>提供了可能，虽然使用起来并不舒服。</p>
+
+<h2 id="protocol"><code>protocol</code></h2>
+
+<p><code>interface</code>可以做为一组不相关的对象进行交流的一种规范或约束，类比<a href="https://developers.google.com/protocol-buffers/"><code>protobuf</code></a>，数据字段必须严格按照声明进行传递。只不过<code>interface</code>约束的是待实现的方法。</p>
+
+<p>比如<code>error</code>接口，所有实现了<code>Error()</code>方法的类型都可以赋值给<code>error</code>类型变量，无需明确声明继承关系，就实现了<code>多态</code>。</p>
+
+<pre><code class="language-golang">// The error built-in interface type is the conventional interface for
+// representing an error condition, with the nil value representing no error.
+type error interface {
+	Error() string
+}
+</code></pre>
+
+<h2 id="interface"><code>interface</code></h2>
+
+<h3 id="generic-algorithm"><code>generic algorithm</code></h3>
+
+<p><code>interface</code>类型接受任意类型的参数，结合<code>reflect</code>或者<code>断言</code>可以确定参数的实际类型。比如<code>fmt</code>包就有这样用（具体需要深入方法内部）：</p>
+
+<pre><code class="language-golang">// Println formats using the default formats for its operands and writes to standard output.
+// Spaces are always added between operands and a newline is appended.
+// It returns the number of bytes written and any write error encountered.
+func Println(a ...interface{}) (n int, err error) {
+	return Fprintln(os.Stdout, a...)
+}
+</code></pre>
+
+<p>通过<code>interface</code>约束一套行为，也可以实现泛型编程。比如<code>sort</code>包，只要实现了接口对应的方法，就可以使用<code>sort</code>包来进行排序。具体如何排序，操作什么数据类型，都由你自己来实现。要实现的方式依次是：获取集合的长度，两个元素比较大小以及如何交换两个元素。</p>
+
+<pre><code>// A type, typically a collection, that satisfies sort.Interface can be
+// sorted by the routines in this package. The methods require that the
+// elements of the collection be enumerated by an integer index.
+type Interface interface {
+	// Len is the number of elements in the collection.
+	Len() int
+	// Less reports whether the element with
+	// index i should sort before the element with index j.
+	Less(i, j int) bool
+	// Swap swaps the elements with indexes i and j.
+	Swap(i, j int)
+}
+</code></pre>
+
+<h3 id="hiding-implement-detail"><code>hiding implement detail</code></h3>
+
+<p>当函数返回一个具体类型的<code>interface</code>，那么你就能调用<code>interface</code>实现的方法，而内部的具体实现可以一无所知。尤其是提供一个默认的接口实现时，就显得更加方便了。</p>
+
+<h3 id="providing-interception-points"><code>providing interception points</code></h3>
+
+<h4 id="unmarshal"><code>Unmarshal</code></h4>
+
+<p>当使用<code>Unmarshal</code>解析<code>json</code>时，为具体的类型实现<a href="https://golang.org/pkg/encoding/json/#Marshaler"><code>Unmarshaler</code></a>接口，就实现了自定义解析。</p>
+
+<blockquote>
+<p><code>To unmarshal JSON into a value implementing the Unmarshaler interface, Unmarshal calls that value's UnmarshalJSON method, including when the input is a JSON null.</code></p>
+</blockquote>
+
+<pre><code>// Unmarshaler is the interface implemented by types
+// that can unmarshal a JSON description of themselves.
+// The input can be assumed to be a valid encoding of
+// a JSON value. UnmarshalJSON must copy the JSON data
+// if it wishes to retain the data after returning.
+//
+// By convention, to approximate the behavior of Unmarshal itself,
+// Unmarshalers implement UnmarshalJSON([]byte(&quot;null&quot;)) as a no-op.
+type Unmarshaler interface {
+	UnmarshalJSON([]byte) error
+}
+</code></pre>
+
+<p>当然还有<code>Marshaler</code>接口，按照自己的想法去解析<code>json</code></p>
+
+<pre><code> type Marshaler interface {
+    MarshalJSON() ([]byte, error)
+}
+</code></pre>
+
+<h4 id="handler"><code>Handler</code></h4>
+
+<p>通过实现<code>Handler</code>接口，来处理不同的请求。</p>
+
+<pre><code>// A Handler responds to an HTTP request.
+//
+// ServeHTTP should write reply headers and data to the ResponseWriter
+// and then return. Returning signals that the request is finished; it
+// is not valid to use the ResponseWriter or read from the
+// Request.Body after or concurrently with the completion of the
+// ServeHTTP call.
+
+type Handler interface {
+	ServeHTTP(ResponseWriter, *Request)
+}
+</code></pre>
+
+<p><code>ServeMux</code>也实现了<code>handler</code>接口，但它基于<code>request</code>实现了一个路由表。</p>
+
+<pre><code>// ServeHTTP dispatches the request to the handler whose
+// pattern most closely matches the request URL.
+func (mux *ServeMux) ServeHTTP(w ResponseWriter, r *Request) {
+	if r.RequestURI == &quot;*&quot; {
+		if r.ProtoAtLeast(1, 1) {
+			w.Header().Set(&quot;Connection&quot;, &quot;close&quot;)
+		}
+		w.WriteHeader(StatusBadRequest)
+		return
+	}
+	h, _ := mux.Handler(r)
+	h.ServeHTTP(w, r)
+}
+
+</code></pre>
+
+<h2 id="stream-io-interface">Stream IO interface</h2>
+
+<p>工作中最常见的两个接口，io.Reader和io.Writer。</p>
+
+<pre><code>type Reader interface {
+    Read(p []byte) (n int, err error)
+}
+</code></pre>
+
+<p>Read方法通过for循，结合io.EOF的方式，将读取到的数据写入到参数p中。Write方法将p中的数据写入到实现的对象里。</p>
+
+<pre><code>type Writer interface {
+    Write(p []byte) (n int, err error)
+}
+</code></pre>
+
+<p>实现了Reader和Writer接口类型包括但不限于：
+- os.File
+- os.Stdout
+- os.Stdin
+- os.Stderr</p>
+
+<hr />
+
+<p>参考文章：</p>
+
+<ol>
+<li><a href="https://research.swtch.com/interfaces"><code>Go Data Structures: Interfaces</code></a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/32926119"><code>https://zhuanlan.zhihu.com/p/32926119</code></a></li>
+</ol>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/golang/" rel="tag">golang</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Neojos avatar" src="/img/avatar.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">About Neojos</span>
+	</div>
+	<div class="authorbox__description">
+		John Doe&rsquo;s true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it.
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/blog/2018/10-10-go-net-%E8%B6%85%E6%97%B6%E5%A4%84%E7%90%86/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">Go net 超时处理</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/blog/2018/10-20-%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7%E4%B8%80/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">数据一致性（一）</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 John Doe.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

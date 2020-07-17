@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mysql on 渐行渐远</title>
+    <link>https://neojos.com/tags/mysql/</link>
+    <description>Recent content in Mysql on 渐行渐远</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 17 Jul 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://neojos.com/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>database.sql.driver</title>
+      <link>https://neojos.com/blog/2019/19-07-17-database.sql.driver/</link>
+      <pubDate>Wed, 17 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-07-17-database.sql.driver/</guid>
+      <description>在事务操作中，要求事务的各个阶段都使用一个Conn连接。在连接被关闭之前，还需要执行rollback操作。</description>
+    </item>
+    
+    <item>
+      <title>数据一致性（二）</title>
+      <link>https://neojos.com/blog/2019/19-03-16-%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7%E4%BA%8C/</link>
+      <pubDate>Sat, 16 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-03-16-%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7%E4%BA%8C/</guid>
+      <description>我们流连于事物的表象，满足浅尝辄止的片刻欢愉，却几乎从不久留。我们在人生的道路上争先恐后，却吝于用片刻思考目标和方向。</description>
+    </item>
+    
+    <item>
+      <title>Database Sharding</title>
+      <link>https://neojos.com/blog/2019/19-03-09-database-sharding/</link>
+      <pubDate>Sat, 09 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-03-09-database-sharding/</guid>
+      <description>Sharding 可以简单地认为Sharding就是对数据进行分组的过程，即将整个大的数据集按照某种规则分割成多个小数据集。类似于网站服务，针对不同的服务，提供服务的链接地址也不相同，而这其实也是一个Sharding的过程。在业务层实现的Sharding，关键就在Route的过程，即将具体的数据请求，发送到对的数据集上。</description>
+    </item>
+    
+    <item>
+      <title>Deafult Decimal</title>
+      <link>https://neojos.com/blog/2018/12-01-deafult-decimal/</link>
+      <pubDate>Sat, 01 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/12-01-deafult-decimal/</guid>
+      <description>版本 0.</description>
+    </item>
+    
+    <item>
+      <title>MySQL事务</title>
+      <link>https://neojos.com/blog/2018/07-01-mysql%E4%BA%8B%E5%8A%A1/</link>
+      <pubDate>Sun, 01 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/07-01-mysql%E4%BA%8B%E5%8A%A1/</guid>
+      <description>关于MySQL事务的诡异问题，至今没有调查出原因。但却也是一个契机，带我重新回忆之前的遇到的事务问题。</description>
+    </item>
+    
+    <item>
+      <title>MySQL使用总结(一)</title>
+      <link>https://neojos.com/blog/2018/05-09-mysql%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93%E4%B8%80-/</link>
+      <pubDate>Wed, 09 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/05-09-mysql%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93%E4%B8%80-/</guid>
+      <description>查询的执行时间 第一次遇到查询时候报超时。很好奇，别的工具是如何修改查询的操时时间。</description>
+    </item>
+    
+  </channel>
+</rss>

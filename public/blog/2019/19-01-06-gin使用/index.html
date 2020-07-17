@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Gin使用 - 渐行渐远</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo logo--mixed">
+		<a class="logo__link" href="/" title="渐行渐远" rel="home">
+			<div class="logo__item logo__imagebox">
+					<img class="logo__img" src="/img/placeholder.png">
+				</div><div class="logo__item logo__text">
+					<div class="logo__title">渐行渐远</div>
+					<div class="logo__tagline">往者不可谏，来者犹可追</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">Gin使用</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">Neojos</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2019-01-05T00:00:00Z">2019-01-05</time></div></div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#接口测试">接口测试</a>
+<ul>
+<li><a href="#使用-postman">使用<code>Postman</code></a></li>
+</ul></li>
+<li><a href="#使用-test">使用<code>Test</code></a>
+<ul>
+<li>
+<ul>
+<li><a href="#测试基类">测试基类</a></li>
+<li><a href="#测试用例">测试用例</a></li>
+<li><a href="#小结">小结</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#middleware"><code>Middleware</code></a></li>
+</ul></li>
+</ul>
+</nav>
+	</div>
+</div>
+<div class="content post__content clearfix">
+			
+
+<p><a href="https://github.com/gin-gonic/gin"><code>Gin</code></a>对<code>net/http</code>包做了封装，支持路由、中间件等特性，极大的方便对<code>Http Server</code>的开发。文章通过一个<code>Test</code>例子，来简要介绍。对于特别基础的部分，请阅读参考文章。</p>
+
+<h2 id="接口测试">接口测试</h2>
+
+<p><code>Go</code>中<code>testing</code>包为程序自测提供了便利。可以查阅之前写的博客<a href="http://neojos.com/blog/2018/05-02-go-test%E5%9F%BA%E7%A1%80%E7%94%A8%E6%B3%95/"><code>Go test基础用法</code></a>，对其内容，我还是挺满意的。</p>
+
+<h3 id="使用-postman">使用<code>Postman</code></h3>
+
+<p>对于接口测试，很多情况都在使用<code>Postman</code>这样的工具。首先在本地启动服务，然后在<code>Postman</code>中配置请求的地址和参数、执行请求、查看结果。</p>
+
+<p>这种方式唯一让人不满意的地方在于：每次修改都需要重启服务。跟直接执行一次<code>Test</code>相比，明显多了一步。</p>
+
+<h2 id="使用-test">使用<code>Test</code></h2>
+
+<h4 id="测试基类">测试基类</h4>
+
+<p>下面的代码作为接口测试的基类。</p>
+
+<p><code>TestMain</code>中，我们为所有的测试用例指定通用的配置。之后在执行其他<code>Test</code>前，都会先执行<code>TestMain</code>中的代码。有效的避免了代码冗余。</p>
+
+<p><code>getRouter</code>方法用于返回一个<code>gin</code>的实例。我们将服务的路由重新在<code>Test</code>中指定，并设置了中间件。</p>
+
+<p><code>testHttpResponse</code>是我们请求处理的核心代码，发送请求，并保存响应到<code>w</code>中</p>
+
+<pre><code class="language-go">//common_test.go
+
+func TestMain(m *testing.M) {
+
+	//声明执行Test前的操作
+	gin.SetMode(gin.TestMode)
+	testutils.NewTestApp(&quot;../conf.test.toml&quot;)
+
+	flag.Parse()
+	os.Exit(m.Run())
+}
+
+//设置路由，获取框架Gin的实例
+func getRouter() *gin.Engine {
+	router := gin.Default()
+
+	//配置路由，这是我项目中的自定义配置
+	router.Use(middleware.HeaderProcess())
+	RouteAPI(router)
+
+	return router
+}
+
+//统一处理请求返回结果
+func testHttpResponse(t *testing.T, r *gin.Engine, req *http.Request, f func(w *httptest.ResponseRecorder) error) {
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	if err := f(w); err != nil {
+		t.Fatal(err)
+	}
+}
+</code></pre>
+
+<h4 id="测试用例">测试用例</h4>
+
+<p>下面是具体的测试用例。我们构造了一个<code>Json</code>数据格式的<code>POST</code>请求，然后通过调用<code>testHttpResponse</code>方法来读取接口的响应数据。</p>
+
+<p>关于<code>NewRequest</code>方法，它参数<code>body</code>传递一个<code>io.Reader</code>接口类型。从源代码可以看出，实现了该接口的分别是：<code>bytes.Buffer</code>   、<code>bytes.Reader</code>、<code>strings.Reader</code>。</p>
+
+<pre><code>func TestWeChatRecharge(t *testing.T) {
+	router := getRouter()
+
+	//构造json的请求体
+	params := map[string]interface{}{
+		&quot;open_id&quot;:     &quot;olFg1s3gPcISnooRX9WSkX_E-cww&quot;,
+		&quot;device_type&quot;: &quot;ANDROID&quot;,
+	}
+	jsonParams, _ := json.Marshal(params)
+	readParams := bytes.NewReader(jsonParams)
+	req, _ := http.NewRequest(&quot;POST&quot;, &quot;/pay/wx/recharge&quot;, readParams)
+	req.Header.Set(&quot;Content-type&quot;, &quot;application/json&quot;)
+
+	//发送请求
+	testHttpResponse(t, router, req, func(w *httptest.ResponseRecorder) error {
+		p, err := ioutil.ReadAll(w.Body)
+		if err != nil {
+			return err
+		}
+
+		t.Logf(&quot;%+v&quot;, string(p))
+		return nil
+	})
+}
+</code></pre>
+
+<h4 id="小结">小结</h4>
+
+<p>通过上述的步骤，我们实现了直接在<code>Test</code>中做接口测试。</p>
+
+<h2 id="middleware"><code>Middleware</code></h2>
+
+<p>声明一个<code>middleware</code>函数，返回类型为<code>type HandlerFunc func(*Context)</code>。</p>
+
+<pre><code>func setUserStatus() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		fmt.Println(&quot;set status&quot;)
+	}
+}
+</code></pre>
+
+<p>如果需要将函数应用于所有的请求，使用<code>Use</code>方法。比如统一的请求头转换、错误输出、日志打印等</p>
+
+<pre><code>//Use adds middleware to the group
+router.Use(setUserStatus())
+</code></pre>
+
+<p>下面是给具体的请求设置中间件。从这里可以看出，中间件处理函数和正常的业务处理函数类型是相同的。</p>
+
+<pre><code>//Use a particular middleware
+articleRoutes.GET(&quot;/create&quot;, setUserStatus(), showArticleCreationPage)
+</code></pre>
+
+<p>最后系统依次调用注册的<code>handler</code>完成请求处理：</p>
+
+<pre><code>func (c *Context) Next() {
+	c.index++
+	for s := int8(len(c.handlers)); c.index &lt; s; c.index++ {
+		c.handlers[c.index](c)
+	}
+}
+</code></pre>
+
+<hr />
+
+<p>参考文章：</p>
+
+<ol>
+<li><a href="https://semaphoreci.com/community/tutorials/building-go-web-applications-and-microservices-using-gin"><code>Building Go Web Applications and Microservices Using Gin</code></a></li>
+<li><a href="https://semaphoreci.com/community/tutorials/test-driven-development-of-go-web-applications-with-gin#"><code>Test-driven Development of Go Web Applications with Gin</code></a></li>
+</ol>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/translate/" rel="tag">translate</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/golang/" rel="tag">golang</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Neojos avatar" src="/img/avatar.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">About Neojos</span>
+	</div>
+	<div class="authorbox__description">
+		John Doe&rsquo;s true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it.
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/blog/2018/12-29-how-to-use-godog/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">How to use godog</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/blog/2019/19-01-11-%E6%8E%A2%E8%AE%A8%E5%88%86%E5%B8%83%E5%BC%8Fid%E7%94%9F%E6%88%90%E7%B3%BB%E7%BB%9F/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">探讨分布式ID生成系统</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 John Doe.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

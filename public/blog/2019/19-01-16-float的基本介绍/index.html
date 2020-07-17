@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Float的基本介绍 - 渐行渐远</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo logo--mixed">
+		<a class="logo__link" href="/" title="渐行渐远" rel="home">
+			<div class="logo__item logo__imagebox">
+					<img class="logo__img" src="/img/placeholder.png">
+				</div><div class="logo__item logo__text">
+					<div class="logo__title">渐行渐远</div>
+					<div class="logo__tagline">往者不可谏，来者犹可追</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">Float的基本介绍</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">Neojos</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2019-01-16T00:00:00Z">2019-01-16</time></div></div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#floating-point-represent">Floating-point represent</a>
+<ul>
+<li><a href="#1-fixed-point"><code>1. Fixed-point</code></a></li>
+</ul></li>
+<li><a href="#floating-point-basics"><code>Floating-point basics</code></a>
+<ul>
+<li><a href="#1-representable-numbers"><code>1. Representable numbers</code></a></li>
+</ul></li>
+<li><a href="#ieee-standard"><code>IEEE standard</code></a>
+<ul>
+<li><a href="#1-ieee-formats"><code>1. IEEE formats</code></a></li>
+<li><a href="#2-非数值"><code>2. 非数值</code></a></li>
+<li><a href="#3-运算"><code>3. 运算</code></a></li>
+</ul></li>
+<li><a href="#float-to-float">float to float</a></li>
+<li><a href="#match-big"><code>match/big</code></a></li>
+</ul></li>
+</ul>
+</nav>
+	</div>
+</div>
+<div class="content post__content clearfix">
+			
+
+<blockquote>
+<p>关于浮点数，为什么它生来就可能存在误差？带着好奇查阅了一些介绍，然后做了简单汇总。这只是一段知识的开始，后续还会继续完善。</p>
+
+<p>—— 荡荡上帝，下民之辟。疾威上帝，其命多辟。天生烝民，其命匪谌。靡不有初，鲜克有终。</p>
+</blockquote>
+
+<h2 id="floating-point-represent">Floating-point represent</h2>
+
+<p>浮点数在计算机中是如何表示的？因为它有小数点，那么小数点后面的数，该如何用二进制来表示呢？我们都知道，浮点数本身就存在误差，在工作中，你所使用的<code>float</code>都是一个近似数。这又是什么原因导致的呢？</p>
+
+<h3 id="1-fixed-point"><code>1. Fixed-point</code></h3>
+
+<p><strong><code>fixed-point</code></strong> 是将<code>bit</code>位拆分成固定的两部分：小数点前的部分和小数点后的部分。拿<code>32 bit</code>的<code>fixed-point</code>表示举例，可以将其中的<code>24 bit</code>用于表示整数部分，剩余的<code>8 bit</code>表示小数部分。</p>
+
+<p>假如要表示<code>1.625</code>，我们可以将小数点后面的第一个<code>bit</code>表示<code>$\frac12$</code>，第二个<code>bit</code>表示<code>1/4</code>，第三个<code>1/8</code>一直到最后一个<code>1/256</code>。最后的表示就是<code>00000000 00000000 00000001 10100000</code>。这样其实也好理解，因为小数点前是从$2^0$开始向左成倍递增，小数点后从<code>$2^{-1}$</code>开始向右递减。</p>
+
+<p>因为小数点后面的部分始终小于1，上面这种表达方式能表达的最大数是<code>255/256</code>。再比这个数小，这种结构就无法表示了。</p>
+
+<h2 id="floating-point-basics"><code>Floating-point basics</code></h2>
+
+<p>根据上面的思路，我们用二进制表达一下<code>5.5</code>这个十进制数，转化后是<code>$101.1_{(2)}$</code>。继续转换成二进制科学计数法的形式：<code>$1.011_{(2)} * 2^2$</code>。在转换的二进制科学计数法过程中，我们将小数点向左移了2位。就跟转换十进制的效果一样：<code>$101.1_{(10)}$</code> 的科学计数形式为<code>$1.011 * 10^2$</code>。</p>
+
+<p>对于二进制科学计数法表达的<code>5.5</code>，我们将其拆分成2部分，<code>1.011</code>是一部分，我们称为<code>mantissa</code>。指数2是另一部分，称为<code>exponent</code>。下面我们要将<code>$1.011_{(2)} * 2^2$</code> 映射到计算机存储的<code>8 bit</code>结构上。</p>
+
+<p>我们用第一个<code>bit</code>来表示正负符号，1表示负数，0表示正数。紧接着的<code>4 bit</code>用来表示<code>exponent + 7</code>后的值。    <code>4 bit</code>最大可以表示到<code>15</code>，这也就意味着当前的<code>exponent</code>不能超过<code>8</code>，不能低于<code>-7</code>。最后的<code>3 bit</code>用于存储<code>mantissa</code>的小数部分。你可能有疑问，它的整数部分怎么办呢？这里我们约定整数部分都调整成1，这样就可以节省<code>1 bit</code>了。举个例子，如果要表示的十进制数是0.5，那么最后的二进制数不是<code>$0.1_{(2)}$</code>，而是<code>$1.0 * 2^{-1}$</code>。最后表示的结果就是：<code>0 1001 011</code>。</p>
+
+<p><img src="http://www.toves.org/books/float/fmt_float8.png" alt="" /></p>
+
+<p>再来一个<code>decode</code>的例子，即将<code>0 0101 100</code>还原回原始值。根据之前的描述<code>0101</code>表示的十进制是5，所以<code>exponent = -2</code>，表示回二进制科学计数法的结果：<code>$1.100 * 2^{-2} = 0.011_{(2)}$</code>。我们继续转换成真实精度的数：<code>0.375</code>。</p>
+
+<p>最后可以看在，如果<code>mantissa</code>的长度超过<code>3 bit</code>表示的范围，那么数据的存储就会丢失精度，结果就是一个近似值了。</p>
+
+<h3 id="1-representable-numbers"><code>1. Representable numbers</code></h3>
+
+<p>继续按照上面的思路，现在<code>8 bit</code>的浮点表示能表示的数值区间更大。</p>
+
+<p>要表示最小正数的话，<code>sign</code>置为0，接下来的<code>4 bits</code>置为<code>0000</code>，最后的<code>mantissa</code>也置为<code>000</code>。那么最终的表示结果就是：<code>$1.000_{(2)} * 2^{-7} = 2^{-7} ≈ 0.0079_{(10)}$</code>。</p>
+
+<p>表示最大正数的话，<code>sign</code>置为0，其他位也都置为1。最终表示的结果：<code>$1.111_{(2)} * 2^{8} = 111100000_{(2)} = 480_{(10)}$</code>。所以<code>8 bits</code>浮点表示的正数范围<code>(0.0079, 480]</code>。而<code>8 bits</code> 二进制表示的范围是<code>[1, 127]</code>。范围确实大了很多。</p>
+
+<p>但是必须注意：<strong>浮点数无法准确表示该区间内的所有数</strong>。拿十进制51来说，用二进制表示是<code>110011</code>。转化为<code>8 bits</code>的浮点数表示：<code>$110011_{(2)} = 1.10011_{(2)}*2^{5}$</code>。当我们试着去存储的时候，发现<code>3 bits</code>的<code>mantissa</code>放不下现在的<code>10011</code>。我们不得不做近似取值，将结果修改为<code>$1.101_{(2)} * 2^{5} = 110100_{(2)} = 52_{(10)}$</code>。所以，在我们<code>8 bits</code> 表达的浮点数中<code>51 = 52</code>。这样的处理有时候让我们很无奈，但这也是为了让<code>8 bits</code>表示更大范围的数所必须付出的代价。</p>
+
+<p>从上面的过程中，我们还可以理解在计算中<code>round up</code>和<code>round down</code>的策略。当小数点后的数超过<code>3 bit</code>时，就是展现这个策略的时候。拿<code>19</code>举例，表示成二进制科学计数法：<code>$1.0011 * 2^4$</code>。如果执行<code>round up</code>，最终的结果就是<code>$1.010_{(2)} * 2^4 = 20_{(10)}$</code>。如果执行<code>round down</code>，结果便是<code>$1.001_{(2)} * 2^4 = 18$</code>。</p>
+
+<p>如果我们要提高浮点数表达的精度，<code>mantissa</code>区间就需要更多的<code>bit</code>来表示。拿<code>float32</code>来举例，它是<code>1 bit</code>的<code>sign</code>，<code>8 bits</code>的<code>exponent</code>以及<code>23 bits</code>表示的<code>mantissa</code>。</p>
+
+<h2 id="ieee-standard"><code>IEEE standard</code></h2>
+
+<p>该标准定义了更长的<code>bit</code>来提高表达的精度和范围。</p>
+
+<h3 id="1-ieee-formats"><code>1. IEEE formats</code></h3>
+
+<p>它定义了上面描述的<code>sign</code>、<code>exponent</code>、<code>mantissa</code>以及<code>excess</code>(就是<code>8 bits</code>表示过程中用到的7)。</p>
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th>sign</th>
+<th>exponent</th>
+<th>mantissa</th>
+<th>exponent</th>
+<th>significant</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>format</td>
+<td>bit</td>
+<td>bits</td>
+<td>bits</td>
+<td>excess</td>
+<td>digits</td>
+</tr>
+
+<tr>
+<td>Our 8-bit</td>
+<td>1</td>
+<td>4</td>
+<td>3</td>
+<td>7</td>
+<td>1</td>
+</tr>
+
+<tr>
+<td>Our 16-bit</td>
+<td>1</td>
+<td>6</td>
+<td>9</td>
+<td>31</td>
+<td>3</td>
+</tr>
+
+<tr>
+<td>IEEE 32-bit</td>
+<td>1</td>
+<td>8</td>
+<td>23</td>
+<td>127</td>
+<td>6</td>
+</tr>
+
+<tr>
+<td>IEEE 64-bit</td>
+<td>1</td>
+<td>11</td>
+<td>52</td>
+<td>1,023</td>
+<td>15</td>
+</tr>
+
+<tr>
+<td>IEEE 128-bit</td>
+<td>1</td>
+<td>15</td>
+<td>112</td>
+<td>16,383</td>
+<td>34</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="2-非数值"><code>2. 非数值</code></h3>
+
+<p>顾名思义：<code>not a number</code>，程序中偶尔会看到的<code>NaN</code>。比如<code>0/0</code>、<code>∞ + −∞</code>等。这类数值在表示中<code>exponent</code>都是1。</p>
+
+<h3 id="3-运算"><code>3. 运算</code></h3>
+
+<p>讨论 <code>x + (y + z)</code> 和 <code>(x + y) +z</code>的结果是否相同，拿上面<code>8 bits</code>的浮点数表示来说明。其中<code>x=1</code>，<code>y=52</code>，<code>z= -52</code>。我们注意到<code>y+z = 0</code>，所以第一个计算结果是1。但<code>(x+y)</code>的结果仍然是<code>52</code>，这主要是因为<code>mantissa</code>无法表示，导致最终结果取近似值还是52，最终结果是0。</p>
+
+<p>另外一个例子：<code>1/6 + 1/6 + 1/6 + 1/6 + 1/6 + 1/6 = 1</code>等式也是不存在的。在<code>8 bits</code>的表示中无法准确的表示<code>1/6</code>，所以最终的结果要比1小。</p>
+
+<p>在程序开发过程中，我们必须意识到这类问题产生的影响。</p>
+
+<h2 id="float-to-float">float to float</h2>
+
+<p><code>Round</code>返回最近的整数，但返回值是一个<code>float64</code>类型。返回值是四舍五入后的结果。</p>
+
+<pre><code class="language-gol">a := math.Round(12.3456)
+//output: 12
+</code></pre>
+
+<p>相对应的函数，还有<code>Floor</code>和<code>Ceil</code></p>
+
+<pre><code class="language-golang">// Floor returns the greatest integer value less than or equal to x.
+// output: 12
+a := math.Floor(12.3456)
+
+// Ceil returns the least integer value greater than or equal to x.
+// output: 13
+a := math.Ceil(12.3456)
+</code></pre>
+
+<h2 id="match-big"><code>match/big</code></h2>
+
+<p>关于浮点数的比较：</p>
+
+<pre><code class="language-gol">// change these value and play around
+float1 := 123.4568
+float2 := 123.45678
+
+// convert float to type math/big.Float
+var bigFloat1 = big.NewFloat(float1)
+var bigFloat2 = big.NewFloat(float2)
+
+// compare bigFloat1 to bigFloat2
+result := bigFloat1.Cmp(bigFloat2)
+</code></pre>
+
+<hr />
+
+<p>参考文章：</p>
+
+<ol>
+<li><a href="https://socketloop.com/tutorials/golang-compare-floating-point-numbers"><code>Golang : Compare floating-point numbers</code></a></li>
+<li><a href="http://www.toves.org/books/float/#s2.1"><code>Floating-point representation</code></a></li>
+<li><a href="https://www.doc.ic.ac.uk/~eedwards/compsys/float/"><code>Floating Point Numbers</code></a></li>
+</ol>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/translate/" rel="tag">translate</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/golang/" rel="tag">golang</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Neojos avatar" src="/img/avatar.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">About Neojos</span>
+	</div>
+	<div class="authorbox__description">
+		John Doe&rsquo;s true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it.
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/blog/2019/19-01-11-%E6%8E%A2%E8%AE%A8%E5%88%86%E5%B8%83%E5%BC%8Fid%E7%94%9F%E6%88%90%E7%B3%BB%E7%BB%9F/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">探讨分布式ID生成系统</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/blog/2019/19-01-26-grpc%E5%85%A5%E9%97%A8/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">gRPC入门</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 John Doe.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

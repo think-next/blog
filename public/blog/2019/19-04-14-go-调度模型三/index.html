@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Go 调度模型（三） - 渐行渐远</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo logo--mixed">
+		<a class="logo__link" href="/" title="渐行渐远" rel="home">
+			<div class="logo__item logo__imagebox">
+					<img class="logo__img" src="/img/placeholder.png">
+				</div><div class="logo__item logo__text">
+					<div class="logo__title">渐行渐远</div>
+					<div class="logo__tagline">往者不可谏，来者犹可追</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">Go 调度模型（三）</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">Neojos</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2019-04-14T00:00:00Z">2019-04-14</time></div></div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#scheduler-trace">Scheduler Trace</a></li>
+<li><a href="#memory-allocator-trace">Memory Allocator Trace</a></li>
+<li><a href="#spinning-thread">Spinning thread</a></li>
+<li><a href="#执行模型">执行模型</a></li>
+<li><a href="#阻塞模型">阻塞模型</a></li>
+<li><a href="#偷g模型">偷G模型</a></li>
+</ul></li>
+</ul>
+</nav>
+	</div>
+</div>
+<div class="content post__content clearfix">
+			
+
+<blockquote>
+<p><code>别抱怨，也别自怜，所有的现状都是你自己选择的</code></p>
+</blockquote>
+
+<h2 id="scheduler-trace">Scheduler Trace</h2>
+
+<p>GODEBUG 变量可以控制运行时内的调试变量，参数以逗号分隔，格式为：name=val。本文着重点在调度器观察上，将会使用如下两个参数：</p>
+
+<ul>
+<li><p>schedtrace：设置 schedtrace=X 参数可以使运行时在每 X 毫秒发出一行调度器的摘要信息到标准 err 输出中。</p></li>
+
+<li><p>scheddetail：设置 schedtrace=X 和 scheddetail=1 可以使运行时在每 X 毫秒发出一次详细的多行信息，信息内容主要包括调度程序、处理器、OS 线程 和 Goroutine 的状态。</p>
+
+<pre><code>GODEBUG=schedtrace=1000 go run ./main.go
+GODEBUG=schedtrace=1000,scheddetail=1 go run ./main.go
+</code></pre></li>
+</ul>
+
+<p>以下面的输出为例：gomaxprocs是当前的GOMAXPROC值，runqueue为全局可运行队列的长度。</p>
+
+<pre><code>➜  one-case go version
+go version go1.13.4 darwin/amd64
+
+➜  one-case GOMAXPROCS=1 GODEBUG=schedtrace=1000 go run ./main.go
+SCHED 0ms: gomaxprocs=1 idleprocs=0 threads=3 spinningthreads=0 idlethreads=0 runqueue=0 [2]
+# command-line-arguments
+SCHED 0ms: gomaxprocs=4 idleprocs=1 threads=4 spinningthreads=1 idlethreads=0 runqueue=0 [1 0 0 0]
+# command-line-arguments
+SCHED 0ms: gomaxprocs=1 idleprocs=0 threads=3 spinningthreads=0 idlethreads=0 runqueue=0 [2]
+SCHED 0ms: gomaxprocs=1 idleprocs=0 threads=3 spinningthreads=0 idlethreads=1 runqueue=0 [0]
+SCHED 1009ms: gomaxprocs=1 idleprocs=1 threads=9 spinningthreads=0 idlethreads=2 runqueue=0 [0]
+SCHED 1008ms: gomaxprocs=1 idleprocs=0 threads=3 spinningthreads=0 idlethreads=1 runqueue=0 [0]
+</code></pre>
+
+<h2 id="memory-allocator-trace">Memory Allocator Trace</h2>
+
+<p>GODEBUG 中指定输出申请内存的 trace 信息:</p>
+
+<pre><code>GODEBUG=allocfreetrace=1,scheddetail=1 go run ./main
+</code></pre>
+
+<h2 id="spinning-thread">Spinning thread</h2>
+
+<p>调度器总是试图让M尽可能多的执行G，来达到充分利用CPU的目的。在抢占式调度中，OS线程之间频繁的传递G，会增加系统延迟。此外，线程还会阻塞在系统调用上，这也会增加额外的开销。为了减少线程间传递G的影响，Go调度实现了<code>Spinning threads</code>。一个线程是<code>Sponning threads</code>:</p>
+
+<ul>
+<li>绑定P的M正在获取可运行的G</li>
+<li>没有绑定P的M正在试图获取P</li>
+<li>当存在一个可执行的G，但是没有空闲的P以及没有自旋的线程时，调度器会创建一个自旋的线程。</li>
+</ul>
+
+<p>系统在任一时刻，最多有GOMAXPROCS自旋的M。当一个新的G被创建，或者M被阻塞时，调度器会确保至少存在一个自旋的M。</p>
+
+<h2 id="执行模型">执行模型</h2>
+
+<p>前面的章节中，我们介绍了操作系统的调度模型：<code>N:1</code>、<code>1:1</code>、<code>M:N</code>。而<code>Go</code>采用了更高效的方式<code>M:N</code>。从进程的角度来说，线程是最小的调度单元。而<code>Go</code>的模型下，可以把<code>P</code>作为最小单元的调度单元，即在单个线程上运行的<code>Go</code>代码。</p>
+
+<p>下图展示了<code>Go</code>的最小调度单元模型。其中的有两个线程，各维持一个<code>P</code>对象，而且正在执行一个<code>G</code>代码。为了运行<code>G</code>，<code>M</code>必须首先持有<code>P</code>对象。图中灰色的<code>G</code>表示还没有被执行，等待被调度。它们被组织在<code>P</code>的一个<code>runqueues</code>的队列中，当<code>M</code>创建新的<code>Goroutine</code>时，对应的<code>G</code>就会被追加到该队列的末尾。</p>
+
+<p><img src="http://morsmachine.dk/in-motion.jpg" alt="" /></p>
+
+<h2 id="阻塞模型">阻塞模型</h2>
+
+<p>为什么要引入<code>P</code>结构，直接将<code>runqueues</code>放在<code>M</code>中，不就可以摆脱<code>P</code>了吗？当然不行，它存在的意义还在于：当<code>M</code>因为其他原因被阻塞时，我们需要将<code>runqueues</code>中的<code>G</code>交给别的<code>M</code>来继续处理。因为线程不可能既执行代码，又阻塞在系统上。</p>
+
+<p><img src="https://i.loli.net/2019/04/14/5cb34717549c3.jpg" alt="" /></p>
+
+<p>如上图所示，当<code>M0</code>阻塞在系统调用上时，它会放弃自己的<code>P</code>，以保证<code>M1</code>可以继续执行其他<code>G</code>。当<code>M0</code>系统调用返回时，<code>M0</code>为了继续执行<code>G0</code>，就必须尝试重新获取<code>P</code>对象。正常的执行流程是：它尝试去偷其它线程的<code>P</code>，如果不行，就将<code>G0</code>放到全局的<code>runqueues</code>中，之后进入休眠。</p>
+
+<p>当<code>P</code>本地的<code>runqueues</code>运行完之后，<code>M</code>会去全局队列取<code>G</code>来执行。同时，全局队列的<code>G</code>也会被间歇性检查，否则里面的<code>G</code>可能永远都得不到执行了。</p>
+
+<h2 id="偷g模型">偷G模型</h2>
+
+<p>当<code>runqueues</code>分布不均衡时，可能存在其中一个<code>M</code>执行完了本地的<code>P</code>，而其他<code>P</code>的本地队列还有很多<code>G</code>等待被执行。如图所示，为了去继续运行<code>Go</code>代码，<code>P1</code>首先会尝试去全局队列获取。如果全局队列没有，那么它就会随机从别的<code>P</code>去偷一半回来。这样做也是用来保证所有线程都一直有工作可以做。</p>
+
+<p><img src="https://i.loli.net/2019/04/14/5cb34b150acc2.jpg" alt="" /></p>
+
+<p>参考文章：</p>
+
+<ol>
+<li><a href="http://morsmachine.dk/go-scheduler"><code>The Go scheduler</code></a></li>
+</ol>
+
+		</div>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Neojos avatar" src="/img/avatar.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">About Neojos</span>
+	</div>
+	<div class="authorbox__description">
+		John Doe&rsquo;s true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it.
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/blog/2019/19-04-07-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">设计模式-适配器模式</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/blog/2019/19-04-21-go-module%E4%B8%80/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">Go Module（一）</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 John Doe.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

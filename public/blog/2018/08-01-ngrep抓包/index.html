@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>ngrep抓包 - 渐行渐远</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo logo--mixed">
+		<a class="logo__link" href="/" title="渐行渐远" rel="home">
+			<div class="logo__item logo__imagebox">
+					<img class="logo__img" src="/img/placeholder.png">
+				</div><div class="logo__item logo__text">
+					<div class="logo__title">渐行渐远</div>
+					<div class="logo__tagline">往者不可谏，来者犹可追</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">ngrep抓包</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">Neojos</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2018-08-01T00:00:00Z">2018-08-01</time></div></div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#example"><code>Example</code></a></li>
+<li><a href="#options"><code>Options</code></a></li>
+<li><a href="#结果示例"><code>结果示例</code></a></li>
+</ul></li>
+</ul>
+</nav>
+	</div>
+</div>
+<div class="content post__content clearfix">
+			
+
+<p>简单的工具其实挺有用的。警告：不许瞧不起工具，尤其是你还不会用的工具。</p>
+
+<p><code>ngrep</code>还是之前跟花椒直播的同事对接项目时，了解到的一个工具。它可以用来抓取服务器上通过网卡的所有请求。跟<code>tcpdump</code>差不多，但却更简单。<code>tcpdump</code>需要借助<code>Wireshark</code>才可以将请求完美展示出来，但这个就跟使用<code>grep</code>一样。</p>
+
+<p>以前专门请教过一个同事如何使用<code>Wireshark</code>分析网络请求，自己也专门看了相关的<code>Wireshark</code>操作。但最终却发现，如果是抓客户端的请求(非分析<code>TCP</code>)，<code>Wireshark</code>使用起来并不方便。而如果分析的是服务端之间的请求，还需要借助<code>tcpdump</code>先来把请求记录下来，然后再到<code>Wireshark</code>中打开分析。</p>
+
+<h2 id="example"><code>Example</code></h2>
+
+<p>经常使用的模式</p>
+
+<pre><code># 匹配特定host
+ngrep -q host api.open.huajiao.com -d any -W byline
+
+# 匹配特定host和端口
+ngrep –q host api.open.huajiao.com and port 80  –W byline 
+
+# 报文中包含&quot;search&quot;关键字
+ngrep –q –W byline &quot;search&quot; host www.google.com and port 80 
+</code></pre>
+
+<h2 id="options"><code>Options</code></h2>
+
+<p>详细还是通过<code>man</code>直接查看工具说明吧！这里列举一个：</p>
+
+<pre><code>-d  By default  ngrep will select a default interface to listen on.
+          Use this option to force ngrep to listen on interface dev.
+</code></pre>
+
+<h2 id="结果示例"><code>结果示例</code></h2>
+
+<p>以下是命令输出的结果，跟<code>curl</code>是不是很像：</p>
+
+<pre><code>interface: any
+filter: ( host api.open.huajiao.com ) and (ip or ip6)
+
+T **.***.***.***:80 -&gt; **.***.***.***:56181 [AP]
+HTTP/1.1 200 OK.
+Server: nginx/1.2.9.
+Date: Wed, 15 Feb 2017 09:18:07 GMT.
+Content-Type: application/json.
+Transfer-Encoding: chunked.
+Connection: close.
+Cache-Control: no-store.
+.
+48.
+{&quot;errno&quot;:35,&quot;errmsg&quot;:&quot;\u670d\u52a1\u5668\u88ab\u62d2\u7edd&quot;,&quot;consume&quot;:6}.
+0.
+.
+</code></pre>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/linux/" rel="tag">linux</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/tools/" rel="tag">tools</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/net/" rel="tag">net</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Neojos avatar" src="/img/avatar.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">About Neojos</span>
+	</div>
+	<div class="authorbox__description">
+		John Doe&rsquo;s true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it.
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/blog/2018/07-28-tcp-server-design/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">Tcp Server Design</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/blog/2018/08-04-ip-routing/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">IP Routing</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 John Doe.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Go反射 - 渐行渐远</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo logo--mixed">
+		<a class="logo__link" href="/" title="渐行渐远" rel="home">
+			<div class="logo__item logo__imagebox">
+					<img class="logo__img" src="/img/placeholder.png">
+				</div><div class="logo__item logo__text">
+					<div class="logo__title">渐行渐远</div>
+					<div class="logo__tagline">往者不可谏，来者犹可追</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">Go反射</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">Neojos</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2018-05-31T00:00:00Z">2018-05-31</time></div></div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#概述"><code>概述</code></a></li>
+<li><a href="#reflect-value"><code>reflect.Value</code></a></li>
+<li><a href="#查找指定的-field">查找指定的<code>Field</code></a></li>
+<li><a href="#将-value-转换为-interface-类型">将<code>value</code>转换为<code>interface</code>类型</a></li>
+<li><a href="#安全设置结构体中的值">安全设置结构体中的值</a></li>
+</ul></li>
+</ul>
+</nav>
+	</div>
+</div>
+<div class="content post__content clearfix">
+			
+
+<blockquote>
+<p><code>人生的挫折感并不取决于境遇本身，而取决于境遇和自我期待之间的落差。</code></p>
+</blockquote>
+
+<h2 id="概述"><code>概述</code></h2>
+
+<p>对<code>interface</code>类型操作，如何对内部的值进行处理和分析。比如判断<code>interface</code>是否底层存储的是<code>struct</code>类型，以及该<code>struct</code>是否含有某个特定的<code>Field</code>值。</p>
+
+<p><code>interface</code>类型包含两部分内容：<code>dynamic type</code>和<code>dynamic value</code>。当转换为<code>interface</code>类型后（操作是默认的），原类型下声明的方法，<code>interface</code>类型就无法再调用了。</p>
+
+<p>实际工作中，<code>interface</code>类型会接收任意类型的值，处理的过程很多都是通过<code>reflect</code>实现的。</p>
+
+<h2 id="reflect-value"><code>reflect.Value</code></h2>
+
+<p><code>reflect</code>里两个主要角色：<code>Value</code>和<code>Type</code>。<code>Value</code>用于处理值的操作，反射过程中处理的值是原始值的值拷贝，所以操作中要注意区分值传递和地址传递。</p>
+
+<p>对于指针类型的值，只有获取其原始值，才可以达到修改的目的。如下所示，<code>obj</code>实际类型是一个<code>struct</code>的指针，想要将其转换成“值类型”，调用<code>Elem</code>方法来实现。</p>
+
+<pre><code class="language-go">//获取指针的实际类型
+v := reflect.ValueOf(obj)       //Kind == Ptr
+v = v.Elem()
+if v.Kind() != reflect.Struct {
+    return NewError(http.ErrorInvalidParam, &quot;interface类型必须是struct结构&quot;, nil)
+}
+</code></pre>
+
+<p>一些其他的操作，比如通过<code>reflect.Value</code>获取<code>reflect.Type</code>类型，通过诸如<code>Index</code>、<code>Elem</code>、<code>MapIndex</code>、<code>Field</code>等来操作不同的数据类型，当然调用前最好结合<code>Kind</code>对实际类型进行判断，保证调用的安全性。</p>
+
+<h2 id="查找指定的-field">查找指定的<code>Field</code></h2>
+
+<p>我们假设<code>struct</code>中包含有某个特殊<code>Field</code>，那么在接口层面该如何进行判断呢？比如，查看结构体中是否含有<code>Data</code>的<code>Field</code>.</p>
+
+<p><code>reflect</code>本身提供了多种判断形式。以<code>FieldByName</code>为例，<code>Type</code>和<code>Value</code>都实现了该方法，但返回值不相同。<code>reflect</code>要求调用的值本身需要是<code>struct</code>类型才可以。</p>
+
+<pre><code class="language-go">h := v.FieldByName(HeaderHField)    //HeaderHField为自定义常亮
+if h.IsValid() {
+	
+}
+</code></pre>
+
+<h2 id="将-value-转换为-interface-类型">将<code>value</code>转换为<code>interface</code>类型</h2>
+
+<p><code>reflect</code>操作的<code>interface</code>类型，即由<code>interface</code>转换为<code>reflect.Value</code>类型，同样，逆向的转换也是可以的。</p>
+
+<p>它提供了<code>interface()</code>方法。转换之后，我们就可以继续使用断言进行实际类型转换了。</p>
+
+<pre><code class="language-go">value := h.Interface()      //将value转换为interface
+customHead, isOk := value.(string)  //  断言为string类型
+</code></pre>
+
+<h2 id="安全设置结构体中的值">安全设置结构体中的值</h2>
+
+<p>为了使反射过程变得更安全，需要了解几个函数</p>
+
+<ol>
+<li><a href="https://golang.org/pkg/reflect/#Value.CanAddr">CanAddr</a></li>
+</ol>
+
+<blockquote>
+<p><code>CanAddr reports whether the value's address can be obtained with Addr. Such values are called addressable. A value is addressable if it is an element of a slice, an element of an addressable array, a field of an addressable struct, or the result of dereferencing a pointer. If CanAddr returns false, calling Addr will panic.</code></p>
+</blockquote>
+
+<ol>
+<li><a href="https://golang.org/pkg/reflect/#Value.CanSet">CanSet</a></li>
+</ol>
+
+<blockquote>
+<p><code>CanSet reports whether the value of v can be changed. A Value can be changed only if it is addressable and was not obtained by the use of unexported struct fields. If CanSet returns false, calling Set or any type-specific setter (e.g., SetBool, SetInt) will panic.</code></p>
+</blockquote>
+
+<p>在使用函数时，还要注意到函数内部的限制。比如<code>FieldByName</code>要求作用的对象类型必须是结构体。所以，在操作之前一定要做好类型判断：<code>v.Kind() != reflect.Struct</code>。</p>
+
+<pre><code class="language-go">// FieldByName returns the struct field with the given name.
+// It returns the zero Value if no field was found.
+// It panics if v's Kind is not struct.
+func (v Value) FieldByName(name string) Value {
+	v.mustBe(Struct)
+	if f, ok := v.typ.FieldByName(name); ok {
+		return v.FieldByIndex(f.Index)
+	}
+	return Value{}
+}
+</code></pre>
+
+<p>参考文章：</p>
+
+<ol>
+<li><a href="https://juejin.im/post/5a75a4fb5188257a82110544">Golang的反射reflect深入理解和示例</a></li>
+<li><a href="https://stackoverflow.com/questions/6395076/using-reflect-how-do-you-set-the-value-of-a-struct-field/6396678#6396678"><code>Using reflect, how do you set the value of a struct field?</code></a></li>
+</ol>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/golang/" rel="tag">golang</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Neojos avatar" src="/img/avatar.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">About Neojos</span>
+	</div>
+	<div class="authorbox__description">
+		John Doe&rsquo;s true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it.
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/blog/2018/05-15-shell%E6%93%8D%E4%BD%9C%E6%96%87%E6%9C%AC%E5%AE%9E%E4%BE%8B/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">shell操作文本实例</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/blog/2018/06-08-%E8%AE%A2%E5%8D%95%E7%B3%BB%E7%BB%9F%E5%88%9D%E8%AF%86/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">订单系统初识</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 John Doe.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

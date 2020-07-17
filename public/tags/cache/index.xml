@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Cache on 渐行渐远</title>
+    <link>https://neojos.com/tags/cache/</link>
+    <description>Recent content in Cache on 渐行渐远</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 21 Jan 2018 15:48:33 +0000</lastBuildDate>
+    
+	<atom:link href="https://neojos.com/tags/cache/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Memcached遇到的json_decode问题</title>
+      <link>https://neojos.com/blog/2018/01-21-memcached%E9%81%87%E5%88%B0%E7%9A%84json_decode%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Sun, 21 Jan 2018 15:48:33 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/01-21-memcached%E9%81%87%E5%88%B0%E7%9A%84json_decode%E9%97%AE%E9%A2%98/</guid>
+      <description>Memcached 是一个高性能的分布式缓存系统，使用Key-Value存储字符串和对象。通常来说，它主要用于缓存从数据库中检索到的数据以及第三方服务的数据等。简单的说，它可以提升服务器的性能。几乎所有的程序语言都可以接入它的API。如下例子所示：</description>
+    </item>
+    
+    <item>
+      <title>Redis学习的惨痛经历</title>
+      <link>https://neojos.com/blog/2018/01-01-redis%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%83%A8%E7%97%9B%E7%BB%8F%E5%8E%86/</link>
+      <pubDate>Mon, 01 Jan 2018 20:10:33 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/01-01-redis%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%83%A8%E7%97%9B%E7%BB%8F%E5%8E%86/</guid>
+      <description>我们开发的产品类似于 trivago hotel search，Redis也多用来缓存临时数据。比如将操作频繁的流水数据先存储到redis，之后迁移到关系型数据库做持久化。</description>
+    </item>
+    
+  </channel>
+</rss>

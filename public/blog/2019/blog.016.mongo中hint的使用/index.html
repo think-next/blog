@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>mongo中hint的使用 - 渐行渐远</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo logo--mixed">
+		<a class="logo__link" href="/" title="渐行渐远" rel="home">
+			<div class="logo__item logo__imagebox">
+					<img class="logo__img" src="/img/placeholder.png">
+				</div><div class="logo__item logo__text">
+					<div class="logo__title">渐行渐远</div>
+					<div class="logo__tagline">往者不可谏，来者犹可追</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">mongo中hint的使用</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">Neojos</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2019-11-13T00:00:00Z">2019-11-13</time></div></div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		
+	</div>
+</div>
+<div class="content post__content clearfix">
+			<p><code>mongo</code>官方文档对<code>hint</code>的解释如下：</p>
+
+<blockquote>
+<p>The $hint operator forces the query optimizer to use a specific index to fulfill the query. Specify the index either by the index name or by document.</p>
+</blockquote>
+
+<p><code>hint</code>的命令行用法：</p>
+
+<pre><code>db.users.find().hint()
+</code></pre>
+
+<p><code>mongo</code>中使用<code>explain</code>来确定查询使用的索引方案，对比<code>explain</code>的结果，可以反向校验<code>hint</code>的使用。<code>explain</code>的命令行用法:</p>
+
+<pre><code>db.collection.explain()
+</code></pre>
+
+<p><code>github.com/globalsign/mgo</code>下对<code>hint</code>方法的注释如下：</p>
+
+<pre><code class="language-go">// Hint will include an explicit &quot;hint&quot; in the query to force the server
+// to use a specified index, potentially improving performance in some
+// situations.  The provided parameters are the fields that compose the
+// key of the index to be used.  For details on how the indexKey may be
+// built, see the EnsureIndex method.
+</code></pre>
+
+<p><code>hint</code>参数列表是用作索引的字段，更多细节请参考<code>EnsureIndex</code>方法。</p>
+
+<pre><code>// To obtain an index with a descending order,
+// the field name should be prefixed by a dash 
+</code></pre>
+
+<p>组合索引</p>
+
+<p><code>mongo</code>中组合索引称为<a href="https://docs.mongodb.com/manual/indexes/#compound-index"><code>Compound Index</code></a>，不同于<code>MySQL</code>，它可以指定索引字段排列顺序。对于下面的索引：</p>
+
+<pre><code>{ userid: 1, score: -1 }
+</code></pre>
+
+<p>索引先通过<code>userid</code>进行排序，如果<code>user_id</code>相同，再根据<code>score</code>的倒序排。这中形式，对查询有什么影响呢？</p>
+
+<p>从<code>mongo</code>官方文档的例子来尝试理解，索引<code>{ a: 1, b: -1 }</code>支持<code>{ a: 1, b: -1 }</code>和<code>{ a: -1, b: 1 }</code>的排序操作，但不支持<code>{ a: -1, b: -1 }</code>和<code>{a: 1, b: 1}</code>的操作。</p>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/mongo/" rel="tag">mongo</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Neojos avatar" src="/img/avatar.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">About Neojos</span>
+	</div>
+	<div class="authorbox__description">
+		John Doe&rsquo;s true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it.
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/blog/2019/blog.015-go.1.13%E4%B8%AD%E7%9A%84modules.2019.11.12/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">go.1.13中的Modules</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/blog/2019/19-12-08-protocol-stack/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">protocol stack</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 John Doe.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

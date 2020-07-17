@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>mongo EOF（二） - 渐行渐远</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo logo--mixed">
+		<a class="logo__link" href="/" title="渐行渐远" rel="home">
+			<div class="logo__item logo__imagebox">
+					<img class="logo__img" src="/img/placeholder.png">
+				</div><div class="logo__item logo__text">
+					<div class="logo__title">渐行渐远</div>
+					<div class="logo__tagline">往者不可谏，来者犹可追</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">mongo EOF（二）</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">Neojos</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2019-05-11T00:00:00Z">2019-05-11</time></div></div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#depends-on">depends_on</a></li>
+<li><a href="#entrypoint">entrypoint</a></li>
+<li><a href="#调整-creator-中的-entrypoint-指令">调整<code>creator</code>中的<code>entrypoint</code>指令</a></li>
+<li><a href="#容器访问">容器访问</a></li>
+<li><a href="#启动服务">启动服务</a></li>
+<li><a href="#总结">总结</a></li>
+</ul></li>
+</ul>
+</nav>
+	</div>
+</div>
+<div class="content post__content clearfix">
+			
+
+<blockquote>
+<p><code>任何事情的成功都需要掐准时间</code></p>
+</blockquote>
+
+<p>上一节<code>mongo EOF</code>中，关于容器的配置，只是粗略的使用了<a href="https://github.com/yowko/Docker-Compose-MongoDB-Replica-Set"><code>Docker-Compose-MongoDB-Replica-Set</code></a>项目提供好的<code>docker-compose.yml</code>文件。在使用过程中，我发现这个文件本身一些不如意的地方。首先，<code>services</code>中的<code>creator</code>服务，<code>entrypoint</code>指令太长了，不美；其次，所有的<code>service</code>都没有给容器外部暴露端口，导致外部无法访问容器；再次，直接使用<code>mongo repliSet</code>的连接串进行访问，无法正常访问<code>mongo</code>服务。</p>
+
+<p>在上一篇文章的基础上，这篇文章对<code>docker-compse.yml</code>做了一些调整，并且也包含了<code>docker</code>使用的入门介绍。更新后的<code>docker-compose.yml</code>请访问<a href="https://github.com/GitHubSi/Docker-Compose-MongoDB-Replica-Set">githubsi</a>。</p>
+
+<h2 id="depends-on">depends_on</h2>
+
+<blockquote>
+<p>However, for startup Compose does not wait until a container is “ready” (whatever that means for your particular application) - only until it’s running. <a href="https://docs.docker.com/compose/startup-order/">There’s a good reason for this</a>.</p>
+</blockquote>
+
+<p>在<code>creator service</code>中使用了该指令， 但是，实际中<code>creator</code>不会等到<code>mongo1</code>、<code>mongo2</code>、<code>mongo3</code>容器<code>ready</code>后再启动，而是等到它们启动就开始启动。这也是我在<code>setup</code>脚本中执行<code>sleep</code>操作的原因。</p>
+
+<pre><code class="language-yml">creator:
+    build:
+      context: .
+      dockerfile: dockerfile
+    entrypoint: [&quot;/data/conf/setup.sh&quot;]
+    depends_on:
+      - mongo1
+      - mongo2
+      - mongo3
+</code></pre>
+
+<h2 id="entrypoint">entrypoint</h2>
+
+<blockquote>
+<p>Entrypoint sets the command and parameters that will be executed first when a container is run.</p>
+</blockquote>
+
+<p>entrypoint设置了容器启动时执行的命令和参数，传递给<code>docker run &lt;image&gt;</code>的参数都将追加到<code>entrypoint</code>命令之后，并且会覆盖<code>CMD</code>命令。比如，<code>docker run &lt;image&gt; bash</code> 将会追加<code>bash</code>到<code>entrypoint</code>命令末尾。</p>
+
+<p>命令的语法格式：</p>
+
+<pre><code class="language-dockerfile">ENTRYPOINT [&quot;executable&quot; &quot;param1&quot; &quot;param2&quot;]
+</code></pre>
+
+<p>在修改后的<code>docker-compose.yml</code>中，<code>entrypoint</code>指令用于执行<code>shell</code>脚本。按照规范来说，可执行文件名称中需要包含<code>entrypoint</code>字段，也就是将下列指令中的<code>setup.sh</code>重命名为<code>setup-entrypoint.sh</code>。但是，重命名之后的文件，容器执行会报错，所以，这里也并没有使用这个规范。</p>
+
+<pre><code class="language-yml">entrypoint: [&quot;/data/conf/setup.sh&quot;]
+</code></pre>
+
+<h2 id="调整-creator-中的-entrypoint-指令">调整<code>creator</code>中的<code>entrypoint</code>指令</h2>
+
+<p>原始的文件如下所示，<code>entrypoint</code>指令的参数非常难看：</p>
+
+<pre><code class="language-yml">creator:
+    build: creator
+    entrypoint: [&quot;mongo&quot;,&quot;--host&quot;,&quot;mongo1&quot;,&quot;--port&quot;,&quot;27017&quot;,&quot;--eval&quot;, 'rs.initiate( { _id : &quot;rs0&quot;,members: [{ _id: 0, host: &quot;mongo1:27017&quot; },{ _id: 1, host: &quot;mongo2:27017&quot; },{ _id: 2, host: &quot;mongo3:27017&quot; }   ]})']
+    depends_on:
+      - mongo1
+      - mongo2
+      - mongo3
+</code></pre>
+
+<p>如果将<code>entrypoint</code>的执行命令提取到一个单独的的脚本中，会让整个页面看起来更加简洁。所以，新建一个<code>setup.sh</code>文件。其中的<a href="https://github.com/GitHubSi/Docker-Compose-MongoDB-Replica-Set/blob/master/replicaSet.js"><code>replicaSet.js</code></a>用于执行<code>rs.initiate</code>操作，详情可以查看<code>github</code>项目。其中的<code>sleep</code>指令只是为了保证：在执行<code>initiate</code>时<code>mongo</code>的3个服务都启动了。</p>
+
+<pre><code class="language-shell">#! /bin/bash
+
+echo &quot;******************************&quot;
+echo Start the replica set
+echo `date`
+echo &quot;******************************&quot;
+
+sleep 20 | echo Sleeping
+echo `date`
+
+mongo mongodb://mongo1:37017 replicaSet.js
+</code></pre>
+
+<p>相应的，我们需要调整<code>creator</code>的<code>dockerfile</code>文件，因为此时的容器内，并没有我们需要的相关文件。我们需要在创建镜像的时候，拷贝本地文件到容器。调整后的文件如下：</p>
+
+<pre><code class="language-dockerfile">FROM mongo:4.0.4
+
+MAINTAINER Yowko Tsai &lt;yowko@yowko.com&gt;
+
+WORKDIR /data/conf
+
+COPY ./setup.sh /data/conf/setup.sh
+COPY ./replicaSet.js /data/conf/replicaSet.js
+
+CMD [&quot;./setup.sh&quot;]
+</code></pre>
+
+<p>在项目的目录下，我们单独编译<code>creator</code>的<code>dockerfile</code>文件，已保证调整是有效的。</p>
+
+<pre><code class="language-shell">docker build .
+docker run &lt;image&gt;
+</code></pre>
+
+<h2 id="容器访问">容器访问</h2>
+
+<p>以<code>mongo1</code>为例，在原始的文件中，<code>docker-compose.yml</code>如下：</p>
+
+<pre><code class="language-yml">mongo1:
+    container_name: mongo1
+    image: mongo:4-xenial
+    expose:
+      - 27017
+    restart: always
+    entrypoint: [ &quot;mongod&quot;, &quot;--bind_ip_all&quot;, &quot;--replSet&quot;, &quot;rs0&quot; ]
+</code></pre>
+
+<p>上面的配置，本地主机是无法访问容器的，我们至少需要暴露出一个端口。下面通过添加<code>ports</code>来指定容器外到容器内的端口映射。在<a href="https://neojos.com/blog/2019/2019-04-27-mongo-eof/">上一篇</a>中已经介绍过<code>ports</code>和<code>expose</code>的相关内容，感兴趣的可以去查看。之后，我们就可以通过37017端口来访问容器内的<code>mongo1</code>服务了。</p>
+
+<pre><code class="language-yml">mongo1:
+    container_name: mongo1
+    image: mongo:4.0.4
+    expose:
+      - 37017
+    ports:
+      - &quot;37017:37017&quot;
+    restart: always
+    entrypoint: [ &quot;mongod&quot;, &quot;--port&quot;, &quot;37017&quot;, &quot;--bind_ip_all&quot;, &quot;--replSet&quot;, &quot;rs0&quot; ]
+</code></pre>
+
+<p>查看<a href="https://docs.mongodb.com/manual/reference/default-mongodb-port/">Default MongoDB Port</a>，<code>mongod</code>的默认端口其实是27017，而这里写成37017也是有原因的。未修改之前<code>mongod</code>的端口映射，如下所示。每个容器中的<code>mongo</code>服务都使用默认的27017端口，通过暴露不通的宿主主机端口来达到区分容器服务的目的。</p>
+
+<pre><code class="language-yml">mongo1:
+    container_name: mongo1
+    image: mongo:4.0.4
+    expose:
+      - 27017
+    ports:
+      - &quot;27017:27017&quot;
+    restart: always
+    entrypoint: [ &quot;mongod&quot;, &quot;--bind_ip_all&quot;, &quot;--replSet&quot;, &quot;rs0&quot; ]
+  mongo2:
+    container_name: mongo2
+    image: mongo:4.0.4
+    expose:
+      - 27017
+    ports:
+      - &quot;27018:27017&quot;
+    restart: always
+    entrypoint: [ &quot;mongod&quot;, &quot;--bind_ip_all&quot;, &quot;--replSet&quot;, &quot;rs0&quot; ]
+  mongo3:
+    container_name: mongo3
+    image: mongo:4.0.4
+    expose:
+      - 27017
+    ports:
+      - &quot;27019:27017&quot;
+    restart: always
+    entrypoint: [ &quot;mongod&quot;, &quot;--bind_ip_all&quot;, &quot;--replSet&quot;, &quot;rs0&quot; ]
+</code></pre>
+
+<p>在单独连接<code>mongo</code>服务的时候，这样的配置是没有任何问题的。我们在命令行输入<code>mongo</code>，也会连接到其中任意一个<code>mongo</code>服务。如果恰好连接的不是<code>PRIMARY</code>节点，可以执行<code>rs.slaveOk()</code>来执行查询。</p>
+
+<p>但当使用<code>replicaSet</code>连接串来访问<code>mongo</code>服务时，连接却会失败。看看这个连接串，感觉不出任何问题。</p>
+
+<pre><code>mongo mongodb://127.0.0.1:27017,127.0.0.1:27018,127.0.0.1:27019/admin?replicaSet=rs0
+</code></pre>
+
+<p>看了报错信息，才明白：当执行连接的时候，<code>mongo</code>会拉取<code>replica set</code>的配置信息，而通过<code>host</code>去访问的时候失败了。很明显：<code>docker-compose</code>容器内可以将<code>server name</code>当作<code>host</code>来相互访问，但在容器外通过<code>server name</code>是访问不通的。</p>
+
+<pre><code>changing hosts to rs0/mongo1:27017,mongo2:27017,mongo3:27017 from rs0/127.0.0.1:27017,127.0.0.1:27018,127.0.0.1:27019
+</code></pre>
+
+<p>另外，你还可以在容器内部打开<code>/etc/hosts</code>文件，查看容器内映射的ip地址，容器外也是ping不通的。我们可以通过下面的指令进入容器查看：</p>
+
+<pre><code class="language-shell">docker exec -it &lt;container-id&gt; bash 
+less /etc/hosts
+</code></pre>
+
+<p>解决的办法是，我们在本地主机上追加<code>host</code>。但这样的话，<code>rs0</code>其实只有一个节点，因为都映射到了<code>127.0.0.1:27017</code>这个容器上。</p>
+
+<pre><code class="language-host"># file: /etc/hosts
+127.0.0.1 mongo1, mongo2, mongo3
+</code></pre>
+
+<p>基于这个原因，我们修改了容器内外暴露的端口。同时，修改各个服务<code>mongod</code>启动时的默认端口以及<code>replica set</code>的配置信息：</p>
+
+<pre><code class="language-yml">mongo1:
+    container_name: mongo1
+    image: mongo:4.0.4
+    expose:
+      - 37017
+    ports:
+      - &quot;37017:37017&quot;
+    restart: always
+    entrypoint: [ &quot;mongod&quot;, &quot;--port&quot;, &quot;37017&quot;, &quot;--bind_ip_all&quot;, &quot;--replSet&quot;, &quot;rs0&quot; ]
+  mongo2:
+    container_name: mongo2
+    image: mongo:4.0.4
+    expose:
+      - 37018
+    ports:
+      - &quot;37018:37018&quot;
+    restart: always
+    entrypoint: [ &quot;mongod&quot;, &quot;--port&quot;, &quot;37018&quot;, &quot;--bind_ip_all&quot;, &quot;--replSet&quot;, &quot;rs0&quot; ]
+  mongo3:
+    container_name: mongo3
+    image: mongo:4.0.4
+    expose:
+      - 37019
+    ports:
+      - &quot;37019:37019&quot;
+    restart: always
+    entrypoint: [ &quot;mongod&quot;, &quot;--port&quot;, &quot;37019&quot;, &quot;--bind_ip_all&quot;, &quot;--replSet&quot;, &quot;rs0&quot; ]
+</code></pre>
+
+<pre><code class="language-js">// file :replicaSet.js
+
+rsconf = {
+    _id: &quot;rs0&quot;,
+    members: [
+        {_id: 0, host: &quot;mongo1:37017&quot;},
+        {_id: 1, host: &quot;mongo2:37018&quot;},
+        {_id: 2, host: &quot;mongo3:37019&quot;}
+    ]
+}
+
+rs.initiate(rsconf);
+rs.conf();
+</code></pre>
+
+<p>做了这些修改，我们就可以正常访问<code>mongo</code>服务了：</p>
+
+<pre><code class="language-shell">mongo mongodb://mongo1:37017,mongo2:37018,mongo3:37019/admin?replicaSet=rs0
+</code></pre>
+
+<h2 id="启动服务">启动服务</h2>
+
+<p>首先，我们看看镜像能不能顺利编译过去：</p>
+
+<pre><code>docker-compose -f docker-compose.yml build
+</code></pre>
+
+<p>其次，我们启动容器服务：</p>
+
+<pre><code>docker-compose -f docker-compose.yml up
+</code></pre>
+
+<p>最后，关闭容器服务。这个命令相当于依次执行<code>docker container stop</code>、<code>docker-compose down</code>，很方便。</p>
+
+<pre><code>docker-compose -f docker-compose.yml down
+</code></pre>
+
+<h2 id="总结">总结</h2>
+
+<p>执行上一篇的测试用例，然后中途关闭一个节点，来查看执行效果。</p>
+
+<p>启动容器：</p>
+
+<pre><code>docker-compose -f docker-compose.yml down
+</code></pre>
+
+<p>查看容器的运行情况：</p>
+
+<pre><code>docker ps
+</code></pre>
+
+<p>关闭其中一个容器：</p>
+
+<pre><code>docker container stop &lt;container-id&gt;
+</code></pre>
+
+<p>服务短暂的输出<code>.no reachable servers</code>错误信息后，由恢复正常了！</p>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/golang/" rel="tag">golang</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/docker/" rel="tag">docker</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Neojos avatar" src="/img/avatar.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">About Neojos</span>
+	</div>
+	<div class="authorbox__description">
+		John Doe&rsquo;s true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it.
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/blog/2019/19-04-27-mongo-eof/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">mongo EOF</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/blog/2019/19-05-18-%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">数据一致性（三）</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 John Doe.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

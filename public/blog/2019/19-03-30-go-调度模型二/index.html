@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Go 调度模型（二） - 渐行渐远</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo logo--mixed">
+		<a class="logo__link" href="/" title="渐行渐远" rel="home">
+			<div class="logo__item logo__imagebox">
+					<img class="logo__img" src="/img/placeholder.png">
+				</div><div class="logo__item logo__text">
+					<div class="logo__title">渐行渐远</div>
+					<div class="logo__tagline">往者不可谏，来者犹可追</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">Go 调度模型（二）</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">Neojos</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2019-03-30T00:00:00Z">2019-03-30</time></div></div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#os-调度结构"><code>OS</code>调度结构</a>
+<ul>
+<li><a href="#single-scheduler"><code>single scheduler</code></a></li>
+<li><a href="#multi-scheduler-with-global-queue"><code>multi scheduler with global queue</code></a></li>
+<li><a href="#multi-scheduler-with-local-queue"><code>multi scheduler with local queue</code></a></li>
+</ul></li>
+<li><a href="#gpm"><code>GPM</code></a></li>
+<li><a href="#m-阻塞"><code>M</code>阻塞</a></li>
+<li><a href="#p-的改进"><code>P</code>的改进</a></li>
+</ul></li>
+</ul>
+</nav>
+	</div>
+</div>
+<div class="content post__content clearfix">
+			
+
+<blockquote>
+<p><code>真的猛士，敢于直面惨淡的人生，敢于正视淋漓的鲜血。这是怎样的哀痛者和幸福者？然而造化又常常为庸人设计，以时间的流驶，来洗涤旧迹，仅使留下淡红的血色和微漠的悲哀。在这淡红的血色和微漠的悲哀中，又给人暂得偷生，维持着这似人非人的世界。我不知道这样的世界何时是一个尽头！</code></p>
+</blockquote>
+
+<p>有一种感觉，<code>Go</code>调度模型可能还得再来几篇博客，才能真正读出感觉来。现在还是一个门外汉。越是深入了解，越觉得知之甚少，后背发凉。</p>
+
+<h2 id="os-调度结构"><code>OS</code>调度结构</h2>
+
+<p><code>Go Runtime</code>实现了自己的调度策略，从<a href="http://wudaijun.com/2018/11/scheduler-blabla/"><code>OS</code>调度结构</a>的演变来看，<strong>调度</strong>思想都是相似的。当然，我始终觉得设计背后的思想才是整个系统的核心。思想从无到有、从中心化到去中心化、从单任务到并行多任务，当然这肯定不是调度策略的专利，在很多场景都有这种思想的体现，比如分布式设计。</p>
+
+<p>那为什么我还是没有一眼看出来呢，可能是阅历太少，思考的深度不够，积极接受现状，懒于了解历史吧。不过，越是去了解，就会发现不会的太多，思维发散的太广，难以为继。</p>
+
+<h3 id="single-scheduler"><code>single scheduler</code></h3>
+
+<p>存在一个全局的任务队列和一个全局的调度器，因为整个过程不需要加锁，所以单核吞吐量很高，但无法充分利用多核资源。</p>
+
+<p>有点类似于：给一个数据表中的所有用户<code>PUSH</code>消息，虽然我们有10台服务器，但我们只在其中一台服务上执行该任务。优点是设计开发简单，缺点是没有充分利用资源，效率不高。</p>
+
+<p><img src="http://i.loli.net/2019/03/28/5c9ce520a0448.png" alt="simple" /></p>
+
+<h3 id="multi-scheduler-with-global-queue"><code>multi scheduler with global queue</code></h3>
+
+<p>多个调度器共享一个全局的任务队列，该模型需要频繁的对任务队列进行加锁，并发性能存在明显的瓶颈。这同时让我想起了<a href="https://neojos.com/blog/2019/19-03-16-%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7%E4%BA%8C/"><code>Go的并发问题</code></a>中介绍的例子，加锁保证了计算的正确性，但却牺牲了效率。当然，这不仅仅是调度系统会面临的问题，比如<a href="https://neojos.com/blog/2018/08-19-%E6%9C%AC%E5%9C%B0%E7%BC%93%E5%AD%98bigcache/">本地缓存BigCache</a>也遇到了同样的问题。</p>
+
+<p>还接着上面的例子说，当在多台服务器上都启动<code>Task</code>执行任务时，为了避免同一个用户不被重复<code>PUSH</code>多次，势必也面临着对单条记录加锁的问题。</p>
+
+<p><img src="https://i.loli.net/2019/03/28/5c9ce520d7a64.png" alt="" /></p>
+
+<h3 id="multi-scheduler-with-local-queue"><code>multi scheduler with local queue</code></h3>
+
+<p>给每个调度器分配一个本地的任务队列，这样调度器就可以无锁的操作本地任务队列，显著减少锁竞争，提高多核下的调度效率。同时还要保证让各个调度器随时都有事情可做，所以也存在一些任务迁移或者任务窃取的方案。到了这里，我们就已经看到了<code>Go Scheduler</code>的雏形。其实思维很简单，将全局的任务队列划分成多个小的任务队列，各个调度器处理自己的任务队列，跟<a href="https://neojos.com/blog/2019/19-03-09-database-sharding/">Database Sharding</a>异曲同工。</p>
+
+<p>继续上面的例子，我们只需要给各个服务器分配用户表的小块数据，当<code>Task</code>执行完分配的数据块后，再去请求新的数据块就可以了。</p>
+
+<p><img src="https://i.loli.net/2019/03/28/5c9ce52100e0a.png" alt="" /></p>
+
+<h2 id="gpm"><code>GPM</code></h2>
+
+<p>现在提到<code>Go Scheduler</code>就会直接想到<code>GPM</code>，但之前的设计里<a href="https://docs.google.com/document/d/1TTj4T2JO42uD5ID9e89oa0sLKhJYD0Y_kqxDv3I3XMw/edit#"><code>Scalable Go Scheduler Design Doc</code></a>其实并不存在<code>P</code>。<code>P</code>的引入直接将调度模型由<code>multi scheduler with global queue</code>跨越到<code>multi scheduler with local queue</code>。</p>
+
+<ul>
+<li>每个<code>Goroutine</code>需要对应一个<code>G</code>结构体，而<code>G</code>保存了当前<code>Goroutine</code>的运行堆栈和状态信息。<code>Goroutine</code>通过<code>G</code>中保存的信息可以执行或恢复执行。</li>
+<li><code>P</code>是专门被引入用来优化原始<code>Go</code>调度系统所抽象的逻辑对象，操作系统并不知道<code>P</code>的存在。对<code>M</code>而言，<code>P</code>提供了其执行的相关环境、以及<code>Goroutine</code>的任务队列等。</li>
+<li><code>M</code>是<code>OS</code>线程的抽象，是物理存在的。<code>M</code>只有和<code>P</code>绑定之后，才可以执行<code>G</code>代码。<code>M</code>本身也不会保存<code>G</code>的状态，在需要任务切换时，<code>M</code>会将堆栈状态保存回<code>G</code>中，任何<code>M</code>都可以根据<code>G</code>中的信息恢复执行。</li>
+</ul>
+
+<h2 id="m-阻塞"><code>M</code>阻塞</h2>
+
+<p>当<code>M</code>准备执行<code>Goroutine</code>时，首选需要关联一个<code>P</code>，然后从<code>P</code>的队列中取出一个<code>G</code>来执行。如果<code>G</code>中执行的代码使<code>M</code>发生阻塞，比如唤起系统调用。那么<code>M</code>将会一直阻塞，直到系统调用返回。此时全局空闲<code>M</code>队列的另一个<code>M</code>会被唤醒，同时，阻塞状态的<code>M</code>会与<code>P</code>解绑。这样做也是为了保证其他<code>G</code>不会因为缺少<code>M</code>而被阻塞执行。</p>
+
+<p>但如果<code>Goroutine</code>在<code>channel</code>通讯过程中发生阻塞，<code>M</code>并不会展示相似的阻塞行为。因为<code>OS</code>并不了解<code>channel</code> 的执行机制，<code>channel</code>是被<code>Go Runtime</code>来处理的。如果一个<code>Goroutine</code>在<code>channel</code>通讯上发生了阻塞，那没有任何理由让运行它的<code>M</code>也阻塞。这种情况下，<code>G</code>的状态会被设置为等待，<code>M</code>会继续执行别的<code>Goroutine</code>。当<code>G</code>重新变成可运行状态时，等待别的<code>M</code>去执行。</p>
+
+<h2 id="p-的改进"><code>P</code>的改进</h2>
+
+<p>原始<code>Go</code>的调度并没有<code>P</code>，仅有<code>G</code>、<code>M</code>以及<code>Sched</code>。当时系统只存在一个全局的<code>G</code>队列，通过<code>Sched</code>锁来进行并发控制。存在的问题有：</p>
+
+<ul>
+<li>调度的执行依赖全局的<code>Sched</code>锁，修改全局的<code>M</code>队列和<code>G</code>队列、或者其他全局的<code>Sched</code>字段都需要加锁</li>
+<li><code>M</code>的内存问题，执行的内存是跟<code>M</code>相关联的。但即使<code>M</code>并不执行<code>G</code>代码，它也会申请<code>2MB</code>的<code>MCache</code>空间，而这些空间只有<code>M</code>在执行<code>G</code>时才需要。同时，一个阻塞中的<code>M</code>也是不需要<code>MCache</code>的。</li>
+<li>系统调用不够清晰，<code>M</code>在执行中会频繁阻塞和恢复，浪费<code>CPU</code>时间</li>
+<li><code>M</code>之间频繁的传递<code>G</code>，而不是选择自己执行它，这增加了系统的额外负载。每个<code>M</code>必须能够执行任何可运行的<code>G</code>，特别是刚刚创建了<code>G</code>的<code>M</code>。</li>
+</ul>
+
+<p><code>P</code>引入之后，从之前的<code>M</code>和<code>Sched</code>中抽取了部分字段，这样做带来了很多好处：</p>
+
+<ul>
+<li><code>MCache</code>就被移动到了<code>P</code>中，而系统最多存在<code>GOMAXPROCES</code>个<code>P</code>，解决了不必要的内存浪费问题</li>
+<li><code>G freelist</code>被移动到<code>P</code>中，每个<code>P</code>都有了一个可运行的本地<code>G</code>队列。本地<code>G</code>队列缓解了全局<code>Sched</code>锁的问题。</li>
+<li>当一个<code>G</code>被<code>M</code>创建，它被追加到对应<code>P</code>的本地队列末尾，以保证每个<code>G</code>都能被执行。</li>
+</ul>
+
+<hr />
+
+<p>参考文章：</p>
+
+<ol>
+<li><a href="https://docs.google.com/document/d/1TTj4T2JO42uD5ID9e89oa0sLKhJYD0Y_kqxDv3I3XMw/edit#">Scalable Go Scheduler Design Doc</a></li>
+<li><a href="http://wudaijun.com/2018/11/scheduler-blabla/">再谈调度</a></li>
+<li><a href="http://wudaijun.com/2018/01/go-scheduler/">Go 调度模型</a></li>
+</ol>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/translate/" rel="tag">translate</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/golang/" rel="tag">golang</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Neojos avatar" src="/img/avatar.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">About Neojos</span>
+	</div>
+	<div class="authorbox__description">
+		John Doe&rsquo;s true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it.
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/blog/2019/19-03-25-%E5%9F%BA%E4%BA%8Ego%E7%9A%84cron-job%E5%AE%9E%E7%8E%B0/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">基于Go的Cron Job实现</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/blog/2019/19-04-07-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">设计模式-适配器模式</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 John Doe.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>singleton pattern - 渐行渐远</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo logo--mixed">
+		<a class="logo__link" href="/" title="渐行渐远" rel="home">
+			<div class="logo__item logo__imagebox">
+					<img class="logo__img" src="/img/placeholder.png">
+				</div><div class="logo__item logo__text">
+					<div class="logo__title">渐行渐远</div>
+					<div class="logo__tagline">往者不可谏，来者犹可追</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">singleton pattern</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">Neojos</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2018-11-03T00:00:00Z">2018-11-03</time></div></div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#sync-once-简介"><code>sync.Once</code>简介</a></li>
+<li><a href="#sync-once-设计思路"><code>sync.Once</code>设计思路</a>
+<ul>
+<li><a href="#reason"><code>reason</code></a></li>
+</ul></li>
+<li><a href="#lock"><code>lock</code></a></li>
+</ul></li>
+</ul>
+</nav>
+	</div>
+</div>
+<div class="content post__content clearfix">
+			
+
+<p><em><u>版本 0.02</u></em></p>
+
+<p>在服务运行期间，针对所有<code>goroutine</code>共用一份数据的情况，比如配置信息，都可以选择只读取一次配置文件。但还是要特别注意：</p>
+
+<ol>
+<li><strong>单例中不要保存只属于具体的<code>goroutine</code>的数据</strong>，否则会出现相互覆盖的情况。</li>
+<li>单例中使用的<strong>具体业务数据</strong>要通过参数的形式传递，避免有成员变量存在。</li>
+</ol>
+
+<p>单例也是<a href="https://docs.microsoft.com/en-us/dotnet/framework/performance/lazy-initialization"><code>Lazy Initialization</code></a>的一种，对于经常不使用的变量，只有在使用的时候才进行实例化，整体来说，还是节约资源的。</p>
+
+<p>或者类似<a href="https://godoc.org/net/http"><code>net/http</code></a>中的<code>client</code>这种类型：</p>
+
+<blockquote>
+<p>Clients and Transports are safe for concurrent use by multiple goroutines and for efficiency should only be created once and re-used.</p>
+</blockquote>
+
+<h2 id="sync-once-简介"><code>sync.Once</code>简介</h2>
+
+<p><code>Go</code>语言通过<code>sync</code>包可以方便的实现线程安全的单例模式。最叹为观止的是，<code>sync</code>包的实现如此简单。通常用来处理在服务运行期间，只需要初始化一次的变量。</p>
+
+<pre><code>// Once is an object that will perform exactly one action.
+type Once struct {
+	m    Mutex
+	done uint32
+}
+
+func (o *Once) Do(f func()) {
+	if atomic.LoadUint32(&amp;o.done) == 1 {
+		return
+	}
+	// Slow-path.
+	o.m.Lock()
+	defer o.m.Unlock()
+	if o.done == 0 {
+		defer atomic.StoreUint32(&amp;o.done, 1)
+		f()
+	}
+}
+</code></pre>
+
+<h2 id="sync-once-设计思路"><code>sync.Once</code>设计思路</h2>
+
+<p>举个例子：</p>
+
+<p>下面声明统一获取配置类的函数，因为配置信息在整个服务运行期间是不会发生改变的。函数通过判断<code>config</code>是否被初始化，来达到只初始化一次的目的。例子中<code>config</code>声明为<code>map</code>的数据结构，来存储配置信息（<code>map</code>不支持并发访问，这里先忽略）。</p>
+
+<pre><code>package encrypt_config
+
+//key-secret pairs
+var config map[string]string
+
+func loadConfig(name string) string {
+	if config == nil {
+		config = map[string]string{
+			&quot;zi-ru&quot;: &quot;Mji9##a0LY&quot;,
+			&quot;baidu&quot;: &quot;Kj8*0okhHH&quot;,
+		}
+	}
+	return config[name]
+}
+</code></pre>
+
+<p>代码最显而易见的问题：并发的情况下，包内变量<code>config</code>被初始化多次。因为各个<code>goroutine</code>访问<code>config</code>时可能都是<code>nil</code>。</p>
+
+<p>但还存在一种可能的情况：<code>goroutine B</code>发现<code>config ！= nil</code>，但是当通过<code>name</code>去获取对应的值时，返回的却是空字符串。也就是说<code>goroutine A</code>访问到了一个没有被完全初始化的<code>config</code></p>
+
+<h3 id="reason"><code>reason</code></h3>
+
+<p><code>Go</code>在执行上述方法的时候，编译器在不影响最终结果的情况下，本身可以调整代码执行的顺序。这也是现在计算机多核处理，共享内存必然要面临的情况。比如编译器做了如下调整：</p>
+
+<pre><code>func loadConfig(name string) string {
+	if config == nil {
+	
+	    //goroutine B 访问的时候，config刚被初始化 
+	    config = make(map[string]string)
+	    config[&quot;zi-ru&quot;] = &quot;Mji9##a0LY&quot;
+	    config[&quot;baidu&quot;] = &quot;Kj8*0okhHH&quot;
+	}
+	return config[name]
+}
+</code></pre>
+
+<p>问题的本质在于：<strong><code>goroutine B</code>访问到了第一个<code>goroutine A</code>正在初始化的变量</strong>。而<code>sync</code>通过声明<code>done</code>标识，在配合<code>Mutex</code>锁，巧妙的实现了隔离。保证在<code>config</code>在初始化过程中，别的<code>goroutine</code>是不可访问的。</p>
+
+<p>下面是在 <a href="https://www.infoq.cn/article/double-checked-locking-with-delay-initialization"><code>双重检查锁定与延迟初始化</code></a> 的一段内容：</p>
+
+<blockquote>
+<p>根据《The Java Language Specification, Java SE 7 Edition》（后文简称为 java 语言规范），所有线程在执行 java 程序时必须要遵守 intra-thread semantics。intra-thread semantics 保证重排序不会改变单线程内的程序执行结果。换句话来说，intra-thread semantics 允许那些在单线程内，不会改变单线程程序执行结果的重排序。</p>
+</blockquote>
+
+<h2 id="lock"><code>lock</code></h2>
+
+<p><code>Lock</code></p>
+
+<pre><code>// Lock locks m.
+// If the lock is already in use, the calling goroutine
+// blocks until the mutex is available.
+func (m *Mutex) Lock() {
+	// Fast path: grab unlocked mutex.
+	if atomic.CompareAndSwapInt32(&amp;m.state, 0, mutexLocked) {
+		if race.Enabled {
+			race.Acquire(unsafe.Pointer(m))
+		}
+		return
+	}
+    ......
+</code></pre>
+
+<hr />
+
+<p>参考文章：</p>
+
+<ol>
+<li><a href="https://www.infoq.cn/article/double-checked-locking-with-delay-initialization"><code>双重检查锁定与延迟初始化</code></a></li>
+</ol>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/golang/" rel="tag">golang</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Neojos avatar" src="/img/avatar.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">About Neojos</span>
+	</div>
+	<div class="authorbox__description">
+		John Doe&rsquo;s true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it.
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/blog/2018/10-20-%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7%E4%B8%80/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">数据一致性（一）</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/blog/2018/11-20-nss%E5%88%9D%E7%AA%A5/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">NSS初窥</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 John Doe.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

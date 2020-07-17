@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>统计 on 渐行渐远</title>
+    <link>https://neojos.com/tags/%E7%BB%9F%E8%AE%A1/</link>
+    <description>Recent content in 统计 on 渐行渐远</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 14 Oct 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://neojos.com/tags/%E7%BB%9F%E8%AE%A1/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>变异性的数值特征-方差</title>
+      <link>https://neojos.com/blog/2019/blog.013-%E5%8F%98%E5%BC%82%E6%80%A7%E7%9A%84%E6%95%B0%E5%80%BC%E7%89%B9%E5%BE%81-%E6%96%B9%E5%B7%AE.2019.10.14/</link>
+      <pubDate>Mon, 14 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/blog.013-%E5%8F%98%E5%BC%82%E6%80%A7%E7%9A%84%E6%95%B0%E5%80%BC%E7%89%B9%E5%BE%81-%E6%96%B9%E5%B7%AE.2019.10.14/</guid>
+      <description>文章主要介绍通过样本方差来了解数据集变化的原理。</description>
+    </item>
+    
+  </channel>
+</rss>

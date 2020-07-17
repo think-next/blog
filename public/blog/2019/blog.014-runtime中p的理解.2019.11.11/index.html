@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>runtime中P的理解 - 渐行渐远</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo logo--mixed">
+		<a class="logo__link" href="/" title="渐行渐远" rel="home">
+			<div class="logo__item logo__imagebox">
+					<img class="logo__img" src="/img/placeholder.png">
+				</div><div class="logo__item logo__text">
+					<div class="logo__title">渐行渐远</div>
+					<div class="logo__tagline">往者不可谏，来者犹可追</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">runtime中P的理解</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">Neojos</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2019-11-11T00:00:00Z">2019-11-11</time></div></div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		
+	</div>
+</div>
+<div class="content post__content clearfix">
+			<p><code>P</code>是在<code>Go1.1</code>引入的概念，初始默认等于<code>CPU</code>核的数量。<code>P</code>只是一个逻辑概念，跟<code>CPU</code>也没有任何关系。</p>
+
+<p>源码<code>go/1.13.4/libexec/src/runtime/proc.go</code>中对<code>P</code>的注释如下：</p>
+
+<pre><code class="language-go">// P - processor, a resource that is required to execute Go code.
+// M must have an associated P to execute Go code, however it can be
+// blocked or in a syscall w/o an associated P.
+</code></pre>
+
+<p>再通过源码<code>go/1.13.4/libexec/src/runtime/runtime2.go</code>来简要了解一下<code>P</code>在调度过程中的状态变化：</p>
+
+<pre><code class="language-go">const (
+    // P status
+    _Pidle = iota
+    _Prunning
+    _Psyscall
+    _Pgcstop
+   
+    // _Pdead means a P is no longer used (GOMAXPROCS shrank). We
+    // reuse Ps if GOMAXPROCS increases. A dead P is mostly
+    // stripped of its resources, though a few things remain
+    // (e.g., trace buffers).
+    _Pdead
+)
+</code></pre>
+
+<p>通过调整<code>GOMAXPROCS</code>可以控制<code>P</code>的状态，<code>_Pdead</code>专门来说明这一点。</p>
+
+<p>从<code>P</code>的结构体字段中，可以进一步了解<code>P</code>中存储的资源，源码<code>go/1.13.4/libexec/src/runtime/runtime2.go</code>：</p>
+
+<pre><code class="language-go">type p struct {
+        id          int32
+        status      uint32 // one of pidle/prunning/...
+        link        puintptr
+        schedtick   uint32     // incremented on every scheduler call
+        syscalltick uint32     // incremented on every system call
+        sysmontick  sysmontick // last tick observed by sysmon
+        m           muintptr   // back-link to associated m (nil if idle)
+        mcache      *mcache
+        raceprocctx uintptr
+
+        deferpool    [5][]*_defer // pool of available defer structs of different sizes (see panic.go)
+        deferpoolbuf [5][32]*_defer
+
+        // Cache of goroutine ids, amortizes accesses to runtime·sched.goidgen.
+        goidcache    uint64
+        goidcacheend uint64
+
+        // Queue of runnable goroutines. Accessed without lock.
+        runqhead uint32
+        runqtail uint32
+        runq     [256]guintptr
+        // runnext, if non-nil, is a runnable G that was ready'd by
+        // the current G and should be run next instead of what's in
+        // runq if there's time remaining in the running G's time
+        // slice. It will inherit the time left in the current time
+        // slice. If a set of goroutines is locked in a
+        // communicate-and-wait pattern, this schedules that set as a
+        // unit and eliminates the (potentially large) scheduling
+        // latency that otherwise arises from adding the ready'd
+        // goroutines to the end of the run queue.
+        runnext guintptr
+
+        // Available G's (status == Gdead)
+        gFree struct {
+                gList
+                n int32
+        }
+
+        sudogcache []*sudog
+        sudogbuf   [128]*sudog
+
+        tracebuf traceBufPtr
+         // traceSweep indicates the sweep events should be traced.
+        // This is used to defer the sweep start event until a span
+        // has actually been swept.
+        traceSweep bool
+        // traceSwept and traceReclaimed track the number of bytes
+        // swept and reclaimed by sweeping in the current sweep loop.
+        traceSwept, traceReclaimed uintptr
+
+        palloc persistentAlloc // per-P to avoid mutex
+
+        _ uint32 // Alignment for atomic fields below
+
+        // Per-P GC state
+        gcAssistTime         int64    // Nanoseconds in assistAlloc
+        gcFractionalMarkTime int64    // Nanoseconds in fractional mark worker (atomic)
+        gcBgMarkWorker       guintptr // (atomic)
+        gcMarkWorkerMode     gcMarkWorkerMode
+
+        // gcMarkWorkerStartTime is the nanotime() at which this mark
+        // worker started.
+        gcMarkWorkerStartTime int64
+
+        // gcw is this P's GC work buffer cache. The work buffer is
+        // filled by write barriers, drained by mutator assists, and
+        // disposed on certain GC state transitions.
+        gcw gcWork
+
+        // wbBuf is this P's GC write barrier buffer.
+        //
+        // TODO: Consider caching this in the running G.
+        wbBuf wbBuf
+
+        runSafePointFn uint32 // if 1, run sched.safePointFn at next safe point
+
+        pad cpu.CacheLinePad
+}
+</code></pre>
+
+<p>字段中<code>mcache</code>再单独说明一下，源码<code>go/1.13.4/libexec/src/runtime/mcache.go</code>:</p>
+
+<pre><code class="language-go">// Per-thread (in Go, per-P) cache for small objects.
+// No locking needed because it is per-thread (per-P).
+//
+// mcaches are allocated from non-GC'd memory, so any heap pointers
+// must be specially handled.
+//
+//go:notinheap
+</code></pre>
+
+<p><code>mcache</code>反映了对象的创建策略：小对象。</p>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/golang/" rel="tag">golang</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Neojos avatar" src="/img/avatar.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">About Neojos</span>
+	</div>
+	<div class="authorbox__description">
+		John Doe&rsquo;s true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it.
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/blog/2019/blog.013-%E5%8F%98%E5%BC%82%E6%80%A7%E7%9A%84%E6%95%B0%E5%80%BC%E7%89%B9%E5%BE%81-%E6%96%B9%E5%B7%AE.2019.10.14/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">变异性的数值特征-方差</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/blog/2019/blog.015-go.1.13%E4%B8%AD%E7%9A%84modules.2019.11.12/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">go.1.13中的Modules</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 John Doe.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

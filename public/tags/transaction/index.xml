@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Transaction on 渐行渐远</title>
+    <link>https://neojos.com/tags/transaction/</link>
+    <description>Recent content in Transaction on 渐行渐远</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 28 Feb 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://neojos.com/tags/transaction/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>MySQL事务（2）</title>
+      <link>https://neojos.com/blog/2019/19-02-28-mysql%E4%BA%8B%E5%8A%A12/</link>
+      <pubDate>Thu, 28 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-02-28-mysql%E4%BA%8B%E5%8A%A12/</guid>
+      <description>花繁柳密能拨开方见手段，风狂雨骤时可立定才是脚跟。</description>
+    </item>
+    
+    <item>
+      <title>数据一致性（一）</title>
+      <link>https://neojos.com/blog/2018/10-20-%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7%E4%B8%80/</link>
+      <pubDate>Sat, 20 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/10-20-%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7%E4%B8%80/</guid>
+      <description>MySQL的事务是数据一致性的典范，事务内的执行要么都成功，要么都失败。但业务系统涉及系统间的相互调用，涉及的数据库也不尽相同，所以实现数据一致性还是有挑战的。</description>
+    </item>
+    
+    <item>
+      <title>Saga Pattern</title>
+      <link>https://neojos.com/blog/2018/04-24-saga-pattern/</link>
+      <pubDate>Tue, 24 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/04-24-saga-pattern/</guid>
+      <description>在微服务中，用的比较多的分布式事务模式：SAGA。下面是lysu/go-saga库中的描述：</description>
+    </item>
+    
+  </channel>
+</rss>

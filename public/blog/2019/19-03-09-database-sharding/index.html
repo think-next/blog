@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Database Sharding - 渐行渐远</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo logo--mixed">
+		<a class="logo__link" href="/" title="渐行渐远" rel="home">
+			<div class="logo__item logo__imagebox">
+					<img class="logo__img" src="/img/placeholder.png">
+				</div><div class="logo__item logo__text">
+					<div class="logo__title">渐行渐远</div>
+					<div class="logo__tagline">往者不可谏，来者犹可追</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">Database Sharding</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">Neojos</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2019-03-09T00:00:00Z">2019-03-09</time></div></div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#sharding"><code>Sharding</code></a></li>
+<li><a href="#why-sharding"><code>Why Sharding</code></a></li>
+<li><a href="#数据均匀分布">数据均匀分布</a></li>
+<li><a href="#业务类型">业务类型</a></li>
+<li><a href="#服务化">服务化</a></li>
+<li><a href="#唯一id">唯一ID</a></li>
+</ul></li>
+</ul>
+</nav>
+	</div>
+</div>
+<div class="content post__content clearfix">
+			
+
+<h2 id="sharding"><code>Sharding</code></h2>
+
+<p>可以简单地认为<code>Sharding</code>就是对数据进行分组的过程，即将整个大的数据集按照某种规则分割成多个小数据集。类似于网站服务，针对不同的服务，提供服务的链接地址也不相同，而这其实也是一个<code>Sharding</code>的过程。在业务层实现的<code>Sharding</code>，关键就在<code>Route</code>的过程，即将具体的数据请求，发送到对的数据集上。</p>
+
+<p><strong>基本要求</strong>：<code>Sharding</code>前后执行相同的查询，返回的结果也相同。</p>
+
+<p><img src="https://raw.githubusercontent.com/GitHubSi/blog/master/static/img/database-sharding/sharding-router.png" alt="img" /></p>
+
+<h2 id="why-sharding"><code>Why Sharding</code></h2>
+
+<p>在一些本地缓存的开发中，如果以<code>map</code>的形式存储数据集，因为该类型不支持并发操作。所以，在读写操作时就需要对<code>map</code>进行加锁，。可想而知，每次操作都加锁、解锁，而读写缓存又是一个高频操作，性能当然上不去。<strong>解决的思路</strong>就是对数据集进行<code>Sharding</code>操作，将整个数据集拆分成多个小块数据集，这样分别对小块数据集进行加锁、解锁，性能就提高了不少。</p>
+
+<p>如果数据集过大，表的检索性能会越来越低。而如果对数据集进行分片，对分片数据并发检索，以及将某些分片数据直接加载到内存，都可以极大提高操作的效率。</p>
+
+<h2 id="数据均匀分布">数据均匀分布</h2>
+
+<p>拿博客网站举例，老用户发布的博客肯定要多于新注册的用户。那么，在对博客记录进行分表操作时，就需要考虑数据均匀分布的问题，避免老用户都分布在一张表内，造成某张表数据额外大。</p>
+
+<p>解决的办法很简单，即对<code>Sharding Key</code>先做<code>Hash</code>处理，然后再实现数据<code>Sharding</code>过程。比如在系统设计初期，我们考虑基于用户<code>UID</code>将博客数据拆分成4个表。最基础的分表策略：</p>
+
+<pre><code class="language-go">// 最终的结果就是blog_0, blog_1, blog_2, blog_3
+tablePrefix := blog_%d
+tableName := fmt.Sprintf(&quot;%s&quot;, uid&amp;3)
+</code></pre>
+
+<h2 id="业务类型">业务类型</h2>
+
+<p>分表过程需要结合实际项目，不同的业务场景，需求千差万别、更别说底层的数据了。拿购物场景来说，以商铺为分表<code>Key</code>，将同商铺的交易数据存储到一起，跟以用户为分表<code>Key</code>，将同用户的交易数据存储到一起。这两种情形完全不同，而这也将决定项目后期数据统计的方式。</p>
+
+<p>所以分区的根本再于业务要执行的具体数据操作，要知道跨分区来之行<code>Join</code>之类的操作，不仅处理麻烦，性能也是问题。</p>
+
+<h2 id="服务化">服务化</h2>
+
+<p>实际项目中，按单一维度划分业务数据几乎是不可能的。比如上面说到的购物场景，商铺是一个维度，用户同样也是一个维度，当然，产品的类型还是一个维度。</p>
+
+<p>这种情况下，我们一般选择将项目拆分成多个微服务，划分各个微服务间操作数据的边界范围。而服务与服务间的数据交互都通过调用<code>API</code>来实现。</p>
+
+<p>需要注意的是，服务拆分一定要从具体业务来考虑，尽可能将相关的数据放在一起，提高检索性能，避免每次操作都需要通过网络来发送数据。</p>
+
+<h2 id="唯一id">唯一ID</h2>
+
+<p>将数据集划分为多个分区后，基于不同的业务，查询场景也会面临各种各样的问题。比如在博客网站中，假设我们基于用户做了<code>Sharding</code>分表，而查询需求是：按照博客的发布时间顺序来展示列表。所以，这样的分页查询会异常痛苦。假设列表每页展示20条记录，那么代码就需要从每张表中都取出最近的20条记录做<code>merge</code>处理。如果<code>Sharding</code>的个数足够多，那简直无法继续了。</p>
+
+<pre><code class="language-sql">-- 获取最新的20条发帖记录。如果要翻页的话，将Now替换为上一批数据的最早时间
+select * from blog_0 where create_time &lt; Now() order by id desc;
+select * from blog_1 where create_time &lt; Now() order by id desc;
+select * from blog_2 where create_time &lt; Now() order by id desc;
+select * from blog_3 where create_time &lt; Now() order by id desc;
+</code></pre>
+
+<p>正确的处理方式是<strong>创建一张关系表</strong>，记录所有博客元信息。而上述分页操作都基于该关系表来实现。但<code>Sharding</code>中的各表都有各自的自增主键，都从1开始自增，这就导致各个表中存在相同的标识符，再关系表中无法做区分。解决的办法大致有两种：</p>
+
+<ol>
+<li><p>生成<a href="http://neojos.com/blog/2019/19-01-11-%E6%8E%A2%E8%AE%A8%E5%88%86%E5%B8%83%E5%BC%8Fid%E7%94%9F%E6%88%90%E7%B3%BB%E7%BB%9F/">全局唯一的<code>UUID</code></a>，或者稍加改造，生成全局自增且占内存小的唯一ID。</p></li>
+
+<li><p>在关系表中不仅保存分区表的主键ID，还额外保存分区ID，通过这两个ID来唯一标识一条记录。</p></li>
+</ol>
+
+<hr />
+
+<p>参考文章：</p>
+
+<ol>
+<li><a href="https://www.citusdata.com/blog/2018/01/10/sharding-in-plain-english/"><code>Database sharding explained in plain English</code></a></li>
+<li><a href="https://www.citusdata.com/blog/2017/08/09/principles-of-sharding-for-relational-databases/"><code>Principles of Sharding for Relational Databases</code></a></li>
+<li><a href="https://www.citusdata.com/blog/2016/08/10/sharding-for-a-multi-tenant-app-with-postgres/"><code>Sharding a multi-tenant app with Postgres</code></a></li>
+<li><a href="http://www.craigkerstiens.com/2012/11/30/sharding-your-database/"><code>Sharding Your Database</code></a></li>
+<li><a href="https://www.scienjus.com/database-sharding-review/"><code>数据库水平分片心得</code></a></li>
+</ol>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/mysql/" rel="tag">MySQL</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Neojos avatar" src="/img/avatar.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">About Neojos</span>
+	</div>
+	<div class="authorbox__description">
+		John Doe&rsquo;s true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it.
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/blog/2019/19-02-28-mysql%E4%BA%8B%E5%8A%A12/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">MySQL事务（2）</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/blog/2019/19-03-16-%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7%E4%BA%8C/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">数据一致性（二）</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 John Doe.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

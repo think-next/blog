@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>故障排查 - 渐行渐远</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo logo--mixed">
+		<a class="logo__link" href="/" title="渐行渐远" rel="home">
+			<div class="logo__item logo__imagebox">
+					<img class="logo__img" src="/img/placeholder.png">
+				</div><div class="logo__item logo__text">
+					<div class="logo__title">渐行渐远</div>
+					<div class="logo__tagline">往者不可谏，来者犹可追</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">故障排查</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">Neojos</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2019-07-28T00:00:00Z">2019-07-28</time></div></div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#go-开发排查问题"><code>Go</code>开发排查问题</a>
+<ul>
+<li><a href="#q1">Q1</a></li>
+<li><a href="#q2">Q2</a></li>
+</ul></li>
+<li><a href="#珍惜-bug">珍惜<code>Bug</code></a></li>
+</ul></li>
+</ul>
+</nav>
+	</div>
+</div>
+<div class="content post__content clearfix">
+			
+
+<p>测试提<code>Bug</code>的基本要素，主要包括：</p>
+
+<ol>
+<li>期望得到的结果</li>
+<li>实际得到的结果</li>
+<li>如何重现问题</li>
+</ol>
+
+<p>生产环境出了故障，当然也脱离不开这3个要点。只不过相对重现问题会略微复杂。毕竟，故障总是我们意外之外的情况。</p>
+
+<p>根据<code>Bug</code>发生的现象，我们会提出很多假设，然后进行逐步排除。</p>
+
+<p>当问题发生时，最应想到的是：系统最近是否有过改动。很大概率上，一个正常工作的服务会一直维持工作，直到某种外力出现。如果确实是新功能上线导致的，可以结合具体情况，考虑是否回滚到老版本。但有些时候，回滚可能还会引发二次问题，需要特别注意。</p>
+
+<p>接下来：</p>
+
+<p>继续保存冷静，简要评估问题的严重程度，及时给外部作出反馈。这里的反馈特别重要，不仅可以让大家了解故障的进展情况，而且，大家还可能提供非常有价值的建议。</p>
+
+<p>接下来：</p>
+
+<p>仔细分析故障发生的现象，不要忽略错误日志的任何细节。这个过程中，日志显得尤为重要。一个好的日志记录，必须能还原或推断出当时故障的现场。日志信息主要包括：上下文信息、报错信息。</p>
+
+<p>当然，有时候故障会涉及多个微服务，最好能有一个<code>trace_id</code>，用来跟踪故障的发生过程，以及具体是微服务中的哪台服务器发生的故障。</p>
+
+<p>接下来：</p>
+
+<p>如果无法绝对确定故障的原因，我们需要复现<code>Bug</code>，也就是前文提到的逐个排除。这开发过程中，追加重要服务的测试用例非常重要，可能会节约好多宝贵的时间。</p>
+
+<p>但也存在难点，比如一些伪相关的原因误导我们的判断。故障一般都有连锁反应，有时候会很难分辨问题的主次。</p>
+
+<h2 id="go-开发排查问题"><code>Go</code>开发排查问题</h2>
+
+<h3 id="q1">Q1</h3>
+
+<p>服务发生<code>panic</code>时，结合日志中打印的堆栈信息，可以很容易定位到出错的代码，并作出很多可能的推测。然后，结合具体的上下文信息，能很快复现问题。整个过程中，日志是问题排查的关键。</p>
+
+<p>日志必须包含<code>panic</code>的堆栈信息，最好有链路的<code>trace_id</code>信息。如果在开发过程中，有对应的<code>Test</code>就更好了。</p>
+
+<h3 id="q2">Q2</h3>
+
+<p>对于接口响应慢的情况，可以依靠<code>pprof</code>工具进行诊断。其中，最可能的是调用外部服务慢，比如经典的<code>MySQL</code>慢查询。</p>
+
+<p>如果排除了外部依赖的问题，那很可能是程序代码自身问题。通过<code>pprof</code>的各种信息展示，也能很快定位。</p>
+
+<h2 id="珍惜-bug">珍惜<code>Bug</code></h2>
+
+<p>不要放过任何<code>Bug</code>，对<code>Bug</code>的处理过程要做好梳理、总结。下面是总结的模版：</p>
+
+<pre><code>-- 细节
+-- 灾难响应
+-- 事后总结
+    -- 做的好的地方
+    -- 做的不好的地方
+</code></pre>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/golang/" rel="tag">golang</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Neojos avatar" src="/img/avatar.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">About Neojos</span>
+	</div>
+	<div class="authorbox__description">
+		John Doe&rsquo;s true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it.
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/blog/2019/19-07-17-database.sql.driver/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">database.sql.driver</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/blog/2019/19-08-25-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BC%9A%E8%AF%9D%E8%B7%9F%E8%B8%AA%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E8%B7%B5/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">分布式会话跟踪系统架构设计与实践</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 John Doe.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

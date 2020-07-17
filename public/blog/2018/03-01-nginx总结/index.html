@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Nginx总结 - 渐行渐远</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo logo--mixed">
+		<a class="logo__link" href="/" title="渐行渐远" rel="home">
+			<div class="logo__item logo__imagebox">
+					<img class="logo__img" src="/img/placeholder.png">
+				</div><div class="logo__item logo__text">
+					<div class="logo__title">渐行渐远</div>
+					<div class="logo__tagline">往者不可谏，来者犹可追</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">Nginx总结</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">Neojos</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2018-03-10T00:00:00Z">2018-03-10</time></div></div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#location-指令">location 指令</a>
+<ul>
+<li><a href="#location修饰符">location修饰符</a></li>
+<li><a href="#location匹配规则">location匹配规则</a></li>
+<li><a href="#举个例子">举个例子</a></li>
+</ul></li>
+<li><a href="#error-page-返回状态码">error_page 返回状态码</a>
+<ul>
+<li><a href="#举个例子-1">举个例子</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+	</div>
+</div>
+<div class="content post__content clearfix">
+			
+
+<h2 id="location-指令">location 指令</h2>
+
+<p>工作中经常用到的一个指令，用来对某个路径的请求做特殊处理。比如同样的链接在<code>PC</code>和<code>Web</code>显示不同的页面。</p>
+
+<h3 id="location修饰符">location修饰符</h3>
+
+<p>location block匹配request url中domain name 或者ip/por之后的请求部分，即请求资源的路径。</p>
+
+<p>形式如下：</p>
+
+<pre><code>location optional_modifier location_match {
+
+}
+</code></pre>
+
+<p>如下是<code>optional_modifier</code>的类型：</p>
+
+<table>
+  <tr>
+​    <th>optional_modifier</th>
+​    <th>含义</th>
+  </tr>
+  <tr>
+​    <td> = </td>
+​    <td>请求的url必须严格匹配被location指定的路径，必须完全相同</td>
+  </tr>
+  <tr>
+​    <td>none</td>
+​    <td> 如果没有修饰符，将对url做前缀匹配</td>
+​  </tr>  
+  <tr>
+​    <td>^~ </td>
+​    <td>最佳的非正则表达式前缀匹配 </td>
+  </tr>
+  <tr>
+​    <td>~ </td>
+​    <td>大小写敏感的正则匹配 </td>
+  </tr>
+  <tr>
+​    <td>~* </td>
+​    <td>大小写不敏感的正则匹配 </td>
+  </tr>
+</table>
+
+<h3 id="location匹配规则">location匹配规则</h3>
+
+<ol>
+<li>nginx会查找一个精确匹配。如果匹配到了 =  modifier，匹配会立即终止，该location就会被选择处理这个请求。</li>
+<li>如果没有精确匹配（= modifier），nginx继续进行前缀匹配，对于给定的url，选择最长的前缀匹配。然后依据下列规则，继续匹配。</li>
+<li>如果最长的前缀匹配有（^~ modifier），nginx会立即结束查询，选择该location。如果没有 ^~ modifier，该匹配会被暂时存起来，以便搜索可以继续。</li>
+<li>最长的匹配被存起来后，nginx会继续匹配正则表达式。nginx移动到 location list 的顶部，然后试着去匹配正则表达式，第一个被匹配的正则表达式会立即被选择处理请求，结束匹配。</li>
+<li>如果没有正则表达式被匹配，则之前存储的最长location被选择用来处理请求。</li>
+</ol>
+
+<p>特别需要理解的：nginx正则匹配结果优先于前缀匹配。但是前缀匹配在先，同时允许通过 ^~ 和 = 来改变这种趋势。</p>
+
+<p>前缀匹配一般选择最长，最精确的匹配，而正则匹配在第一个匹配发现时，匹配就会终止。也就是说，正则匹配跟配置文件中规则的定义位置有很大关系。
+如果匹配上该location，请求会跳出匹配。</p>
+
+<h3 id="举个例子">举个例子</h3>
+
+<p>当前想修改一下，针对某个请求<code>/fuhui/twenty/index.html</code>静态文件的根路径，即所以请求该路径的静态资源，统一到<code>/src/www/fuhui/twenty</code>目录下查找。</p>
+
+<p>在<code>nginx</code>中做了如下配置。所以<code>nginx</code>按照流程，前缀匹配到<code>/fuhui/twenty</code>之后，判断它其实就是前缀匹配中最长的匹配。同时，它的修饰符为<code>^~</code>，<code>location</code>匹配完成。</p>
+
+<p>假设②将修饰符修改为普通的前缀匹配（none），则①的<code>location</code>会匹配成功。</p>
+
+<pre><code># 1
+location ~* \.html$ {
+    add_header Pragma &quot;no-cache&quot;;
+    try_files $uri /resource/html/$uri =404;
+}
+
+# 2
+location ^~ /fuhui/twenty {
+    root /src/www/fuhui/twenty;
+} 
+</code></pre>
+
+<h2 id="error-page-返回状态码">error_page 返回状态码</h2>
+
+<p>语法：</p>
+
+<pre><code>error_page code [code...] [=|=answer-code] url | @named_location
+</code></pre>
+
+<p>当对于某个请求返回错误码时，如果匹配上了error_page中设置的code,则重定向到新的url中，例如：</p>
+
+<pre><code>error_page 404 /404.html
+error_page 502 503 /50x.html
+</code></pre>
+
+<p>注意，虽然重定向了url，但是返回的http错误码还是与原来的相同，用户可以通过=号来更改返回的错误码</p>
+
+<pre><code>    error_page 404 =200 /empty.gif
+</code></pre>
+
+<p>也可以不指定确切的返回错误码，而由重定向后实际处理的真实结果来决定，这是，只要把=后面的错误码去掉即可</p>
+
+<pre><code>    error_page 404 = /empty.gif
+</code></pre>
+
+<h3 id="举个例子-1">举个例子</h3>
+
+<p>禁用外网IP访问内网服务器，返回<code>403 forbidden</code>。</p>
+
+<pre><code>location / {
+    # 允许内网ip访问
+    allow 10.xx.xx.xx/24;
+    
+    # 禁止其他所有ip访问
+    deny all;
+}
+
+error_page 403 @403error
+
+location @403error {
+    rewrite /403.html;
+    
+    # 重要
+    allow all;
+}
+</code></pre>
+
+<p>未完待续，敬请期待&hellip;..</p>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/nginx/" rel="tag">nginx</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Neojos avatar" src="/img/avatar.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">About Neojos</span>
+	</div>
+	<div class="authorbox__description">
+		John Doe&rsquo;s true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it.
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/blog/2018/02-08-iap%E6%94%AF%E4%BB%98%E5%88%9D%E8%AF%86/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">IAP支付初识</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/blog/2018/03-17-http%E6%80%BB%E7%BB%93-%E7%8A%B6%E6%80%81%E7%A0%81/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">HTTP总结-状态码</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 John Doe.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

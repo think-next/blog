@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Net on 渐行渐远</title>
+    <link>https://neojos.com/tags/net/</link>
+    <description>Recent content in Net on 渐行渐远</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 08 Dec 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://neojos.com/tags/net/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>protocol stack</title>
+      <link>https://neojos.com/blog/2019/19-12-08-protocol-stack/</link>
+      <pubDate>Sun, 08 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-12-08-protocol-stack/</guid>
+      <description>盗了一张图，小小确幸一下</description>
+    </item>
+    
+    <item>
+      <title>Tcp Bulk Data</title>
+      <link>https://neojos.com/blog/2018/09-24-tcp-bulk-data/</link>
+      <pubDate>Mon, 24 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/09-24-tcp-bulk-data/</guid>
+      <description>TCP在数据传输中有receive buffer和send buffer。通过连接中的window size可以看出数据的读取情况。</description>
+    </item>
+    
+    <item>
+      <title>IP Routing</title>
+      <link>https://neojos.com/blog/2018/08-04-ip-routing/</link>
+      <pubDate>Sat, 04 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/08-04-ip-routing/</guid>
+      <description>假设你在跟小米公司对接服务，那你有没有好奇过：自家的服务器是如何找到小米公司的服务器的。为了安全，公司的服务器可都是在内网的，用户是无法直接访问到的。好好了解一下Ip Routing，它可以给你部分答案。</description>
+    </item>
+    
+    <item>
+      <title>ngrep抓包</title>
+      <link>https://neojos.com/blog/2018/08-01-ngrep%E6%8A%93%E5%8C%85/</link>
+      <pubDate>Wed, 01 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/08-01-ngrep%E6%8A%93%E5%8C%85/</guid>
+      <description>简单的工具其实挺有用的。警告：不许瞧不起工具，尤其是你还不会用的工具。</description>
+    </item>
+    
+    <item>
+      <title>Tcp Server Design</title>
+      <link>https://neojos.com/blog/2018/07-28-tcp-server-design/</link>
+      <pubDate>Sat, 28 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/07-28-tcp-server-design/</guid>
+      <description>绝大多数的TCP服务都是支持并发的。当一个连接请求到达时，服务端接收这个连接，然后创建一个新的线程(或进程)来处理这个连接。</description>
+    </item>
+    
+    <item>
+      <title>siege压测</title>
+      <link>https://neojos.com/blog/2018/07-19-siege%E5%8E%8B%E6%B5%8B/</link>
+      <pubDate>Thu, 19 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/07-19-siege%E5%8E%8B%E6%B5%8B/</guid>
+      <description>关于压测，首先要了解TPS和并发用户数之间的关系：</description>
+    </item>
+    
+    <item>
+      <title>mitmproxy使用</title>
+      <link>https://neojos.com/blog/2018/07-06-mitmproxy%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Fri, 06 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/07-06-mitmproxy%E4%BD%BF%E7%94%A8/</guid>
+      <description>介绍一款非常好用的抓包工具，官网地址：https://www.</description>
+    </item>
+    
+    <item>
+      <title>TIME_WAIT状态解读</title>
+      <link>https://neojos.com/blog/2018/06-15-time_wait%E7%8A%B6%E6%80%81%E8%A7%A3%E8%AF%BB/</link>
+      <pubDate>Fri, 15 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/06-15-time_wait%E7%8A%B6%E6%80%81%E8%A7%A3%E8%AF%BB/</guid>
+      <description>版本：0.</description>
+    </item>
+    
+  </channel>
+</rss>

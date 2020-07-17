@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>mongo EOF - 渐行渐远</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo logo--mixed">
+		<a class="logo__link" href="/" title="渐行渐远" rel="home">
+			<div class="logo__item logo__imagebox">
+					<img class="logo__img" src="/img/placeholder.png">
+				</div><div class="logo__item logo__text">
+					<div class="logo__title">渐行渐远</div>
+					<div class="logo__tagline">往者不可谏，来者犹可追</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">mongo EOF</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">Neojos</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2019-04-27T00:00:00Z">2019-04-27</time></div></div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#question"><code>Question</code></a>
+<ul>
+<li><a href="#描述">描述</a></li>
+<li><a href="#解决思路">解决思路</a></li>
+</ul></li>
+<li><a href="#搭建-replica-set-https-docs-mongodb-com-manual-reference-glossary-term-replica-set">搭建<a href="https://docs.mongodb.com/manual/reference/glossary/#term-replica-set"><code>replica set</code></a></a></li>
+<li><a href="#测试">测试</a></li>
+<li><a href="#docker-compose-yml"><code>docker-compose.yml</code></a>
+<ul>
+<li><a href="#ports-vs-expose"><code>ports vs expose</code></a></li>
+<li><a href="#entrypoint"><code>entrypoint</code></a></li>
+<li><a href="#depends-on"><code>depends_on</code></a></li>
+</ul></li>
+<li><a href="#docker-command"><code>docker command</code></a></li>
+<li><a href="#mongo-command"><code>mongo command</code></a></li>
+</ul></li>
+</ul>
+</nav>
+	</div>
+</div>
+<div class="content post__content clearfix">
+			
+
+<blockquote>
+<p><code>很多事情仅仅的是严肃的提出问题都感觉很难，更何况还得要先发现它。</code></p>
+</blockquote>
+
+<h2 id="question"><code>Question</code></h2>
+
+<h3 id="描述">描述</h3>
+
+<p>项目中使用：<a href="https://godoc.org/github.com/globalsign/mgo"><code>github.com/globalsign/mgo</code></a>这个库，在一次主从切换之后，<code>mongo</code>后续的操作都失败了, 错误信息输出：<code>EOF</code>。</p>
+
+<p>引用网上遇到<a href="https://groups.google.com/forum/#!topic/mgo-users/XM0rc6p-V-8">同样问题</a>的其他描述：</p>
+
+<blockquote>
+<p><code>The problem I have is, when the connection to the mongodb server fails (the server drops the connection sometimes or mongodb server fails), then my pointer to the session variable doesn't work anymore. Even if the internet connection comes back, mgo driver doesn't reconnect anymore, instead of this I get the error (when I do Find().One() method call): &quot;EOF&quot;</code></p>
+</blockquote>
+
+<h3 id="解决思路">解决思路</h3>
+
+<blockquote>
+<ol>
+<li>Call Refresh on the session, which makes it discard (or put back in
+the pool, if the connection is good) the connection it&rsquo;s holding, and
+pick a new one when necessary.</li>
+<li>Instead of using a single session, use many by calling session.Copy
+when you need a new session, and then call session.Close when you&rsquo;re
+done with it. This will also mean you&rsquo;re using multiple connections to
+the database, when necessary.</li>
+</ol>
+</blockquote>
+
+<p>按照这个思路，在<code>mongo</code>启动的时候，设置一个定时<code>ping</code>检查。当<code>error</code>返回<code>io.EOF</code>时执行<a href="https://godoc.org/github.com/globalsign/mgo#Session.Refresh"><code>Refresh</code></a>操作。</p>
+
+<p><strong>主从切换就会出现这个问题吗？发现并不是。下面的重现的尝试</strong></p>
+
+<h2 id="搭建-replica-set-https-docs-mongodb-com-manual-reference-glossary-term-replica-set">搭建<a href="https://docs.mongodb.com/manual/reference/glossary/#term-replica-set"><code>replica set</code></a></h2>
+
+<p>参考这里<a href="https://github.com/yowko/Docker-Compose-MongoDB-Replica-Set"><code>Use only docker and docker-compose to create a MongoDB Replica Set</code></a>创建<code>docker-compose.yml</code>文件。</p>
+
+<p>稍稍对文件做了修改，指定了<code>ports</code>命令，以达到本地可以访问容器内<code>mongo</code>的目。</p>
+
+<h2 id="测试">测试</h2>
+
+<p>循环1000次来执行读操作，在读操作执行的过程中，关闭掉<code>PRIMARY</code>节点，强制触发主从选举。很遗憾，服务短暂不可用之后，恢复正常了</p>
+
+<pre><code class="language-go">type People struct {
+	FirstName string `json:&quot;firstname&quot;`
+	LastName  string `json:&quot;lastname&quot;`
+}
+
+func TestCheckComplete(t *testing.T) {
+	session, err := mgo.DialWithTimeout(&quot;mongodb://127.0.0.1:27017,127.0.0.1:27018,127.0.0.1:27019/admin?replicaSet=rs0&quot;, time.Second)
+	if err != nil {
+		panic(err)
+	}
+	session.SetSyncTimeout(time.Second)
+
+	var actionLog People
+	for i := 0; i &lt;= 1000; i ++ {
+		// show progress
+		fmt.Print(&quot;.&quot;)
+		
+		if err := session.DB(&quot;dev&quot;).C(&quot;people&quot;).Find(bson.M{&quot;firstname&quot;: &quot;Nic&quot;}).One(&amp;actionLog); err != nil {
+			if err == io.EOF {
+				fmt.Println(&quot;the error equal io.EOF&quot;)
+			}
+			if err.Error() == &quot;EOF&quot; {
+				fmt.Println(&quot;the error.Error() equal io.EOF&quot;)
+			}
+			fmt.Println(err)
+		}
+	}
+}
+</code></pre>
+
+<h2 id="docker-compose-yml"><code>docker-compose.yml</code></h2>
+
+<h3 id="ports-vs-expose"><code>ports vs expose</code></h3>
+
+<p><code>ports</code>暴露容器端口到主机的任意端口或指定端口。当我们想在本地访问<code>docker</code>内服务时，就需要使用这个命令。比如：</p>
+
+<pre><code>ports:
+  - &quot;27018:27017&quot;     # 绑定宿主27018端口端口到容器21017端口
+</code></pre>
+
+<p><code>expose</code> 声明运行时容器打算使用的端口，这只是一个声明，在运行时应用并不会因为这个声明就会开启这个端口。只有在使用 <code>docker run -P</code> 时，才会自动基于规则映射<code>EXPOSE</code>的端口。</p>
+
+<pre><code>expose:
+    - 27017
+</code></pre>
+
+<h3 id="entrypoint"><code>entrypoint</code></h3>
+
+<p><code>entrypoint</code>用于指定容器启动程序和参数。当指定了<code>entrypoint</code>之后，<code>cmd</code>的含义就发生变化了，不再是直接运行命令，而是将<code>cmd</code>的内容作为参数传递给<code>entrypoint</code>指令。这里的<code>cmd</code>主要代指容器名后面追加的参数。</p>
+
+<pre><code>&lt;entrypoint&gt; &quot;&lt;cmd&gt;&quot;
+</code></pre>
+
+<p>如<code>docker-compose.yml</code>中的示例代码，用于初始化<code>mongo</code>的配置。</p>
+
+<pre><code>creator:
+    build: creator
+    entrypoint: [&quot;mongo&quot;,&quot;--host&quot;,&quot;mongo1&quot;,&quot;--port&quot;,&quot;27017&quot;,&quot;--eval&quot;, 'rs.initiate( { _id : &quot;rs0&quot;,members: [{ _id: 0, host: &quot;mongo1:27017&quot; },{ _id: 1, host: &quot;mongo2:27017&quot; },{ _id: 2, host: &quot;mongo3:27017&quot; }   ]})']
+    depends_on:
+      - mongo1
+      - mongo2
+      - mongo3
+</code></pre>
+
+<h3 id="depends-on"><code>depends_on</code></h3>
+
+<p><code>depends_on</code>用来定义服务间的依赖关系，<code>creator</code>要落后于<code>mongo1-3</code>的启动</p>
+
+<h2 id="docker-command"><code>docker command</code></h2>
+
+<pre><code># 查看容器的日志
+docker logs -f &lt;container-id&gt;
+
+# 获取当前容器的信息
+docker container ls -a
+
+# 启动容器
+docker-compose -f docker-compose.yml up
+
+# 进去容器里面
+docker exec -it &lt;contrainer-id&gt; bash
+
+# 关闭容器
+docker container stop &lt;container-id&gt;
+</code></pre>
+
+<h2 id="mongo-command"><code>mongo command</code></h2>
+
+<blockquote>
+<p><code>A replica set in MongoDB is a group of mongod processes that maintain the same data set. Replica sets provide redundancy and high availability, and are the basis for all production deployments. This section introduces replication in MongoDB as well as the components and architecture of replica sets. The section also provides tutorials for common tasks related to replica sets.</code></p>
+</blockquote>
+
+<pre><code>// Returns:	A document with status information.
+// 查看当前mongo的主从节点配置
+rs.status()
+
+// This allows the current connection to allow read operations to run on secondary members.
+// 当在SECONDARY节点上执行show dbs失败时执行
+rs.slaveOk()
+</code></pre>
+
+		</div>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Neojos avatar" src="/img/avatar.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">About Neojos</span>
+	</div>
+	<div class="authorbox__description">
+		John Doe&rsquo;s true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it.
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/blog/2019/19-04-24-kafka%E4%B8%AD%E6%B6%88%E6%81%AF%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">Kafka中消息分配策略</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/blog/2019/19-05-11-mongo-eof%E4%BA%8C/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">mongo EOF（二）</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 John Doe.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>

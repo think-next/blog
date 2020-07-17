@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>变异性的数值特征-方差 - 渐行渐远</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo logo--mixed">
+		<a class="logo__link" href="/" title="渐行渐远" rel="home">
+			<div class="logo__item logo__imagebox">
+					<img class="logo__img" src="/img/placeholder.png">
+				</div><div class="logo__item logo__text">
+					<div class="logo__title">渐行渐远</div>
+					<div class="logo__tagline">往者不可谏，来者犹可追</div>
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">变异性的数值特征-方差</h1>
+			<div class="post__meta meta"><div class="meta__item-author meta__item">
+	<svg class="meta__icon icon icon-author" width="16" height="16" viewBox="0 0 12 16"><path d="M6 1c2.2 0 3.5 2 3.5 4.5C9.5 7 8.9 8.2 8 9c2.9.8 4 2.5 4 5v1H0v-1c0-2.5 1.1-4.2 4-5-.9-.8-1.5-2-1.5-3.5C2.5 3 3.8 1 6 1z"/></svg><span class="meta__text">Neojos</span>
+</div>
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2019-10-14T00:00:00Z">2019-10-14</time></div></div>
+		</header>
+<div class="post__toc toc">
+	<div class="toc__title">Page content</div>
+	<div class="toc__menu">
+		
+	</div>
+</div>
+<div class="content post__content clearfix">
+			<p>文章主要介绍通过<code>样本方差</code>来了解数据集变化的原理。</p>
+
+<p>我们对两个数据集做观察，数据集A和数据集B：</p>
+
+<pre><code>A: 1,2,3,4,5
+B: 2,3,3,3,4
+</code></pre>
+
+<p>对于定量数据集，最常用、也最容易理解的集中趋势测度是数据集的算数平均数。类比我们学生年代，经常谈论的班级平均分。那么，我们对数据集A、B做平均数计算：</p>
+
+<pre><code>A: 3
+B: 3
+</code></pre>
+
+<p>两个样本集的均值都是3。接着，我们计算每个值与均值之间的差值，观察这些偏差数据：</p>
+
+<pre><code>A: (1-3),(2-3),(3-3),(4-3),(5-3)
+B: (2-3),(3-3),(3-3),(3-3),(4-3)
+</code></pre>
+
+<p>从距离的角度，我们在坐标图上做体现。数据集中的每个点跟均值的距离：</p>
+
+<p><img src="https://i.loli.net/2019/10/14/7jfzAxvJT1eol3O.png" alt="distance.png" /></p>
+
+<p>从图上可以看出，数据集A这些点是向外分散的，或者说有较大的变异。数据集B的点都集中在均值3附近，没有太大的变异。</p>
+
+<p>下一步是要将这些有关偏差的信息精简为变异程度的数字度量。距离平均值的偏差有正数，也有负数，取平均值是不可取的。那么，消除偏差的负号的方法就是进行平方处理。</p>
+
+<p>在统计学上，一个含有n个测量值的样本的样本方差等于距离均值的偏差平方和除以(n-1)。</p>
+
+<p>方差的单位是具体单位的平方，我们再对数据做一次处理，计算样本方差的平方根。即标准差。最后，我们通过标准差认为样本值到均值之前的“典型”距离。</p>
+
+<p>在整个过程中，我们通过抽象，最终使用标准差来表示样本的变异性。需要注意的是，计算样本方差的时候，分母是<code>n-1</code>而不是<code>n</code>，主要是因为在使用了<code>n</code>后，会降低总体方差。</p>
+
+<p>参考文章：</p>
+
+<ol>
+<li><a href="https://book.douban.com/subject/26410924/">商务与经济统计学</a></li>
+</ol>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/%E7%BB%9F%E8%AE%A1/" rel="tag">统计</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Neojos avatar" src="/img/avatar.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">About Neojos</span>
+	</div>
+	<div class="authorbox__description">
+		John Doe&rsquo;s true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it.
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/blog/2019/blog.012-%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E5%92%8C%E5%AD%A6%E4%B9%A0.2019.10.08.md/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">如何工作和学习</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/blog/2019/blog.014-runtime%E4%B8%ADp%E7%9A%84%E7%90%86%E8%A7%A3.2019.11.11/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">runtime中P的理解</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 John Doe.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+<script src="/js/custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async></script>
+</body>
+</html>
