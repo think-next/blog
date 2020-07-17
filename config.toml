@@ -1,7 +1,7 @@
 baseurl = "https://neojos.com/"
 title = "渐行渐远"
 languageCode = "en-us"
-paginate = "48" # Number of posts per page
+paginate = "12" # Number of posts per page
 theme = "mainroad"
 disqusShortname = "" # Enable Disqus comments by entering your Disqus shortname
 googleAnalytics = "" # Enable Google Analytics by entering your tracking id
@@ -10,7 +10,18 @@ summaryLength = 1
 [Author] # Used in authorbox
   name = "Neojos"
   bio = "John Doe's true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it."
-  avatar = "img/avatar.png"
+  avatar = "img/headimg.png"
+
+[[menu.main]]
+    name = "Home"
+    url = "/"
+    weight = 1
+
+[[menu.main]]
+    identifier = "Blog"
+    name = "Blog"
+    url = "/blog"
+    weight = 2
 
 [Params]
   description = "John Doe's Personal blog about everything" # Site description. Used in meta description
@@ -33,13 +44,13 @@ summaryLength = 1
   customJS = ["js/custom.js"] # Include custom JS files
 
 [Params.logo]
-  image = "img/placeholder.png" # Logo image. Path relative to "static"
-  title = "渐行渐远" # Logo title, otherwise will use site title
+  image = "img/headimg.png" # Logo image. Path relative to "static"
+  title = "我思故我在" # Logo title, otherwise will use site title
   subtitle = "往者不可谏，来者犹可追" # Logo subtitle
 
 [Params.sidebar]
   home = "right" # Configure layout for home page
-  list = "left"  # Configure layout for list pages
+  # list = "left"  # Configure layout for list pages
   single = true # Configure layout for single pages
   # Enable widgets in given order
   widgets = ["search", "recent", "categories", "taglist", "social", "languages"]
