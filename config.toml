@@ -1,10 +1,11 @@
 baseurl = "https://neojos.com/"
-title = "Mainroad"
+title = "渐行渐远"
 languageCode = "en-us"
-paginate = "10" # Number of posts per page
+paginate = "48" # Number of posts per page
 theme = "mainroad"
 disqusShortname = "" # Enable Disqus comments by entering your Disqus shortname
 googleAnalytics = "" # Enable Google Analytics by entering your tracking id
+summaryLength = 1
 
 [Author] # Used in authorbox
   name = "Neojos"
@@ -12,13 +13,12 @@ googleAnalytics = "" # Enable Google Analytics by entering your tracking id
   avatar = "img/avatar.png"
 
 [Params]
-  subtitle = "渐行渐远" # Deprecated in favor of .Site.Params.logo.subtitle
   description = "John Doe's Personal blog about everything" # Site description. Used in meta description
   copyright = "John Doe" # Footer copyright holder, otherwise will use site title
-  opengraph = true # Enable OpenGraph if true
-  schema = true # Enable Schema
-  twitter_cards = true # Enable Twitter Cards if true
-  readmore = false # Show "Read more" button in list if true
+  # opengraph = true # Enable OpenGraph if true
+  # schema = true # Enable Schema
+  # twitter_cards = true # Enable Twitter Cards if true
+  readmore = true # Show "Read more" button in list if true
   authorbox = true # Show authorbox at bottom of pages if true
   toc = true # Enable Table of Contents
   pager = true # Show pager navigation (prev/next links) at the bottom of pages if true
@@ -34,8 +34,8 @@ googleAnalytics = "" # Enable Google Analytics by entering your tracking id
 
 [Params.logo]
   image = "img/placeholder.png" # Logo image. Path relative to "static"
-  title = "Mainroad" # Logo title, otherwise will use site title
-  subtitle = "Just another site" # Logo subtitle
+  title = "渐行渐远" # Logo title, otherwise will use site title
+  subtitle = "往者不可谏，来者犹可追" # Logo subtitle
 
 [Params.sidebar]
   home = "right" # Configure layout for home page
@@ -52,22 +52,10 @@ googleAnalytics = "" # Enable Google Analytics by entering your tracking id
 
 [Params.widgets.social]
   # Enable parts of social widget
-  facebook = "username"
-  twitter = "username"
-  instagram = "username"
-  linkedin = "username"
-  telegram = "username"
   github = "username"
-  gitlab = "username"
-  bitbucket = "username"
   email = "example@example.com"
 
 # Custom social links
-[[Params.widgets.social.custom]]
-  title = "Youtube"
-  url = "https://youtube.com/user/username"
-  icon = "youtube.svg" # Optional. Path relative to "layouts/partials"
-
 [[Params.widgets.social.custom]]
   title = "My Home Page"
   url = "http://example.com"
