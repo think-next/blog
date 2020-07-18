@@ -9,7 +9,7 @@ summaryLength = 1
 
 [Author] # Used in authorbox
   name = "Neojos"
-  bio = "John Doe's true identity is unknown. Maybe he is a successful blogger or writer. Nobody knows it."
+  bio = "沙漏"
   avatar = "img/headimg.png"
 
 [[menu.main]]
@@ -45,8 +45,8 @@ summaryLength = 1
   customJS = ["js/custom.js"] # Include custom JS files
 
 [Params.logo]
-  image = "img/headimg.png" # Logo image. Path relative to "static"
-  title = "我思故我在" # Logo title, otherwise will use site title
+  image = "img/mifeng.jpeg" # Logo image. Path relative to "static"
+  title = "Neojos" # Logo title, otherwise will use site title
   subtitle = "往者不可谏，来者犹可追" # Logo subtitle
 
 [Params.sidebar]
