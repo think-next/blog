@@ -13,15 +13,16 @@ summaryLength = 1
   avatar = "img/headimg.png"
 
 [[menu.main]]
-    name = "Home"
-    url = "/"
-    weight = 1
-
-[[menu.main]]
     identifier = "Blog"
-    name = "Blog"
+    name = "主页"
     url = "/blog"
     weight = 2
+
+[[menu.main]]
+    identifier = "emotion"
+    name = "情绪"
+    url = "/greatperson"
+    weight = 3
 
 [Params]
   description = "John Doe's Personal blog about everything" # Site description. Used in meta description
@@ -50,7 +51,7 @@ summaryLength = 1
 
 [Params.sidebar]
   home = "right" # Configure layout for home page
-  # list = "left"  # Configure layout for list pages
+  list = "right"  # Configure layout for list pages
   single = true # Configure layout for single pages
   # Enable widgets in given order
   widgets = ["search", "recent", "categories", "taglist", "social", "languages"]
