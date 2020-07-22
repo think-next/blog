@@ -9,7 +9,7 @@ summaryLength = 1
 
 [Author] # Used in authorbox
   name = "Neojos"
-  bio = "沙漏"
+  bio = "我们听到的一切都是一个观点，不是事实。我们看到的一切都是一个视角，不是真相"
   avatar = "img/headimg.png"
 
 [[menu.main]]
