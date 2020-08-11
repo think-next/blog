@@ -1,6 +1,6 @@
 ---
 title: "Oh My ZSH使用"
-date: "2020-08-03"
+date: "2020-08-11"
 lead: "命令行中Git自动提示"
 comments: true # Enable Disqus comments for specific page
 authorbox: true # Enable authorbox for specific page
