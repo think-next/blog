@@ -2,7 +2,7 @@ baseurl = "https://neojos.com/"
 title = "渐行渐远"
 languageCode = "en-us"
 paginate = "12" # Number of posts per page
-theme = "mainroad"
+theme = "cactus"
 disqusShortname = "" # Enable Disqus comments by entering your Disqus shortname
 googleAnalytics = "" # Enable Google Analytics by entering your tracking id
 summaryLength = 1
@@ -14,13 +14,13 @@ summaryLength = 1
 
 [[menu.main]]
     identifier = "Blog"
-    name = "主页"
+    name = "技术"
     url = "/blog"
     weight = 2
 
 [[menu.main]]
     identifier = "emotion"
-    name = "情绪"
+    name = "生活"
     url = "/greatperson"
     weight = 3
 
