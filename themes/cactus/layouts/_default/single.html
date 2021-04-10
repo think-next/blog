@@ -1,6 +1,7 @@
 {{ define "main" }}
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 <!-- TODO: gallery -->
+  <h1 id="title">{{ .Title }}</h1>
   <div class="content" itemprop="articleBody">
   {{ if (eq .Type "search") }}
     <!-- TODO: search https://gohugo.io/tools/search/ -->

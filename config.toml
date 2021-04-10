@@ -13,6 +13,12 @@ summaryLength = 1
   avatar = "img/mifeng.jpeg"
 
 [[menu.main]]
+  identifier = "Home"
+  name = "主页"
+  url = "/"
+  weight = 1
+
+[[menu.main]]
     identifier = "Blog"
     name = "技术"
     url = "/blog"
@@ -25,8 +31,8 @@ summaryLength = 1
     weight = 3
 
 [Params]
-  description = "John Doe's Personal blog about everything" # Site description. Used in meta description
-  copyright = "John Doe" # Footer copyright holder, otherwise will use site title
+  description = "Neojos Personal blog about everything" # Site description. Used in meta description
+  copyright = "Neojos" # Footer copyright holder, otherwise will use site title
   # opengraph = true # Enable OpenGraph if true
   schema = true # Enable Schema
   # twitter_cards = true # Enable Twitter Cards if true
@@ -35,7 +41,7 @@ summaryLength = 1
   toc = true # Enable Table of Contents
   pager = true # Show pager navigation (prev/next links) at the bottom of pages if true
   post_meta = ["author", "date", "categories", "translations"] # Order of post meta information
-  mainSections = ["post", "blog", "news"] # Specify section pages to show on home page and the "Recent articles" widget
+  mainSections = ["blog"] # Specify section pages to show on home page and the "Recent articles" widget
   dateformat = "2006-01-02" # Change the format of dates
   mathjax = true # Enable MathJax
   mathjaxPath = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js" # Specify MathJax path
@@ -43,11 +49,18 @@ summaryLength = 1
   highlightColor = "#e22d30" # Override highlight color
   customCSS = ["css/custom.css"] # Include custom CSS files
   customJS = ["js/custom.js"] # Include custom JS files
+  colortheme = "white" # dark, light, white, or classic
+  mainSection = "blog"
+  postsOnHomePage = 12
+  tagsOverview = false
+  #showProjectsList = true
+  projectsUrl = "https://github.com/think-next"
+  logo = "img/mifeng.jpeg"
 
-[Params.logo]
-  image = "img/mifeng.jpeg" # Logo image. Path relative to "static"
-  title = "Neojos" # Logo title, otherwise will use site title
-  subtitle = "往者不可谏，来者犹可追" # Logo subtitle
+# [Params.logo]
+  # image = "img/mifeng.jpeg" # Logo image. Path relative to "static"
+  # title = "Neojos" # Logo title, otherwise will use site title
+  # subtitle = "往者不可谏，来者犹可追" # Logo subtitle
 
 [Params.sidebar]
   home = "right" # Configure layout for home page
@@ -62,12 +75,19 @@ summaryLength = 1
   recent_num = 5 # Set the number of articles in the "Recent articles" widget
   tags_counter = false # Enable counter for each tag in "Tags" widget
 
-[Params.widgets.social]
+# [Params.widgets.social]
   # Enable parts of social widget
-  github = "username"
-  email = "example@example.com"
+  # github = "username"
+  # email = "example@example.com"
 
 # Custom social links
-[[Params.widgets.social.custom]]
-  title = "My Home Page"
-  url = "http://example.com"
+# [[Params.widgets.social.custom]]
+  # title = "My Home Page"
+  # url = "http://example.com"
+
+[[Params.social]]
+  name = "CSDN"
+  link = "https://neojos.blog.csdn.net/"
+
+[Params.comments]
+  enabled = true
