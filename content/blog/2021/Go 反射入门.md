@@ -7,7 +7,7 @@ lead: ""
 通过下面的例子，我们来深入了解 `reflect` 数据包。我们定义`People`的结构体类型，来开始探索。
 
 
-```go
+{{< highlight go "linenos=table,hl_lines=2 4-7,linenostart=1,style=abap,lineanchors=neojos" >}}
 type People struct {
     Age int64
 }
@@ -21,7 +21,7 @@ func main() {
     value := reflect.Indirect(reflect.ValueOf(p))
   	fmt.Println(value.Kind())		// output: struct
 }
-```
+{{< / highlight >}}
 
 上面这个例子，`reflect.Indirect` 返回的是底层的值类型，所以，调用`Kind`返回的类型为 `struct`。而它本身的 `Kind` 类型为`ptr`。查看源码中  `Kind` 的数据类型定义。通过这些常量的声明，可以帮助我们理解 Go 的基础类型。
 
