@@ -171,13 +171,115 @@ func toType(t *rtype) Type {
 
 #### ValueOf
 
-下面是源码中 `Value`转`Type`的方法。示例代码中，方法运行到注释为`Easy case`的逻辑里就直接返回了，后续的其他逻辑并没有执行到。
+`ValueOf` 的源码如下，更多的细节还是需要查看 `unpackEface` 方法。返回值类型 `Value` 和 `Type` 不同，`Value` 是一个结构体值类型，
+而 `Type` 是一个接口类型。当入参是一个 `nil` 时，直接返回一个初始化的 `Value` 对象。
 
-疑问的是，`flagMethod`是如何设置到`v.flag`上的呢？
+{{< highlight go "linenos=table,hl_lines=14,linenostart=2349,style=abap,lineanchors=neojos" >}}
+// ValueOf returns a new Value initialized to the concrete value
+// stored in the interface i. ValueOf(nil) returns the zero Value.
+func ValueOf(i interface{}) Value {
+	if i == nil {
+		return Value{}
+	}
 
-查看源码，通过`ValueOf`方法设置的`flag`是无法把`flagMethod`指定的`bit`位设置成1的。`flagMethod`的常量定义:`flagMethod      flag = 1 << 9`，把1右移9位，在`reflect.ValueOf`中并没有做这样的逻辑处理。
+	// TODO: Maybe allow contents of a Value to live on the stack.
+	// For now we make the contents always escape to the heap. It
+	// makes life easier in a few places (see chanrecv/mapassign
+	// comment below).
+	escapes(i)
 
-{{< highlight go "linenos=table,hl_lines=8-9,linenostart=1904,style=abap,lineanchors=neojos" >}}
+	return unpackEface(i)
+}
+{{< / highlight >}}
+
+下面是 `unpackEface` 的方法实现，通过第 13 行返回值，我们可以看出，`Value` 操作的也是 `emptyInterface` 结构体，只是再它的基础上，
+多了一个 `flag` 属性。
+
+对比之前 `TypeOf` 的源码，`TypeOf` 仅仅返回 `emptyInterface` 的 `typ` 属性，也就是底层的数据类型。
+而 `ValueOf` 在 `TypeOf` 的基础上还返回了 `emptyInterface` 的 `word` 属性，并且设置了一个 `flag`。
+
+正因为如此，`Value` 可以获取 `Type`，`Type` 类型却无法获取 `Value`。在使用反射遍历结构体类型的时候，如果想要获取结构体字段的值，就必须操作 `Value` 对象了。
+
+{{< highlight go "linenos=table,hl_lines=3 13,linenostart=141,style=abap,lineanchors=neojos" >}}
+// unpackEface converts the empty interface i to a Value.
+func unpackEface(i interface{}) Value {
+	e := (*emptyInterface)(unsafe.Pointer(&i))
+	// NOTE: don't read e.word until we know whether it is really a pointer or not.
+	t := e.typ
+	if t == nil {
+		return Value{}
+	}
+	f := flag(t.Kind())
+	if ifaceIndir(t) {
+		f |= flagIndir
+	}
+	return Value{t, e.word, f}
+}
+{{< / highlight >}}
+
+我其实并不想把 `Value` 结构体的源码复制到这里，因为它的注释太长了。我就非常抵触代码的行数特别多（包括注释），因为不利于阅读。
+但最终还是整体复制过来了，说服自己的就一个观点，既然是复制，就要跟原来的保持一致。
+
+`Value` 的结构体声明没有什么特别，除了 `flag` 属性是我们自己设置的，其他都是对象转换成 `emptyInterface` 后直接获取的。
+
+{{< highlight go "linenos=table,hl_lines=42,linenostart=16,style=abap,lineanchors=neojos" >}}
+// Value is the reflection interface to a Go value.
+//
+// Not all methods apply to all kinds of values. Restrictions,
+// if any, are noted in the documentation for each method.
+// Use the Kind method to find out the kind of value before
+// calling kind-specific methods. Calling a method
+// inappropriate to the kind of type causes a run time panic.
+//
+// The zero Value represents no value.
+// Its IsValid method returns false, its Kind method returns Invalid,
+// its String method returns "<invalid Value>", and all other methods panic.
+// Most functions and methods never return an invalid value.
+// If one does, its documentation states the conditions explicitly.
+//
+// A Value can be used concurrently by multiple goroutines provided that
+// the underlying Go value can be used concurrently for the equivalent
+// direct operations.
+//
+// To compare two Values, compare the results of the Interface method.
+// Using == on two Values does not compare the underlying values
+// they represent.
+type Value struct {
+	// typ holds the type of the value represented by a Value.
+	typ *rtype
+
+	// Pointer-valued data or, if flagIndir is set, pointer to data.
+	// Valid when either flagIndir is set or typ.pointers() is true.
+	ptr unsafe.Pointer
+
+	// flag holds metadata about the value.
+	// The lowest bits are flag bits:
+	//	- flagStickyRO: obtained via unexported not embedded field, so read-only
+	//	- flagEmbedRO: obtained via unexported embedded field, so read-only
+	//	- flagIndir: val holds a pointer to the data
+	//	- flagAddr: v.CanAddr is true (implies flagIndir)
+	//	- flagMethod: v is a method value.
+	// The next five bits give the Kind of the value.
+	// This repeats typ.Kind() except for method values.
+	// The remaining 23+ bits give a method number for method values.
+	// If flag.kind() != Func, code can assume that flagMethod is unset.
+	// If ifaceIndir(typ), code can assume that flagIndir is set.
+	flag
+
+	// A method value represents a curried method invocation
+	// like r.Read for some receiver r. The typ+val+flag bits describe
+	// the receiver r, but the flag's Kind bits say Func (methods are
+	// functions), and the top bits of the flag give the method number
+	// in r's type's method table.
+}
+
+type flag uintptr
+{{< / highlight >}}	
+
+我们开始步入主题，查看 `Value` 类型的 `Type` 方法。一般的情况，方法体会在 1912 行直接返回，后续的其他逻辑并不会执行，正如注释所说，这是 `Easy case` 的情况。
+如果我们不在反射的基础是使用反射，后续的逻辑基本上是触发不到的。即使声明一个函数或者方法，然后对他们调用 `ValueOf` 的 `TypeOf` 方法也是一样的。
+
+{{< highlight go "linenos=table,hl_lines=8-9 12,linenostart=1904,style=abap,lineanchors=neojos" >}}
 // Type returns v's type.
 func (v Value) Type() Type {
 	f := v.flag
@@ -212,15 +314,31 @@ func (v Value) Type() Type {
 }
 {{< / highlight >}}
 
-上述`Easy case`之后的逻辑该如何触发呢？
+在这里就有疑问了，`Easy case` 后续的逻辑什么情况下才会被触发呢？`flagMethod` 是如何设置到 `v.flag` 上的呢（在 `unpackEface` 方法中我们可没有看到过这个标志位）？
 
-通过方法的名称，我们还是可以隐约猜测到，它可能是一个方法的 `Value`。我们给 `People`对象追加一个方法，获取方法的`Value`对象，然后通过这个对象获取`Type`。代码的调整如下：
+`ValueOf` 方法中并不会把 `flag` 属性的 `flagMethod` 标识位设置为1。下面是标志位的具体位置。`flagMethod` 为把 1 左移 9 位，从右到左，第 10 给比特位为 1。
+但是 `flag` 的第 10 个比特位并不是 1，`falg` 所有为 1 的比特位和 `falgMethod` 与运算后都是 0 。
 
-```go
-type People struct {
-    Age int64
-}
+{{< highlight go "linenos=table,hl_lines=8,linenostart=68,style=abap,lineanchors=neojos" >}}
+const (
+	flagKindWidth        = 5 // there are 27 kinds
+	flagKindMask    flag = 1<<flagKindWidth - 1
+	flagStickyRO    flag = 1 << 5
+	flagEmbedRO     flag = 1 << 6
+	flagIndir       flag = 1 << 7
+	flagAddr        flag = 1 << 8
+	flagMethod      flag = 1 << 9
+	flagMethodShift      = 10
+	flagRO          flag = flagStickyRO | flagEmbedRO
+)
+{{< / highlight >}}
 
+通过全局搜索 `flagMethod` 关键字，可以隐约猜测到，触发后续逻辑的应该是一个方法的 `Value`，而且这个方法的 `Value` 还必须从结构体的 `Value`中获得。
+我们给 `People` 对象追加一个方法， 代码第 10 行获取方法的 `Value` 对象，然后通过这个对象获取 `Type`。
+
+通过断点调试，这样处理后，确实触发了`Easy case`之后的逻辑。
+
+{{< highlight go "linenos=table,hl_lines=10,linenostart=1,style=abap,lineanchors=neojos" >}}
 func (p *People) Describe() {
     fmt.Println("people age:", p.Age)
 }
@@ -230,17 +348,17 @@ func main() {
         Age: 30,
     }
 
-    methodType := reflect.ValueOf(p).MethodByName("Describe").
-        Type()
+    methodType := reflect.ValueOf(p).MethodByName("Describe").Type()
     fmt.Println(methodType)
 }
-```
+{{< / highlight >}}
 
-通过断点调试，这样处理后，确实触发了`Easy case`之后的逻辑。
+#### MethodByName
 
-那么，`MethodByName`具体做了什么操作呢？
+这是基于上述 `flag` 内容的延伸。那么，`MethodByName` 具体又做了什么操作呢？看第 10 行的代码，`flagMethod` 标志位的含义就明白了，
+它标志是否是方法的 `Value`。`v` 必须不能被设置 `flagMethod` 标志，如果设置的话，会返回空的 `Value`。
 
-```go
+{{< highlight go "linenos=table,hl_lines=10,linenostart=1,style=abap,lineanchors=neojos" >}}
 // MethodByName returns a function value corresponding to the method
 // of v with the given name.
 // The arguments to a Call on the returned function should not include
@@ -259,11 +377,11 @@ func (v Value) MethodByName(name string) Value {
 	}
 	return v.Method(m.Index)
 }
-```
+{{< / highlight >}}
 
-在 `Method`方法中，重新创建了返回的`Value`,并对 `flag`做好了标志位。
+跳过 `MethodByName` 的方法实现，见第 10 行代码，我们找到了设置 `flagMethod` 的地方。
 
-```go
+{{< highlight go "linenos=table,hl_lines=17,linenostart=1316,style=abap,lineanchors=neojos" >}}
 // Method returns a function value corresponding to v's i'th method.
 // The arguments to a Call on the returned function should not include
 // a receiver; the returned function will always use v as the receiver.
@@ -283,5 +401,5 @@ func (v Value) Method(i int) Value {
 	fl |= flag(i)<<flagMethodShift | flagMethod
 	return Value{v.typ, v.ptr, fl}
 }
-```
+{{< / highlight >}}
 
