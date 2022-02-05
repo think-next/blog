@@ -1435,6 +1435,11 @@ article .content blockquote {
     font-weight: bold;
 }
 
+article .content > blockquote {
+    color: #c07814;
+    border: .5em #c4e5b6 outset;
+}
+
 article .content blockquote p {
     margin: 0;
 }
