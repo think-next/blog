@@ -58,10 +58,25 @@
 </head>
 
 <body class="column mx-auto px3 ltr">
-  <div class="column-left">左边栏</div>
-  <div class="max-width column-right">
-    <div class="content index py4">
-
+  <div class="column-left">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#引言">引言</a></li>
+    <li><a href="#待解决的问题">待解决的问题</a></li>
+    <li><a href="#方案可行性">方案可行性</a></li>
+    <li><a href="#了解kafka">了解<code>kafka</code></a>
+      <ul>
+        <li><a href="#consumer使用pull拉取数据"><code>consumer</code>使用<code>pull</code>拉取数据</a></li>
+        <li><a href="#consumer-position"><code>consumer position</code></a></li>
+        <li><a href="#offset-earliest-and-latest的区别"><code>offset earliest and latest</code>的区别</a></li>
+        <li><a href="#offsetsretention配置属性"><code>Offsets.Retention</code>配置属性</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
       <header id="header">
   <a href="https://neojos.com/">
   
@@ -94,21 +109,7 @@
 
   <h1 id="title">Kafka的offset初窥(1)</h1>文章 763 字
   <aside>
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#引言">引言</a></li>
-    <li><a href="#待解决的问题">待解决的问题</a></li>
-    <li><a href="#方案可行性">方案可行性</a></li>
-    <li><a href="#了解kafka">了解<code>kafka</code></a>
-      <ul>
-        <li><a href="#consumer使用pull拉取数据"><code>consumer</code>使用<code>pull</code>拉取数据</a></li>
-        <li><a href="#consumer-position"><code>consumer position</code></a></li>
-        <li><a href="#offset-earliest-and-latest的区别"><code>offset earliest and latest</code>的区别</a></li>
-        <li><a href="#offsetsretention配置属性"><code>Offsets.Retention</code>配置属性</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
+
   </aside>
   <div class="content" itemprop="articleBody">
   
@@ -197,6 +198,7 @@ offset.</p>
 
     </div>
   </div>
+  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

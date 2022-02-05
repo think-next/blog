@@ -58,10 +58,22 @@
 </head>
 
 <body class="column mx-auto px3 ltr">
-  <div class="column-left">左边栏</div>
-  <div class="max-width column-right">
-    <div class="content index py4">
-
+  <div class="column-left">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#查询的执行时间">查询的执行时间</a></li>
+    <li><a href="#left-join"><code>left join</code></a>
+      <ul>
+        <li><a href="#on条件"><code>on</code>条件</a></li>
+        <li><a href="#执行效率">执行效率</a></li>
+      </ul>
+    </li>
+    <li><a href="#时间格式">时间格式</a></li>
+  </ul>
+</nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
       <header id="header">
   <a href="https://neojos.com/">
   
@@ -94,18 +106,7 @@
 
   <h1 id="title">MySQL使用总结(一)</h1>文章 125 字
   <aside>
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#查询的执行时间">查询的执行时间</a></li>
-    <li><a href="#left-join"><code>left join</code></a>
-      <ul>
-        <li><a href="#on条件"><code>on</code>条件</a></li>
-        <li><a href="#执行效率">执行效率</a></li>
-      </ul>
-    </li>
-    <li><a href="#时间格式">时间格式</a></li>
-  </ul>
-</nav>
+
   </aside>
   <div class="content" itemprop="articleBody">
   
@@ -178,6 +179,7 @@ where table_out.id &gt; 2018
 
     </div>
   </div>
+  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

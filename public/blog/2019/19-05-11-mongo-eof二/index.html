@@ -58,10 +58,20 @@
 </head>
 
 <body class="column mx-auto px3 ltr">
-  <div class="column-left">左边栏</div>
-  <div class="max-width column-right">
-    <div class="content index py4">
-
+  <div class="column-left">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#depends_on">depends_on</a></li>
+    <li><a href="#entrypoint">entrypoint</a></li>
+    <li><a href="#调整creator中的entrypoint指令">调整<code>creator</code>中的<code>entrypoint</code>指令</a></li>
+    <li><a href="#容器访问">容器访问</a></li>
+    <li><a href="#启动服务">启动服务</a></li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
+</nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
       <header id="header">
   <a href="https://neojos.com/">
   
@@ -94,16 +104,7 @@
 
   <h1 id="title">mongo EOF（二）</h1>文章 430 字
   <aside>
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#depends_on">depends_on</a></li>
-    <li><a href="#entrypoint">entrypoint</a></li>
-    <li><a href="#调整creator中的entrypoint指令">调整<code>creator</code>中的<code>entrypoint</code>指令</a></li>
-    <li><a href="#容器访问">容器访问</a></li>
-    <li><a href="#启动服务">启动服务</a></li>
-    <li><a href="#总结">总结</a></li>
-  </ul>
-</nav>
+
   </aside>
   <div class="content" itemprop="articleBody">
   
@@ -317,6 +318,7 @@ less /etc/hosts
 
     </div>
   </div>
+  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

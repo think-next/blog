@@ -58,10 +58,19 @@
 </head>
 
 <body class="column mx-auto px3 ltr">
-  <div class="column-left">左边栏</div>
-  <div class="max-width column-right">
-    <div class="content index py4">
-
+  <div class="column-left">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#sliding-window"><code>sliding window</code></a></li>
+    <li><a href="#window-size"><code>window size</code></a></li>
+    <li><a href="#push"><code>PUSH</code></a></li>
+    <li><a href="#slow-start"><code>slow start</code></a></li>
+    <li><a href="#delayed-acks"><code>Delayed Acks</code></a></li>
+  </ul>
+</nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
       <header id="header">
   <a href="https://neojos.com/">
   
@@ -94,15 +103,7 @@
 
   <h1 id="title">Tcp Bulk Data</h1>文章 42 字
   <aside>
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#sliding-window"><code>sliding window</code></a></li>
-    <li><a href="#window-size"><code>window size</code></a></li>
-    <li><a href="#push"><code>PUSH</code></a></li>
-    <li><a href="#slow-start"><code>slow start</code></a></li>
-    <li><a href="#delayed-acks"><code>Delayed Acks</code></a></li>
-  </ul>
-</nav>
+
   </aside>
   <div class="content" itemprop="articleBody">
   
@@ -149,6 +150,7 @@
 
     </div>
   </div>
+  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

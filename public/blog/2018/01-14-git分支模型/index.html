@@ -58,10 +58,24 @@
 </head>
 
 <body class="column mx-auto px3 ltr">
-  <div class="column-left">左边栏</div>
-  <div class="max-width column-right">
-    <div class="content index py4">
-
+  <div class="column-left">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#为什么选择git">为什么选择Git</a></li>
+    <li><a href="#不集中式又集中式">不集中式又集中式</a></li>
+    <li><a href="#主要分支">主要分支</a></li>
+    <li><a href="#支承分支">支承分支</a>
+      <ul>
+        <li><a href="#feature-分支">Feature 分支</a></li>
+        <li><a href="#release分支">release分支</a></li>
+        <li><a href="#hotfix-分支">Hotfix 分支</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
       <header id="header">
   <a href="https://neojos.com/">
   
@@ -94,20 +108,7 @@
 
   <h1 id="title">Git分支模型</h1>文章 189 字
   <aside>
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#为什么选择git">为什么选择Git</a></li>
-    <li><a href="#不集中式又集中式">不集中式又集中式</a></li>
-    <li><a href="#主要分支">主要分支</a></li>
-    <li><a href="#支承分支">支承分支</a>
-      <ul>
-        <li><a href="#feature-分支">Feature 分支</a></li>
-        <li><a href="#release分支">release分支</a></li>
-        <li><a href="#hotfix-分支">Hotfix 分支</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
+
   </aside>
   <div class="content" itemprop="articleBody">
   
@@ -257,6 +258,7 @@ git merge --no-ff hotfix-1.2.1
 
     </div>
   </div>
+  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

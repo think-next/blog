@@ -58,10 +58,32 @@
 </head>
 
 <body class="column mx-auto px3 ltr">
-  <div class="column-left">左边栏</div>
-  <div class="max-width column-right">
-    <div class="content index py4">
-
+  <div class="column-left">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#比较运算">比较运算</a>
+      <ul>
+        <li><a href="#算数比较">算数比较</a></li>
+        <li><a href="#文件系统">文件系统</a></li>
+        <li><a href="#字符串比较">字符串比较</a></li>
+        <li><a href="#逻辑运算">逻辑运算</a></li>
+      </ul>
+    </li>
+    <li><a href="#基本语句example">基本语句<code>Example</code></a>
+      <ul>
+        <li><a href="#if语句"><code>if</code>语句</a></li>
+        <li><a href="#while语句"><code>while</code>语句</a></li>
+        <li><a href="#for语句"><code>for</code>语句</a></li>
+        <li><a href="#case语句"><code>case</code>语句</a></li>
+      </ul>
+    </li>
+    <li><a href="#数组">数组</a></li>
+    <li><a href="#函数">函数</a></li>
+  </ul>
+</nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
       <header id="header">
   <a href="https://neojos.com/">
   
@@ -94,28 +116,7 @@
 
   <h1 id="title">Shell必备基础（1）</h1>文章 223 字
   <aside>
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#比较运算">比较运算</a>
-      <ul>
-        <li><a href="#算数比较">算数比较</a></li>
-        <li><a href="#文件系统">文件系统</a></li>
-        <li><a href="#字符串比较">字符串比较</a></li>
-        <li><a href="#逻辑运算">逻辑运算</a></li>
-      </ul>
-    </li>
-    <li><a href="#基本语句example">基本语句<code>Example</code></a>
-      <ul>
-        <li><a href="#if语句"><code>if</code>语句</a></li>
-        <li><a href="#while语句"><code>while</code>语句</a></li>
-        <li><a href="#for语句"><code>for</code>语句</a></li>
-        <li><a href="#case语句"><code>case</code>语句</a></li>
-      </ul>
-    </li>
-    <li><a href="#数组">数组</a></li>
-    <li><a href="#函数">函数</a></li>
-  </ul>
-</nav>
+
   </aside>
   <div class="content" itemprop="articleBody">
   
@@ -265,6 +266,7 @@ $@  与$*相同，但是使用时加引号，并在引号中返回每个参数�
 
     </div>
   </div>
+  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

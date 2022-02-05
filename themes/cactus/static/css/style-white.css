@@ -1244,7 +1244,7 @@ body {
     top: 45%;
 }
 
-#TableOfContents::before {
+#TableOfContents > ul::before {
     color: #2bbc8a;
     content: "#文章的目录结构：";
     margin-right: 8px;

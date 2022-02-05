@@ -58,10 +58,21 @@
 </head>
 
 <body class="column mx-auto px3 ltr">
-  <div class="column-left">左边栏</div>
-  <div class="max-width column-right">
-    <div class="content index py4">
-
+  <div class="column-left">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#wireshark配置"><code>wireshark</code>配置</a></li>
+    <li><a href="#key-log文件格式"><code>key log</code>文件格式</a></li>
+    <li><a href="#tls加解密"><code>TLS</code>加解密</a>
+      <ul>
+        <li><a href="#case-1"><code>case 1.</code></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
       <header id="header">
   <a href="https://neojos.com/">
   
@@ -94,17 +105,7 @@
 
   <h1 id="title">NSS初窥</h1>文章 136 字
   <aside>
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#wireshark配置"><code>wireshark</code>配置</a></li>
-    <li><a href="#key-log文件格式"><code>key log</code>文件格式</a></li>
-    <li><a href="#tls加解密"><code>TLS</code>加解密</a>
-      <ul>
-        <li><a href="#case-1"><code>case 1.</code></a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
+
   </aside>
   <div class="content" itemprop="articleBody">
   
@@ -179,6 +180,7 @@ EXPORTER_SECRET 51c27befc24dceb18ade59b4a10c1398725848f7130b2ebeeb2e01483ed95e4d
 
     </div>
   </div>
+  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

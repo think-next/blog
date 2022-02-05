@@ -58,10 +58,19 @@
 </head>
 
 <body class="column mx-auto px3 ltr">
-  <div class="column-left">左边栏</div>
-  <div class="max-width column-right">
-    <div class="content index py4">
-
+  <div class="column-left">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#概述"><code>概述</code></a></li>
+    <li><a href="#reflectvalue"><code>reflect.Value</code></a></li>
+    <li><a href="#查找指定的field">查找指定的<code>Field</code></a></li>
+    <li><a href="#将value转换为interface类型">将<code>value</code>转换为<code>interface</code>类型</a></li>
+    <li><a href="#安全设置结构体中的值">安全设置结构体中的值</a></li>
+  </ul>
+</nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
       <header id="header">
   <a href="https://neojos.com/">
   
@@ -94,15 +103,7 @@
 
   <h1 id="title">Go反射</h1>文章 228 字
   <aside>
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#概述"><code>概述</code></a></li>
-    <li><a href="#reflectvalue"><code>reflect.Value</code></a></li>
-    <li><a href="#查找指定的field">查找指定的<code>Field</code></a></li>
-    <li><a href="#将value转换为interface类型">将<code>value</code>转换为<code>interface</code>类型</a></li>
-    <li><a href="#安全设置结构体中的值">安全设置结构体中的值</a></li>
-  </ul>
-</nav>
+
   </aside>
   <div class="content" itemprop="articleBody">
   
@@ -195,6 +196,7 @@
 
     </div>
   </div>
+  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

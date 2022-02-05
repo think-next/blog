@@ -58,10 +58,29 @@
 </head>
 
 <body class="column mx-auto px3 ltr">
-  <div class="column-left">左边栏</div>
-  <div class="max-width column-right">
-    <div class="content index py4">
-
+  <div class="column-left">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#使用reset回退">使用<code>reset</code>回退</a>
+      <ul>
+        <li><a href="#example"><code>Example</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#checkout"><code>checkout</code></a></li>
+    <li><a href="#stash储藏"><code>stash</code>储藏</a></li>
+    <li><a href="#使用clean清空">使用<code>clean</code>清空</a></li>
+    <li><a href="#使用revert">使用<code>revert</code></a>
+      <ul>
+        <li><a href="#revert-a-merge"><code>Revert a merge</code></a></li>
+        <li><a href="#revert-vs-reset"><code>Revert vs Reset</code></a></li>
+        <li><a href="#revert-the-revert"><code>Revert the revert</code></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
       <header id="header">
   <a href="https://neojos.com/">
   
@@ -94,25 +113,7 @@
 
   <h1 id="title">Git撤销本地修改</h1>文章 155 字
   <aside>
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#使用reset回退">使用<code>reset</code>回退</a>
-      <ul>
-        <li><a href="#example"><code>Example</code></a></li>
-      </ul>
-    </li>
-    <li><a href="#checkout"><code>checkout</code></a></li>
-    <li><a href="#stash储藏"><code>stash</code>储藏</a></li>
-    <li><a href="#使用clean清空">使用<code>clean</code>清空</a></li>
-    <li><a href="#使用revert">使用<code>revert</code></a>
-      <ul>
-        <li><a href="#revert-a-merge"><code>Revert a merge</code></a></li>
-        <li><a href="#revert-vs-reset"><code>Revert vs Reset</code></a></li>
-        <li><a href="#revert-the-revert"><code>Revert the revert</code></a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
+
   </aside>
   <div class="content" itemprop="articleBody">
   
@@ -211,6 +212,7 @@ fatal: 还原失败
 
     </div>
   </div>
+  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

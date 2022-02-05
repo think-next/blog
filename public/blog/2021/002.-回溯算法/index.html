@@ -58,10 +58,21 @@
 </head>
 
 <body class="column mx-auto px3 ltr">
-  <div class="column-left">左边栏</div>
-  <div class="max-width column-right">
-    <div class="content index py4">
-
+  <div class="column-left">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#回溯算法">回溯算法</a>
+      <ul>
+        <li><a href="#构造一个树的结构">构造一个树的结构</a></li>
+        <li><a href="#递归的退出条件">递归的退出条件</a></li>
+        <li><a href="#递归中状态的更新和回退">递归中状态的更新和回退</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
       <header id="header">
   <a href="https://neojos.com/">
   
@@ -94,17 +105,7 @@
 
   <h1 id="title">回溯算法</h1>文章 97 字
   <aside>
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#回溯算法">回溯算法</a>
-      <ul>
-        <li><a href="#构造一个树的结构">构造一个树的结构</a></li>
-        <li><a href="#递归的退出条件">递归的退出条件</a></li>
-        <li><a href="#递归中状态的更新和回退">递归中状态的更新和回退</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
+
   </aside>
   <div class="content" itemprop="articleBody">
   
@@ -199,6 +200,7 @@
 
     </div>
   </div>
+  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

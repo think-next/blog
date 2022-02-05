@@ -58,10 +58,33 @@
 </head>
 
 <body class="column mx-auto px3 ltr">
-  <div class="column-left">左边栏</div>
-  <div class="max-width column-right">
-    <div class="content index py4">
-
+  <div class="column-left">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#npm包管理">npm包管理</a>
+      <ul>
+        <li><a href="#包的版本">包的版本</a></li>
+        <li><a href="#管理依赖">管理依赖</a></li>
+        <li><a href="#版本管理">版本管理</a></li>
+      </ul>
+    </li>
+    <li><a href="#composer管理">Composer管理</a>
+      <ul>
+        <li><a href="#installupdate">install/update</a></li>
+        <li><a href="#版本管理-1">版本管理</a></li>
+      </ul>
+    </li>
+    <li><a href="#go下的版本管理工具"><code>Go</code>下的版本管理工具</a>
+      <ul>
+        <li><a href="#glide"><code>glide</code></a></li>
+        <li><a href="#govendor"><code>govendor</code></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
       <header id="header">
   <a href="https://neojos.com/">
   
@@ -94,29 +117,7 @@
 
   <h1 id="title">包管理工具</h1>文章 92 字
   <aside>
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#npm包管理">npm包管理</a>
-      <ul>
-        <li><a href="#包的版本">包的版本</a></li>
-        <li><a href="#管理依赖">管理依赖</a></li>
-        <li><a href="#版本管理">版本管理</a></li>
-      </ul>
-    </li>
-    <li><a href="#composer管理">Composer管理</a>
-      <ul>
-        <li><a href="#installupdate">install/update</a></li>
-        <li><a href="#版本管理-1">版本管理</a></li>
-      </ul>
-    </li>
-    <li><a href="#go下的版本管理工具"><code>Go</code>下的版本管理工具</a>
-      <ul>
-        <li><a href="#glide"><code>glide</code></a></li>
-        <li><a href="#govendor"><code>govendor</code></a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
+
   </aside>
   <div class="content" itemprop="articleBody">
   
@@ -206,6 +207,7 @@ govendor sync -v
 
     </div>
   </div>
+  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

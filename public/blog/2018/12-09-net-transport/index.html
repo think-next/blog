@@ -58,10 +58,20 @@
 </head>
 
 <body class="column mx-auto px3 ltr">
-  <div class="column-left">左边栏</div>
-  <div class="max-width column-right">
-    <div class="content index py4">
-
+  <div class="column-left">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#dial"><code>Dial</code></a></li>
+    <li><a href="#transport"><code>Transport</code></a></li>
+    <li><a href="#roundtripper">RoundTripper</a></li>
+    <li><a href="#缓存idle连接">缓存<code>Idle</code>连接</a></li>
+    <li><a href="#test-case"><code>Test Case</code></a></li>
+    <li><a href="#tcp-keepalive-timer"><code>TCP KeepAlive Timer</code></a></li>
+  </ul>
+</nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
       <header id="header">
   <a href="https://neojos.com/">
   
@@ -94,16 +104,7 @@
 
   <h1 id="title">Net Transport</h1>文章 565 字
   <aside>
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#dial"><code>Dial</code></a></li>
-    <li><a href="#transport"><code>Transport</code></a></li>
-    <li><a href="#roundtripper">RoundTripper</a></li>
-    <li><a href="#缓存idle连接">缓存<code>Idle</code>连接</a></li>
-    <li><a href="#test-case"><code>Test Case</code></a></li>
-    <li><a href="#tcp-keepalive-timer"><code>TCP KeepAlive Timer</code></a></li>
-  </ul>
-</nav>
+
   </aside>
   <div class="content" itemprop="articleBody">
   
@@ -318,6 +319,7 @@ func TestRequestBaiDu(t *testing.T) {
 
     </div>
   </div>
+  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

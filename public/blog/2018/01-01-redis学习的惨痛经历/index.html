@@ -58,10 +58,28 @@
 </head>
 
 <body class="column mx-auto px3 ltr">
-  <div class="column-left">左边栏</div>
-  <div class="max-width column-right">
-    <div class="content index py4">
-
+  <div class="column-left">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#调试和修复">调试和修复</a>
+      <ul>
+        <li><a href="#在调用redis结束后关闭连接">在调用redis结束后关闭连接</a></li>
+        <li><a href="#ab-testing-redis库">A/B-Testing Redis库</a></li>
+        <li><a href="#更新redis">更新redis</a></li>
+        <li><a href="#调试延迟问题">调试延迟问题</a></li>
+        <li><a href="#为每个业务创建专门的实例">为每个业务创建专门的实例</a></li>
+        <li><a href="#on时间复杂度">O(n)时间复杂度</a></li>
+        <li><a href="#每个连接创建一个请求">每个连接创建一个请求</a></li>
+        <li><a href="#数据拆分">数据拆分</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
+</nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
       <header id="header">
   <a href="https://neojos.com/">
   
@@ -94,24 +112,7 @@
 
   <h1 id="title">Redis学习的惨痛经历</h1>文章 357 字
   <aside>
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#前言">前言</a></li>
-    <li><a href="#调试和修复">调试和修复</a>
-      <ul>
-        <li><a href="#在调用redis结束后关闭连接">在调用redis结束后关闭连接</a></li>
-        <li><a href="#ab-testing-redis库">A/B-Testing Redis库</a></li>
-        <li><a href="#更新redis">更新redis</a></li>
-        <li><a href="#调试延迟问题">调试延迟问题</a></li>
-        <li><a href="#为每个业务创建专门的实例">为每个业务创建专门的实例</a></li>
-        <li><a href="#on时间复杂度">O(n)时间复杂度</a></li>
-        <li><a href="#每个连接创建一个请求">每个连接创建一个请求</a></li>
-        <li><a href="#数据拆分">数据拆分</a></li>
-      </ul>
-    </li>
-    <li><a href="#总结">总结</a></li>
-  </ul>
-</nav>
+
   </aside>
   <div class="content" itemprop="articleBody">
   
@@ -299,6 +300,7 @@ min: 0, max: 463, avg: 2.03 (19443 samples)
 
     </div>
   </div>
+  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

@@ -58,10 +58,31 @@
 </head>
 
 <body class="column mx-auto px3 ltr">
-  <div class="column-left">左边栏</div>
-  <div class="max-width column-right">
-    <div class="content index py4">
-
+  <div class="column-left">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#question"><code>Question</code></a>
+      <ul>
+        <li><a href="#描述">描述</a></li>
+        <li><a href="#解决思路">解决思路</a></li>
+      </ul>
+    </li>
+    <li><a href="#搭建replica-sethttpsdocsmongodbcommanualreferenceglossaryterm-replica-set">搭建<a href="https://docs.mongodb.com/manual/reference/glossary/#term-replica-set"><code>replica set</code></a></a></li>
+    <li><a href="#测试">测试</a></li>
+    <li><a href="#docker-composeyml"><code>docker-compose.yml</code></a>
+      <ul>
+        <li><a href="#ports-vs-expose"><code>ports vs expose</code></a></li>
+        <li><a href="#entrypoint"><code>entrypoint</code></a></li>
+        <li><a href="#depends_on"><code>depends_on</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#docker-command"><code>docker command</code></a></li>
+    <li><a href="#mongo-command"><code>mongo command</code></a></li>
+  </ul>
+</nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
       <header id="header">
   <a href="https://neojos.com/">
   
@@ -94,27 +115,7 @@
 
   <h1 id="title">mongo EOF</h1>文章 416 字
   <aside>
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#question"><code>Question</code></a>
-      <ul>
-        <li><a href="#描述">描述</a></li>
-        <li><a href="#解决思路">解决思路</a></li>
-      </ul>
-    </li>
-    <li><a href="#搭建replica-sethttpsdocsmongodbcommanualreferenceglossaryterm-replica-set">搭建<a href="https://docs.mongodb.com/manual/reference/glossary/#term-replica-set"><code>replica set</code></a></a></li>
-    <li><a href="#测试">测试</a></li>
-    <li><a href="#docker-composeyml"><code>docker-compose.yml</code></a>
-      <ul>
-        <li><a href="#ports-vs-expose"><code>ports vs expose</code></a></li>
-        <li><a href="#entrypoint"><code>entrypoint</code></a></li>
-        <li><a href="#depends_on"><code>depends_on</code></a></li>
-      </ul>
-    </li>
-    <li><a href="#docker-command"><code>docker command</code></a></li>
-    <li><a href="#mongo-command"><code>mongo command</code></a></li>
-  </ul>
-</nav>
+
   </aside>
   <div class="content" itemprop="articleBody">
   
@@ -252,6 +253,7 @@ rs.slaveOk()
 
     </div>
   </div>
+  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

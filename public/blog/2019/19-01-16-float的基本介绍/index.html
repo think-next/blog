@@ -58,10 +58,33 @@
 </head>
 
 <body class="column mx-auto px3 ltr">
-  <div class="column-left">左边栏</div>
-  <div class="max-width column-right">
-    <div class="content index py4">
-
+  <div class="column-left">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#floating-point-represent">Floating-point represent</a>
+      <ul>
+        <li><a href="#1-fixed-point"><code>1. Fixed-point</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#floating-point-basics"><code>Floating-point basics</code></a>
+      <ul>
+        <li><a href="#1-representable-numbers"><code>1. Representable numbers</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#ieee-standard"><code>IEEE standard</code></a>
+      <ul>
+        <li><a href="#1-ieee-formats"><code>1. IEEE formats</code></a></li>
+        <li><a href="#2-非数值"><code>2. 非数值</code></a></li>
+        <li><a href="#3-运算"><code>3. 运算</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#float-to-float">float to float</a></li>
+    <li><a href="#matchbig"><code>match/big</code></a></li>
+  </ul>
+</nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
       <header id="header">
   <a href="https://neojos.com/">
   
@@ -94,29 +117,7 @@
 
   <h1 id="title">Float的基本介绍</h1>文章 304 字
   <aside>
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#floating-point-represent">Floating-point represent</a>
-      <ul>
-        <li><a href="#1-fixed-point"><code>1. Fixed-point</code></a></li>
-      </ul>
-    </li>
-    <li><a href="#floating-point-basics"><code>Floating-point basics</code></a>
-      <ul>
-        <li><a href="#1-representable-numbers"><code>1. Representable numbers</code></a></li>
-      </ul>
-    </li>
-    <li><a href="#ieee-standard"><code>IEEE standard</code></a>
-      <ul>
-        <li><a href="#1-ieee-formats"><code>1. IEEE formats</code></a></li>
-        <li><a href="#2-非数值"><code>2. 非数值</code></a></li>
-        <li><a href="#3-运算"><code>3. 运算</code></a></li>
-      </ul>
-    </li>
-    <li><a href="#float-to-float">float to float</a></li>
-    <li><a href="#matchbig"><code>match/big</code></a></li>
-  </ul>
-</nav>
+
   </aside>
   <div class="content" itemprop="articleBody">
   
@@ -277,6 +278,7 @@ result := bigFloat1.Cmp(bigFloat2)
 
     </div>
   </div>
+  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

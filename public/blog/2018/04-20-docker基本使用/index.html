@@ -58,10 +58,37 @@
 </head>
 
 <body class="column mx-auto px3 ltr">
-  <div class="column-left">左边栏</div>
-  <div class="max-width column-right">
-    <div class="content index py4">
-
+  <div class="column-left">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#安装redis">安装redis</a>
+      <ul>
+        <li><a href="#bitmap-使用">bitmap 使用</a></li>
+      </ul>
+    </li>
+    <li><a href="#example"><code>Example</code></a></li>
+    <li><a href="#dockerfile指令"><code>Dockerfile</code>指令</a>
+      <ul>
+        <li><a href="#from"><code>FROM</code></a></li>
+        <li><a href="#run"><code>RUN</code></a></li>
+        <li><a href="#env"><code>ENV</code></a></li>
+        <li><a href="#copy"><code>COPY</code></a></li>
+        <li><a href="#cmd"><code>CMD</code></a></li>
+        <li><a href="#entrypoint"><code>ENTRYPOINT</code></a></li>
+        <li><a href="#expose"><code>EXPOSE</code></a></li>
+        <li><a href="#workdir"><code>WORKDIR</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#多阶段构建">多阶段构建</a>
+      <ul>
+        <li><a href="#example-1"><code>Example</code></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
       <header id="header">
   <a href="https://neojos.com/">
   
@@ -94,33 +121,7 @@
 
   <h1 id="title">docker基本使用</h1>文章 407 字
   <aside>
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#安装redis">安装redis</a>
-      <ul>
-        <li><a href="#bitmap-使用">bitmap 使用</a></li>
-      </ul>
-    </li>
-    <li><a href="#example"><code>Example</code></a></li>
-    <li><a href="#dockerfile指令"><code>Dockerfile</code>指令</a>
-      <ul>
-        <li><a href="#from"><code>FROM</code></a></li>
-        <li><a href="#run"><code>RUN</code></a></li>
-        <li><a href="#env"><code>ENV</code></a></li>
-        <li><a href="#copy"><code>COPY</code></a></li>
-        <li><a href="#cmd"><code>CMD</code></a></li>
-        <li><a href="#entrypoint"><code>ENTRYPOINT</code></a></li>
-        <li><a href="#expose"><code>EXPOSE</code></a></li>
-        <li><a href="#workdir"><code>WORKDIR</code></a></li>
-      </ul>
-    </li>
-    <li><a href="#多阶段构建">多阶段构建</a>
-      <ul>
-        <li><a href="#example-1"><code>Example</code></a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
+
   </aside>
   <div class="content" itemprop="articleBody">
   
@@ -289,6 +290,7 @@ CMD [&quot;bash&quot;, &quot;-c&quot;, &quot;/data/src/${RUN_PROG:=baby} --log_d
 
     </div>
   </div>
+  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

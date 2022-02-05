@@ -58,10 +58,35 @@
 </head>
 
 <body class="column mx-auto px3 ltr">
-  <div class="column-left">左边栏</div>
-  <div class="max-width column-right">
-    <div class="content index py4">
-
+  <div class="column-left">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#test"><code>Test</code></a></li>
+    <li><a href="#option"><code>option</code></a>
+      <ul>
+        <li><a href="#使用map的测试">使用<code>map</code>的测试</a></li>
+      </ul>
+    </li>
+    <li><a href="#main"><code>Main</code></a></li>
+    <li><a href="#性能测试pprof">性能测试<code>pprof</code></a>
+      <ul>
+        <li><a href="#profile"><code>Profile</code></a></li>
+        <li><a href="#在终端查看性能">在终端查看性能</a></li>
+      </ul>
+    </li>
+    <li><a href="#benchmark测试"><code>Benchmark</code>测试</a>
+      <ul>
+        <li><a href="#regular-expression"><code>regular expression</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#run-example"><code>Run Example</code></a></li>
+    <li><a href="#覆盖率">覆盖率</a></li>
+    <li><a href="#火焰图"><code>火焰图</code></a></li>
+  </ul>
+</nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
       <header id="header">
   <a href="https://neojos.com/">
   
@@ -94,31 +119,7 @@
 
   <h1 id="title">Go test基础用法</h1>文章 539 字
   <aside>
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#test"><code>Test</code></a></li>
-    <li><a href="#option"><code>option</code></a>
-      <ul>
-        <li><a href="#使用map的测试">使用<code>map</code>的测试</a></li>
-      </ul>
-    </li>
-    <li><a href="#main"><code>Main</code></a></li>
-    <li><a href="#性能测试pprof">性能测试<code>pprof</code></a>
-      <ul>
-        <li><a href="#profile"><code>Profile</code></a></li>
-        <li><a href="#在终端查看性能">在终端查看性能</a></li>
-      </ul>
-    </li>
-    <li><a href="#benchmark测试"><code>Benchmark</code>测试</a>
-      <ul>
-        <li><a href="#regular-expression"><code>regular expression</code></a></li>
-      </ul>
-    </li>
-    <li><a href="#run-example"><code>Run Example</code></a></li>
-    <li><a href="#覆盖率">覆盖率</a></li>
-    <li><a href="#火焰图"><code>火焰图</code></a></li>
-  </ul>
-</nav>
+
   </aside>
   <div class="content" itemprop="articleBody">
   
@@ -364,6 +365,7 @@ go-torch -h
 
     </div>
   </div>
+  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

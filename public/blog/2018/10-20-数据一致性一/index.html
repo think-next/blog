@@ -58,10 +58,28 @@
 </head>
 
 <body class="column mx-auto px3 ltr">
-  <div class="column-left">左边栏</div>
-  <div class="max-width column-right">
-    <div class="content index py4">
-
+  <div class="column-left">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#基础理论">基础理论</a>
+      <ul>
+        <li><a href="#acid"><code>ACID</code></a></li>
+        <li><a href="#cap"><code>CAP</code></a></li>
+        <li><a href="#base"><code>BASE</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#购买业务">购买业务</a></li>
+    <li><a href="#代码设计">代码设计</a></li>
+    <li><a href="#如何补偿">如何补偿</a>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
       <header id="header">
   <a href="https://neojos.com/">
   
@@ -94,24 +112,7 @@
 
   <h1 id="title">数据一致性（一）</h1>文章 81 字
   <aside>
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#基础理论">基础理论</a>
-      <ul>
-        <li><a href="#acid"><code>ACID</code></a></li>
-        <li><a href="#cap"><code>CAP</code></a></li>
-        <li><a href="#base"><code>BASE</code></a></li>
-      </ul>
-    </li>
-    <li><a href="#购买业务">购买业务</a></li>
-    <li><a href="#代码设计">代码设计</a></li>
-    <li><a href="#如何补偿">如何补偿</a>
-      <ul>
-        <li></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
+
   </aside>
   <div class="content" itemprop="articleBody">
   
@@ -221,6 +222,7 @@
 
     </div>
   </div>
+  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

@@ -552,6 +552,12 @@ body td {
 
 @font-face {
     font-style: normal;
+    font-family: "Meslo LG";
+    src: local("Meslo LG S"), url("../lib/meslo-LG/MesloLGS-Regular.ttf") format("truetype");
+}
+
+@font-face {
+    font-style: normal;
     font-family: "JetBrains Mono";
     src: local("JetBrains Mono"), url("../lib/JetBrainsMono/ttf/JetBrainsMono-Regular.ttf") format("truetype");
 }
@@ -593,11 +599,14 @@ body {
 
 .column-left {
     flex: 1;
-    padding-left: 5em;
+}
+
+.column-middle {
+    flex: 2;
 }
 
 .column-right {
-    flex: 2;
+    flex: 1;
 }
 
 .content {
@@ -1230,13 +1239,24 @@ body {
     text-align: left;
 }
 
-#footer-post #toc-footer #TableOfContents ul {
+#TableOfContents {
+    position: fixed;
+    top: 45%;
+}
+
+#TableOfContents > ul::before {
+    color: #2bbc8a;
+    content: "#文章的目录结构：";
+    margin-right: 8px;
+}
+
+#TableOfContents ul {
     margin: 0;
     padding-left: 20px;
     list-style-type: none;
 }
 
-#footer-post #toc-footer #TableOfContents ul li {
+#TableOfContents ul li {
     line-height: 30px;
 }
 
@@ -1248,31 +1268,40 @@ body {
 /* #footer-post #toc-footer #TableOfContents > ul > li > a {
   display: none;
 } */
-#footer-post #toc-footer #TableOfContents > ul > li {
+#TableOfContents > ul > li {
     color: #383838;
     font-size: 0.8rem;
 }
 
-#footer-post #toc-footer #TableOfContents > ul > li > a::before {
-    color: #2bbc8a;
+#TableOfContents > ul > li > ul > li > a {
+    text-decoration: none;
+    color: #103586;
+    font-weight: bold;
+    padding: .5em;
+    margin-top: .5em;
+    display: block;
+}
+
+#TableOfContents > ul > li > a::before {
+    color: #352bbc;
     content: "#";
     margin-right: 8px;
 }
 
-#footer-post #toc-footer #TableOfContents > ul > li > ul > li {
+#TableOfContents > ul > li > ul > li {
     color: #666;
     font-size: 0.7rem;
     line-height: 15px;
 }
 
-#footer-post #toc-footer #TableOfContents > ul > li > ul > li:before {
+#TableOfContents > ul > li > ul > li > a:before {
     color: #2bbc8a;
-    content: "·";
+    content: "-";
     font-weight: bold;
     margin-right: 3px;
 }
 
-#footer-post #toc-footer #TableOfContents > ul > li > ul > li > ul > li {
+#TableOfContents > ul > li > ul > li > ul > li {
     display: none;
 }
 
@@ -1420,7 +1449,7 @@ article .content blockquote:before {
 }
 
 article .content blockquote footer {
-    margin: 0;
+    margin: line-height 0;
     color: #666;
     font-size: 11px;
 }
@@ -1954,11 +1983,13 @@ code {
 }
 
 .highlight figcaption:before,
-.highlight figcaption {
-    content: " ";
-    display: table;
-}
+.highlight figcaption content:
 
+""
+{
+    display: table
+;
+}
 .highlight figcaption:after {
     clear: both;
 }

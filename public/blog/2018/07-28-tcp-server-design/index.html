@@ -58,10 +58,16 @@
 </head>
 
 <body class="column mx-auto px3 ltr">
-  <div class="column-left">左边栏</div>
-  <div class="max-width column-right">
-    <div class="content index py4">
-
+  <div class="column-left">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#listen状态"><code>listen</code>状态</a></li>
+    <li><a href="#request-queue"><code>request queue</code></a></li>
+  </ul>
+</nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
       <header id="header">
   <a href="https://neojos.com/">
   
@@ -94,12 +100,7 @@
 
   <h1 id="title">Tcp Server Design</h1>文章 56 字
   <aside>
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#listen状态"><code>listen</code>状态</a></li>
-    <li><a href="#request-queue"><code>request queue</code></a></li>
-  </ul>
-</nav>
+
   </aside>
   <div class="content" itemprop="articleBody">
   
@@ -152,6 +153,7 @@ tcp46      0      0  *.3900                 *.*                    LISTEN
 
     </div>
   </div>
+  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
