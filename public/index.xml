@@ -822,12 +822,12 @@
     </item>
     
     <item>
-      <title>About</title>
+      <title>About Me</title>
       <link>https://neojos.com/about/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://neojos.com/about/</guid>
-      <description>网站是使用hugo + GitHub搭建的静态网页。在这之前，一直用的是hexo，自从无意间看到了https://yihui.</description>
+      <description>欢迎大家访问我的博客地址</description>
     </item>
     
     <item>

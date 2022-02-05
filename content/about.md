@@ -1,6 +1,8 @@
 ---
-title: About
+title: About Me
 ---
-网站是使用`hugo` + `GitHub`搭建的静态网页。在这之前，一直用的是`hexo`，自从无意间看到了[https://yihui.name/](https://yihui.name/)。不得不说，自己被博主的优秀以及博客的简单明了折服的一塌糊涂。
 
-简单了解[hugo](http://gohugo.io/getting-started/)之后，发现它更简单、更方便，所以将自己的博客也做了迁移。
+欢迎大家访问我的博客地址
+
+- [CSDN 地址](https://neojos.blog.csdn.net/?type=blog)
+- [segmentfault 地址](https://segmentfault.com/u/neojos/articles)

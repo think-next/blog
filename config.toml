@@ -30,6 +30,12 @@ summaryLength = 1
     url = "/greatperson"
     weight = 3
 
+[[menu.main]]
+    identifier = "about"
+    name = "About"
+    url = "/about"
+    weight = 4
+
 [Params]
   description = "Neojos Personal blog about everything" # Site description. Used in meta description
   copyright = "Neojos" # Footer copyright holder, otherwise will use site title
