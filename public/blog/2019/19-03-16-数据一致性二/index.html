@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> 数据一致性（二） | 渐行渐远</title>
+  <meta name="description" content="Neojos Personal blog about everything">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="数据一致性（二）" />
+<meta property="og:description" content="我们流连于事物的表象，满足浅尝辄止的片刻欢愉，却几乎从不久留。我们在人生的道路上争先恐后，却吝于用片刻思考目标和方向。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://neojos.com/blog/2019/19-03-16-%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7%E4%BA%8C/" />
+<meta property="article:published_time" content="2019-03-16T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-03-16T00:00:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="数据一致性（二）"/>
+<meta name="twitter:description" content="我们流连于事物的表象，满足浅尝辄止的片刻欢愉，却几乎从不久留。我们在人生的道路上争先恐后，却吝于用片刻思考目标和方向。"/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+
+  
+  
+
+  <style>
+    :root {
+      font-size: 1em;
+      --main-font: orange;
+    }
+
+    .featured {
+      width: 20em;
+      height: calc(6em - 16px);
+      font-size: 1rem;
+      border-radius: .15em;
+      background-color: var(--main-font);
+      box-shadow: .45em .25em #6f9090;
+    }
+  </style>
+</head>
+
+<body class="column mx-auto px3 ltr">
+  <div class="column-left">左边栏</div>
+  <div class="max-width column-right">
+    <div class="content index py4">
+
+      <header id="header">
+  <a href="https://neojos.com/">
+  
+    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+  
+  <div id="title">
+    <h1>渐行渐远</h1>
+  </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/blog">技术</a></li>
+      
+        <li><a href="/greatperson">生活</a></li>
+      
+    </ul>
+  </div>
+</header>
+
+
+
+      
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <h1 id="title">数据一致性（二）</h1>文章 280 字
+  <aside>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#概述">概述</a></li>
+    <li><a href="#mysql数据的一致性">MySQL数据的一致性</a>
+      <ul>
+        <li><a href="#master-slave模式"><code>Master-Slave</code>模式</a></li>
+        <li><a href="#并发下的数据一致性">并发下的数据一致性</a></li>
+      </ul>
+    </li>
+    <li><a href="#理解冲突">理解冲突</a>
+      <ul>
+        <li><a href="#go的并发问题">Go的并发问题</a></li>
+        <li><a href="#一对多情况">一对多情况</a></li>
+      </ul>
+    </li>
+    <li><a href="#cap"><code>CAP</code></a></li>
+    <li><a href="#last-write-wins"><code>Last-write-wins</code></a></li>
+    <li><a href="#vector-clock"><code>vector clock</code></a></li>
+    <li><a href="#cassandra的思路"><code>Cassandra</code>的思路</a></li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
+</nav>
+  </aside>
+  <div class="content" itemprop="articleBody">
+  
+    <blockquote>
+<p><code>我们流连于事物的表象，满足浅尝辄止的片刻欢愉，却几乎从不久留。我们在人生的道路上争先恐后，却吝于用片刻思考目标和方向。</code></p>
+</blockquote>
+<h2 id="概述">概述</h2>
+<p>至今没有接触过<code>MySQL</code>多主的情况，即存在多个<code>MySQL</code>实例同时负责读写请求（抛弃只读库）。思考后认为：没有这么实现的技术难点在于：数据的一致性得不到保证。此外，还会涉及：</p>
+<ol>
+<li><code>MySQL</code>采用自增主键索引的话，多主之间的数据同步简直是灾难。</li>
+<li>内部锁机制的优势大打折扣，跨主库间的锁应该也是灾难级别的吧。</li>
+</ol>
+<p>那么支持分布式的其他数据库又是怎么搞定这个问题的呢？比如<code>Cassandra</code>，多个节点之间可以同时处理读写请求，那么它是如何处理节点间数据同步以保证一致性的呢？</p>
+<h2 id="mysql数据的一致性">MySQL数据的一致性</h2>
+<blockquote>
+<p>We think this is an unacceptable burden to place ondevelopers and that consistency problems should be solved at the database level</p>
+</blockquote>
+<p>细细想想，<code>MySQL</code>自身实现的数据一致性也是相当复杂的。以<code>Innodb</code>举例，如果通过普通索引执行查询，首先获取到的仅仅是主键索引，后面还需要通过主键索引来获取完整的记录。查询如此，更新亦如此。</p>
+<h3 id="master-slave模式"><code>Master-Slave</code>模式</h3>
+<p>通常情况下，<code>MySQL</code>部署都是一主多从。<code>Master</code>作为更新<code>DB</code>的入口，而<code>Slave</code>的数据通过<code>binlog</code>来进行同步。所以<strong>大胆想一想</strong>，有没有可能出现一种情况（假设<code>id=1</code>记录原始的<code>name</code>值为<code>neojos</code>）：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#f92672">##</span> <span style="color:#960050;background-color:#1e0010">第一次同步数据</span>
+<span style="color:#66d9ef">update</span> s<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> <span style="color:#66d9ef">set</span> name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;neojos-1&#34;</span> <span style="color:#66d9ef">where</span> id <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;    <span style="color:#f92672">##</span> <span style="color:#960050;background-color:#1e0010">失败</span>
+<span style="color:#66d9ef">update</span> s<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span> <span style="color:#66d9ef">set</span> name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;neojos-1&#34;</span> <span style="color:#66d9ef">where</span> id <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;    <span style="color:#f92672">##</span> <span style="color:#960050;background-color:#1e0010">成功</span>
+<span style="color:#66d9ef">update</span> s<span style="color:#f92672">-</span><span style="color:#ae81ff">3</span> <span style="color:#66d9ef">set</span> name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;neojos-1&#34;</span> <span style="color:#66d9ef">where</span> id <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;    <span style="color:#f92672">##</span> <span style="color:#960050;background-color:#1e0010">成功</span>
+
+<span style="color:#f92672">##</span> <span style="color:#960050;background-color:#1e0010">第二次同步数据</span>
+<span style="color:#66d9ef">update</span> s<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> <span style="color:#66d9ef">set</span> name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;neojos-2&#34;</span> <span style="color:#66d9ef">where</span> id <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;    <span style="color:#f92672">##</span> <span style="color:#960050;background-color:#1e0010">成功</span>
+<span style="color:#66d9ef">update</span> s<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span> <span style="color:#66d9ef">set</span> name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;neojos-2&#34;</span> <span style="color:#66d9ef">where</span> id <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;    <span style="color:#f92672">##</span> <span style="color:#960050;background-color:#1e0010">失败</span>
+<span style="color:#66d9ef">update</span> s<span style="color:#f92672">-</span><span style="color:#ae81ff">3</span> <span style="color:#66d9ef">set</span> name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;neojos-2&#34;</span> <span style="color:#66d9ef">where</span> id <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;    <span style="color:#f92672">##</span> <span style="color:#960050;background-color:#1e0010">成功</span>
+</code></pre></div><p>最后，数据库从某一个时间点开始，<code>Master</code>和<code>Salve</code>的数据会变得不一致了当然不可能，<code>MySQL</code>在数据同步上做了非常硬的约束。包括<code>Slave_IO_Running</code>、<code>Slave_SQL_Running</code>以及<a href="https://dev.mysql.com/doc/refman/8.0/en/show-slave-status.html"><code>Seconds_Behind_Master</code></a>等。</p>
+<p><img src="https://i.loli.net/2019/03/16/5c8cae8a60bf4.jpg" alt="mysql"></p>
+<h3 id="并发下的数据一致性">并发下的数据一致性</h3>
+<p><code>MySQL</code>并发下的数据一致性是通过锁来保证的。并发的请求，谁先拿到<a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html"><code>X</code>锁</a>，谁就有修改的权限。锁类似扮演了一个操作版本号的作用。</p>
+<table>
+<thead>
+<tr>
+<th><code>X</code></th>
+<th><code>IX</code></th>
+<th><code>S</code></th>
+<th><code>IS</code></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>X</code></td>
+<td>Conflict</td>
+<td>Conflict</td>
+<td>Conflict</td>
+<td>Conflict</td>
+</tr>
+<tr>
+<td><code>IX</code></td>
+<td>Conflict</td>
+<td>Compatible</td>
+<td>Conflict</td>
+<td>Compatible</td>
+</tr>
+<tr>
+<td><code>S</code></td>
+<td>Conflict</td>
+<td>Conflict</td>
+<td>Compatible</td>
+<td>Compatible</td>
+</tr>
+<tr>
+<td><code>IS</code></td>
+<td>Conflict</td>
+<td>Compatible</td>
+<td>Compatible</td>
+<td>Compatible</td>
+</tr>
+</tbody>
+</table>
+<h2 id="理解冲突">理解冲突</h2>
+<p>以数据读取和写入为切入点，引申出两个工作中可能可能遇到的冲突问题，并通过加锁以及设置版本号来避免冲突的发生。</p>
+<h3 id="go的并发问题">Go的并发问题</h3>
+<p>下面是一个简单的<code>Go Test</code>代码问题：求1-100的累加和。我们通过<code>Goroutine</code>和最普通的两个方式分别计算。同时，在代码的末尾对两种方式的计算结果进行了比较并打印输出。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// 输出结果每次都是变化的。其中一次：5499 != 5050
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestSum1To100</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
+
+	<span style="color:#a6e22e">result1</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>
+	<span style="color:#a6e22e">result2</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>
+	
+  <span style="color:#75715e">// 并发的进行计算
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">wg</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">1</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">100</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">1</span>)
+		<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">m</span> <span style="color:#66d9ef">int</span>) {
+			<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Done</span>()
+			<span style="color:#a6e22e">result1</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">m</span>
+		}(<span style="color:#a6e22e">i</span>)
+	}
+
+  <span style="color:#75715e">// 正常的For循环
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">1</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">100</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#a6e22e">result2</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">i</span>
+	}
+
+	<span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Wait</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">result1</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">result2</span> {
+		<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Fatalf</span>(<span style="color:#e6db74">&#34; %d != %d&#34;</span>, <span style="color:#a6e22e">result1</span>, <span style="color:#a6e22e">result2</span>)
+	}
+}
+</code></pre></div><p>并发情况下，每个<code>goroutine</code>在读取<code>result1</code>到<code>result1=result1+1</code>的过程中，无法保证<code>result1</code>不被别的<code>goroutine</code>所修改。</p>
+<p>从<code>MySQL</code>解决问题的思路来考虑：加锁。我们要对读取<code>result1</code>到<code>result1=result1+1</code>的过程进行加锁，保证这个过程是同步的。</p>
+<h3 id="一对多情况">一对多情况</h3>
+<p>在国内第三方支付（微信/支付宝）场景中，用户是否支付了某个商品，是通过服务端接受第三方异步回调通知的方式，来作为判断依据的。而回调通知存在相应的重试策略，而且都要求幂等处理。</p>
+<p>假设下面一个场景，我们创建了以<code>user_id</code>为唯一索引的表（<code>user_pay</code>）用于统计该用户支付成功的次数，以及用户支付明细表（<code>user_pay_detail</code>），两者是一对多的对应关系。服务端每次收到第三方的支付回调，都在<code>user_pay_detail</code>追加一条新记录，同时相应的调整<code>user_pay</code>的信息。</p>
+<p><img src="https://i.loli.net/2019/03/16/5c8cca30aad33.png" alt="table"></p>
+<p>如果在回调过程中，存在这样一个场景：在<code>03-02</code>号收到了支付回调通知，对数据进行了调整。而在<code>03-15</code>号的时候却又收到了<code>02-01</code>的回调通知（该通知已经在<code>02-01</code>处理过了）。如何保证<code>user_pay</code>中的数据不会被多加一次？</p>
+<p>当然，解决办法非常简单。其中一个解决办法便是：在<code>user_pay</code>中记录上一次回调通知的时间戳，以此作为这行记录的版本号，后续也只有大于该版本号的通知才会被处理。</p>
+<h2 id="cap"><code>CAP</code></h2>
+<p>了解一下分布式的环境下的<code>CAP</code>定理，这里主要强调一下：<code>Consistency</code>。在分布式系统中，存在多节点同时对外提供读写服务，数据存储多份副本的情况。那么，这些节点在同步数据的过程中，可能会因为网络或者机器的原因导致数据同步失败，从而造成各个节点数据不一致的情况发生。</p>
+<p><img src="https://i.loli.net/2019/03/16/5c8ca67640466.png" alt="cap"></p>
+<h2 id="last-write-wins"><code>Last-write-wins</code></h2>
+<p><code>Last-write-wins</code>表示在对一条记录应用多个修改的时候，最后的改动会覆盖掉之前的操作，返回给客户端的记录都以最后一次的改动为准。</p>
+<p>这也是分布式系统解决冲突的一个策略。基于<code>timestamp</code>的版本控制系统，比如<code>HBase</code>。每次操作都会给记录附加一个<code>timestamp</code>的版本号。这样一来，当某些数据发生冲突时，我们就可以简单的认为最新的记录是准确的。</p>
+<p>但实际上，基于<code>Last-write-wins</code>的策略并不一定是正确的。比如多个节点对同一条记录进行修改。首先，节点服务上的时间钟不是严格相等的；其次，客户端发出的请求时间，跟到达节点服务的时间也是没有任何联系的。</p>
+<h2 id="vector-clock"><code>vector clock</code></h2>
+<blockquote>
+<p>先说一下需要用到向量时钟的场景。我们在写数据时候，经常希望数据不要存储在单点。如db1，db2都可以同时提供写服务，并且都存有全量数据。而client不管是写哪一个db都不用担心数据写乱问题。但是现实场景中往往会碰到并行同时修改。导致db1和db2数据不一致。于是乎就有人想出一些解决策略。向量时钟算是其中一种。简单易懂。但是并没有彻底解决冲突问题，现实分布式存储补充了很多额外技巧。</p>
+</blockquote>
+<p>文章<a href="http://www.d-kai.me/vector-clock-%e5%90%91%e9%87%8f%e6%97%b6%e9%92%9f%e7%ae%97%e6%b3%95/">vector clock 向量时钟算法</a>解释的实在是太完美了，这里就不冗余解释了。下图是一个分布式服务的示例，各个节点都可以提供读写服务。</p>
+<p><img src="https://i.loli.net/2019/03/17/5c8df05d447b6.jpg" alt="peer-to-perr"></p>
+<h2 id="cassandra的思路"><code>Cassandra</code>的思路</h2>
+<p><code>KV</code>类型的分布式数据库在存储对象时，存储的是对象序列化的结果。举个例子：</p>
+<ol>
+<li>有一个<code>jbellis</code>的对象，初始值为<code>{'email': 'jbellis@example.com', 'phone': '555-5555'}</code>，我们认为这个初始值为<code>V0</code></li>
+<li>之后修改了<code>jbellis</code>的邮件地址，这时候值记作<code>V1</code>，<code>{'email': 'jbellis@illustration.com', 'phone': '555-5555'}</code>。但因为网络或其他问题，在同步数据到其他节点的时候失败了，导致该修改仅仅被成功写到了其中一个节点上</li>
+<li>接着，我们更新<code>jbellis</code>中的电话信息。但我们读取到的<code>jbellis</code>是<code>V0</code>，所以，修改后的<code>V3</code>为<code>{'email': 'jbellis@example.com', 'phone': '444-4444'}</code></li>
+</ol>
+<p>从<code>Last-write-wins</code>的角度考虑，我们采纳了<code>V2</code>的值，而丢弃了<code>V1</code>。简单直接，但不一定正确；</p>
+<p>从<code>vector clock</code>的角度来看，当同步<code>V2</code>到其他节点时，就会发生数据冲突，因为当前节点的版本为<code>[V0, V2]</code>，而其他节点的版本是<code>[V0, V1]</code>，这时候就需要依靠具体的冲突解决策略。</p>
+<p>而<code>Cassandra</code>在存储数据结构上做了处理，将对象中<code>email</code>和<code>phone</code>单独存储，并给每个<code>column</code>都指定一个独立的<code>timestamp</code>作为版本号。这样，当冲突发生时，就可以简单运用<code>Last-write-wins</code>策略了。</p>
+<blockquote>
+<p><code>A column is the basic data structure of Cassandra with three values, namely key or column name, value, and a timestamp. Given below is the structure of a column.</code></p>
+</blockquote>
+<p><img src="https://i.loli.net/2019/03/17/5c8deee5f3fbf.jpg" alt="cassandra-data-mode"></p>
+<h2 id="总结">总结</h2>
+<p>实事求是，具体问题具体分析。请记住，对你而言，上面这些方法可能都不合适。</p>
+<p>参考文章：</p>
+<ol>
+<li><a href="http://www.d-kai.me/vector-clock-%e5%90%91%e9%87%8f%e6%97%b6%e9%92%9f%e7%ae%97%e6%b3%95/">vector clock 向量时钟算法</a></li>
+<li><a href="https://www.datastax.com/dev/blog/why-cassandra-doesnt-need-vector-clocks"><code>Why Cassandra doesn’t need vector clocks</code></a></li>
+<li><a href="https://www.tutorialspoint.com/cassandra/cassandra_data_model.htm"><code>Cassandra - Data Model</code></a></li>
+</ol>
+
+  
+
+    
+    
+  </div>
+</article>
+
+
+      <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2022  渐行渐远 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/">主页</a></li>
+         
+        <li><a href="/blog">技术</a></li>
+         
+        <li><a href="/greatperson">生活</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+  </div>
+</body>
+
+<link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
+<script src=/lib/jquery/jquery.min.js></script>
+<script src=/js/main.js></script>
+</html>

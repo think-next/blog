@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> 垃圾回收之引用计数 | 渐行渐远</title>
+  <meta name="description" content="Neojos Personal blog about everything">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="垃圾回收之引用计数" />
+<meta property="og:description" content="思来想去，决定总结一下垃圾回收机制。引用计数与我结缘最早，也比较简单、基础，遂决定从引用计数入手。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://neojos.com/blog/2019/19-02-01-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E4%B9%8B%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0/" />
+<meta property="article:published_time" content="2019-02-01T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-02-01T00:00:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="垃圾回收之引用计数"/>
+<meta name="twitter:description" content="思来想去，决定总结一下垃圾回收机制。引用计数与我结缘最早，也比较简单、基础，遂决定从引用计数入手。"/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+
+  
+  
+
+  <style>
+    :root {
+      font-size: 1em;
+      --main-font: orange;
+    }
+
+    .featured {
+      width: 20em;
+      height: calc(6em - 16px);
+      font-size: 1rem;
+      border-radius: .15em;
+      background-color: var(--main-font);
+      box-shadow: .45em .25em #6f9090;
+    }
+  </style>
+</head>
+
+<body class="column mx-auto px3 ltr">
+  <div class="column-left">左边栏</div>
+  <div class="max-width column-right">
+    <div class="content index py4">
+
+      <header id="header">
+  <a href="https://neojos.com/">
+  
+    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+  
+  <div id="title">
+    <h1>渐行渐远</h1>
+  </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/blog">技术</a></li>
+      
+        <li><a href="/greatperson">生活</a></li>
+      
+    </ul>
+  </div>
+</header>
+
+
+
+      
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <h1 id="title">垃圾回收之引用计数</h1>文章 371 字
+  <aside>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#reference-counting"><code>Reference Counting</code></a>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+    <li><a href="#如何实现">如何实现</a>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+    <li><a href="#对象引用关系">对象引用关系</a></li>
+    <li><a href="#gc扫描">GC扫描</a>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </aside>
+  <div class="content" itemprop="articleBody">
+  
+    <blockquote>
+<p><code>思来想去，决定总结一下垃圾回收机制。引用计数与我结缘最早，也比较简单、基础，遂决定从引用计数入手。</code></p>
+<p>—— <code>不管人非笑，不管人毁谤，不管人荣辱，任他功夫有进有退，我只是这致良知的主宰不息，久久自然有得力处</code></p>
+</blockquote>
+<h2 id="reference-counting"><code>Reference Counting</code></h2>
+<p>对象在创建时保存一个自身被引用的计数，初始值为1。每次被新的变量引用，该值加1。相反，则减去1。当该值等于0时，占用空间被系统回收。</p>
+<h6 id="什么是对象呢">什么是对象呢？</h6>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Go" data-lang="Go"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">neojos</span> <span style="color:#66d9ef">int64</span> = <span style="color:#ae81ff">32</span>
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ptrNeojos</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">int64</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">neojos</span>
+</code></pre></div><p>如上所示，我们创建了一个<code>int64</code>类型的<code>object</code>，命名为<code>neojos</code>。程序中对该<code>object</code>的操作都是通过使用<code>neojos</code>来实现的。而<code>ptrNeojos</code>其实又创建了一个<code>*int64</code>类型的<code>object</code>，但它的值保存的是<code>neojos</code>的地址。</p>
+<p>对于<code>ptrNeojos</code>来说，它的生命周期跟普通变量的生命周期没有区别。唯一区别的是，当它生命周期结束后，<code>ptrNeojos</code>会被垃圾回收，而底层指向的<code>object</code>却不会。</p>
+<h6 id="如何计数呢">如何计数呢？</h6>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">Object <span style="color:#f92672">*</span> obj1 <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Object(); <span style="color:#75715e">// RefCount(obj1) starts at 1
+</span><span style="color:#75715e"></span>Object <span style="color:#f92672">*</span> obj2 <span style="color:#f92672">=</span> obj1;         <span style="color:#75715e">// RefCount(obj1) incremented to 2 as new reference is added
+</span><span style="color:#75715e"></span>Object <span style="color:#f92672">*</span> obj3 <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Object(); 
+
+obj2<span style="color:#f92672">-&gt;</span>SomeMethod();
+obj2 <span style="color:#f92672">=</span> NULL;                  <span style="color:#75715e">// RefCount(obj1) decremented to 1 as ref goes away
+</span><span style="color:#75715e"></span>obj1 <span style="color:#f92672">=</span> obj3;                  <span style="color:#75715e">// RefCount(obj1) decremented to 0 and can be collected
+</span></code></pre></div><p><code>obj1</code>指向了一个匿名对象，为了方便，我们叫<code>anonymousObj</code>。上述代码展示了<code>anonymousObj</code>从创建到被垃圾回收的整个过程。<strong>垃圾回收对象的内存空间</strong>，上述过程中<code>obj1</code>对象的地址不会发生改变，只是底层引用的对象发生了变化。</p>
+<p>下面的例子，用于测试<code>ptrName</code>代表的对象在赋值过程中不会发生变化。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Go" data-lang="Go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestCase2</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">name</span> <span style="color:#66d9ef">int64</span> = <span style="color:#ae81ff">32</span>
+
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ptrName</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">int64</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">name</span>
+	<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Log</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ptrName</span>)		<span style="color:#75715e">//0xc42000e078
+</span><span style="color:#75715e"></span>
+	<span style="color:#a6e22e">ptrName</span> = <span style="color:#66d9ef">nil</span>
+	<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Log</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ptrName</span>)		<span style="color:#75715e">//0xc42000e078
+</span><span style="color:#75715e"></span>}
+</code></pre></div><h2 id="如何实现">如何实现</h2>
+<p>基于不同的语言会有不同的实现方式，但思路是相通的。</p>
+<h6 id="存储结构和申请空间">存储结构和申请空间</h6>
+<p>创建对象的时候，申请额外的空间用于存储引用计数，同时对外隐藏该空间的存在。如下图，<code>Header</code>部分就用于存储引用计数。所以，程序返回的指针实际是<code>ActualData</code>的首地址，调用者完全意识不到<code>header</code>的存在，而<code>GC</code>执行的时候却可以通过对象的地址访问<code>Header</code>。</p>
+<p><img src="https://msdnshared.blob.core.windows.net/media/TNBlogsFS/BlogFileStorage/blogs_msdn/abhinaba/WindowsLiveWriter/BackToBasicsReferenceCountingGarbageColl_D20A/image_2.png" alt="counter herader"></p>
+<p>如下代码，申请地址时，将引用计数初始化为1。同时，返回<code>ActualData</code>的指针地址。后续的引用计数更新，释放对象空间都通过判断<code>Header</code>来处理。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">//Header结构
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> MemHeader
+{
+    UINT32 refCount;
+};
+
+<span style="color:#75715e">// cb is the number of bytes to be allocated
+</span><span style="color:#75715e"></span>PVOID <span style="color:#a6e22e">GC_Alloc</span>(size_t cb)
+{
+    <span style="color:#75715e">// allocate MemHeader + cb but cast it to MemHeader
+</span><span style="color:#75715e"></span>    MemHeader<span style="color:#f92672">*</span> pHdr <span style="color:#f92672">=</span> (MemHeader<span style="color:#f92672">*</span>)PlatformAlloc(MEMHEADERSIZE <span style="color:#f92672">+</span> cb);
+    <span style="color:#66d9ef">if</span> (pHdr <span style="color:#f92672">==</span> NULL)
+        <span style="color:#66d9ef">return</span> NULL;
+
+    <span style="color:#75715e">// set the initial refCount
+</span><span style="color:#75715e"></span>    pHdr<span style="color:#f92672">-&gt;</span>refCount <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+
+    <span style="color:#75715e">// increment the pointer by the size of MemHeader 
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// and make it point to the start of the actual data
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">++</span>pHdr;
+
+    <span style="color:#66d9ef">return</span> (PVOID)pHdr;
+}
+
+<span style="color:#75715e">//访问Header头
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">inline</span> MemHeader <span style="color:#f92672">*</span> <span style="color:#a6e22e">GetHeader</span>(PVOID pMem)
+{
+    <span style="color:#66d9ef">return</span> ((MemHeader<span style="color:#f92672">*</span>)pMem) <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
+}
+</code></pre></div><h6 id="基类实现">基类实现</h6>
+<p>对象可以意识到引用计数机制的存在，明确的增加或减少引用计数。这种情况适用于：调用者手动释放空间的场合。那么，所有对象需要继承一个通用的基类，来实现这部分计数逻辑。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">class ReferenceCount
+{
+    <span style="color:#66d9ef">int</span> count;
+ 
+    ReferenceCount()
+    {
+        count <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; <span style="color:#75715e">//start at 1 as creation implies at least once reference is being made
+</span><span style="color:#75715e"></span>    }
+ 
+    <span style="color:#66d9ef">void</span> increment()
+    {
+        count<span style="color:#f92672">++</span>;
+    }
+ 
+    <span style="color:#66d9ef">void</span> decrement()
+    {
+        count<span style="color:#f92672">--</span>;
+        <span style="color:#66d9ef">if</span>( count <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> )
+            delete this;
+    }
+};
+ 
+<span style="color:#75715e">//any reference counted object simply derives from the above type
+</span><span style="color:#75715e"></span>class MyType : public ReferenceCount { ... }
+</code></pre></div><h2 id="对象引用关系">对象引用关系</h2>
+<p>对象与对象之间存在相互调用，当其中一个对象的引用计数减为0时，该对象“引用链”上其他对象的引用计数都需要被更新。<code>GC</code>如何执行清理的呢？</p>
+<p><img src="https://msdnshared.blob.core.windows.net/media/TNBlogsFS/BlogFileStorage/blogs_msdn/abhinaba/WindowsLiveWriter/BackToBasicsReferenceCountingGarbageColl_D20A/image_4.png" alt="relation"></p>
+<p>当<code>object1</code>释放<code>object3</code>的引用时，<code>object3</code>和<code>object5</code>的引用计数都需要被更新，而这是一个递归检查、更新的过程。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">VOID <span style="color:#a6e22e">GC_ReleaseRef</span>(PVOID pMem)
+{
+    <span style="color:#66d9ef">if</span> (pMem <span style="color:#f92672">==</span> NULL) <span style="color:#66d9ef">return</span>;
+    MemHeader <span style="color:#f92672">*</span>pHdr <span style="color:#f92672">=</span> GetHeader(pMem);
+    <span style="color:#f92672">--</span>(pHdr<span style="color:#f92672">-&gt;</span>refCount);
+    <span style="color:#66d9ef">if</span> (pHdr<span style="color:#f92672">-&gt;</span>refCount <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>)
+    {
+        foreach(PVOID pChild in Get_Child(pHdr)) 
+            GC_ReleaseRef(pChild);
+        PlatformFree(pHdr);
+    }
+}
+</code></pre></div><h2 id="gc扫描">GC扫描</h2>
+<p>除了自动回收垃圾外，<code>GC</code>的扫描是从哪里开始的？拿<code>Java</code>来解释，<code>GC roots</code>就是<code>Java</code>中的<code>ClassLoader</code>。</p>
+<h6 id="classloader">ClassLoader</h6>
+<blockquote>
+<p>After that when we try to use a Class, Java ClassLoader loads that class into memory</p>
+</blockquote>
+<p><code>ClassLoader</code>按需将使用到的<code>class</code>加载到内存，熟悉<code>PHP</code>的可以跟<code>Laravel Container</code>做类比。</p>
+<h6 id="gc-roots"><code>GC roots</code></h6>
+<blockquote>
+<p>In Java, there are special objects called <strong>Garbage Collection Roots</strong> (GC roots). They serve as a root objects for Garbage Collection marking mechanism (see picture).</p>
+</blockquote>
+<p><img src="https://i.stack.imgur.com/8ehun.jpg" alt="GC roots"></p>
+<hr>
+<p>参考文章：</p>
+<ol>
+<li><a href="https://www.journaldev.com/349/java-classloader"><code>Java ClassLoader</code></a></li>
+<li><a href="https://stackoverflow.com/questions/27186799/what-are-gc-roots-for-classes"><code>What are GC roots for classes?</code></a></li>
+<li><a href="https://www.w3resource.com/java-tutorial/garbage-collection-in-java.php"><code>Garbage Collection in Java</code></a></li>
+<li><a href="https://medium.com/computed-comparisons/garbage-collection-vs-automatic-reference-counting-a420bd4c7c81"><code>Garbage Collection vs Automatic Reference Counting</code></a></li>
+<li><a href="https://mortoray.com/2012/01/08/whats-an-object-whats-a-variable/"><code>What’s an object? What’s a variable?</code></a></li>
+<li><a href="https://mortoray.com/2012/01/08/what-is-reference-counting/"><code>What is reference counting?</code></a></li>
+<li><a href="https://blogs.msdn.microsoft.com/abhinaba/2009/01/27/back-to-basics-reference-counting-garbage-collection/"><code>Back To Basics: Reference Counting Garbage Collection</code></a></li>
+</ol>
+
+  
+
+    
+    
+  </div>
+</article>
+
+
+      <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2022  渐行渐远 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/">主页</a></li>
+         
+        <li><a href="/blog">技术</a></li>
+         
+        <li><a href="/greatperson">生活</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+  </div>
+</body>
+
+<link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
+<script src=/lib/jquery/jquery.min.js></script>
+<script src=/js/main.js></script>
+</html>

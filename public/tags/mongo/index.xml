@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>mongo on 渐行渐远</title>
+    <link>https://neojos.com/tags/mongo/</link>
+    <description>Recent content in mongo on 渐行渐远</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 13 Nov 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://neojos.com/tags/mongo/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>mongo中hint的使用</title>
+      <link>https://neojos.com/blog/2019/blog.016.mongo%E4%B8%ADhint%E7%9A%84%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Wed, 13 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/blog.016.mongo%E4%B8%ADhint%E7%9A%84%E4%BD%BF%E7%94%A8/</guid>
+      <description>mongo官方文档对hint的解释如下：</description>
+    </item>
+    
+    <item>
+      <title>mongo中ObjectId</title>
+      <link>https://neojos.com/blog/2019/19-06-11-mongo%E4%B8%ADobjectid/</link>
+      <pubDate>Mon, 03 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-06-11-mongo%E4%B8%ADobjectid/</guid>
+      <description>ObjectId在mongo中是自动生成的_id字段，充当数据表的主键ID。按照_id排序基本上等于按照记录的创建时间排序，但还是必须注意：_id并不是严格单调递增的，前4个byte的也只是精确到了秒级，同一秒内的_id并不能保证有序。</description>
+    </item>
+    
+  </channel>
+</rss>

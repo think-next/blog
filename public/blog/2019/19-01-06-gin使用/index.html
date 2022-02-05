@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> Gin使用 | 渐行渐远</title>
+  <meta name="description" content="Neojos Personal blog about everything">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="Gin使用" />
+<meta property="og:description" content="Gin对net/http包做了封装，支持路由、中间件等特性，极大的方便对Http Server的开发。文章通过一个Test例子，来简要介绍。对于特别基础的部分，请阅读参考文章。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://neojos.com/blog/2019/19-01-06-gin%E4%BD%BF%E7%94%A8/" />
+<meta property="article:published_time" content="2019-01-05T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-01-05T00:00:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Gin使用"/>
+<meta name="twitter:description" content="Gin对net/http包做了封装，支持路由、中间件等特性，极大的方便对Http Server的开发。文章通过一个Test例子，来简要介绍。对于特别基础的部分，请阅读参考文章。"/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+
+  
+  
+
+  <style>
+    :root {
+      font-size: 1em;
+      --main-font: orange;
+    }
+
+    .featured {
+      width: 20em;
+      height: calc(6em - 16px);
+      font-size: 1rem;
+      border-radius: .15em;
+      background-color: var(--main-font);
+      box-shadow: .45em .25em #6f9090;
+    }
+  </style>
+</head>
+
+<body class="column mx-auto px3 ltr">
+  <div class="column-left">左边栏</div>
+  <div class="max-width column-right">
+    <div class="content index py4">
+
+      <header id="header">
+  <a href="https://neojos.com/">
+  
+    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+  
+  <div id="title">
+    <h1>渐行渐远</h1>
+  </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/blog">技术</a></li>
+      
+        <li><a href="/greatperson">生活</a></li>
+      
+    </ul>
+  </div>
+</header>
+
+
+
+      
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <h1 id="title">Gin使用</h1>文章 199 字
+  <aside>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#接口测试">接口测试</a>
+      <ul>
+        <li><a href="#使用postman">使用<code>Postman</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#使用test">使用<code>Test</code></a>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+    <li><a href="#middleware"><code>Middleware</code></a></li>
+  </ul>
+</nav>
+  </aside>
+  <div class="content" itemprop="articleBody">
+  
+    <p><a href="https://github.com/gin-gonic/gin"><code>Gin</code></a>对<code>net/http</code>包做了封装，支持路由、中间件等特性，极大的方便对<code>Http Server</code>的开发。文章通过一个<code>Test</code>例子，来简要介绍。对于特别基础的部分，请阅读参考文章。</p>
+<h2 id="接口测试">接口测试</h2>
+<p><code>Go</code>中<code>testing</code>包为程序自测提供了便利。可以查阅之前写的博客<a href="http://neojos.com/blog/2018/05-02-go-test%E5%9F%BA%E7%A1%80%E7%94%A8%E6%B3%95/"><code>Go test基础用法</code></a>，对其内容，我还是挺满意的。</p>
+<h3 id="使用postman">使用<code>Postman</code></h3>
+<p>对于接口测试，很多情况都在使用<code>Postman</code>这样的工具。首先在本地启动服务，然后在<code>Postman</code>中配置请求的地址和参数、执行请求、查看结果。</p>
+<p>这种方式唯一让人不满意的地方在于：每次修改都需要重启服务。跟直接执行一次<code>Test</code>相比，明显多了一步。</p>
+<h2 id="使用test">使用<code>Test</code></h2>
+<h4 id="测试基类">测试基类</h4>
+<p>下面的代码作为接口测试的基类。</p>
+<p><code>TestMain</code>中，我们为所有的测试用例指定通用的配置。之后在执行其他<code>Test</code>前，都会先执行<code>TestMain</code>中的代码。有效的避免了代码冗余。</p>
+<p><code>getRouter</code>方法用于返回一个<code>gin</code>的实例。我们将服务的路由重新在<code>Test</code>中指定，并设置了中间件。</p>
+<p><code>testHttpResponse</code>是我们请求处理的核心代码，发送请求，并保存响应到<code>w</code>中</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">//common_test.go
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestMain</span>(<span style="color:#a6e22e">m</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">M</span>) {
+
+	<span style="color:#75715e">//声明执行Test前的操作
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">gin</span>.<span style="color:#a6e22e">SetMode</span>(<span style="color:#a6e22e">gin</span>.<span style="color:#a6e22e">TestMode</span>)
+	<span style="color:#a6e22e">testutils</span>.<span style="color:#a6e22e">NewTestApp</span>(<span style="color:#e6db74">&#34;../conf.test.toml&#34;</span>)
+
+	<span style="color:#a6e22e">flag</span>.<span style="color:#a6e22e">Parse</span>()
+	<span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Exit</span>(<span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Run</span>())
+}
+
+<span style="color:#75715e">//设置路由，获取框架Gin的实例
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getRouter</span>() <span style="color:#f92672">*</span><span style="color:#a6e22e">gin</span>.<span style="color:#a6e22e">Engine</span> {
+	<span style="color:#a6e22e">router</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">gin</span>.<span style="color:#a6e22e">Default</span>()
+
+	<span style="color:#75715e">//配置路由，这是我项目中的自定义配置
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">router</span>.<span style="color:#a6e22e">Use</span>(<span style="color:#a6e22e">middleware</span>.<span style="color:#a6e22e">HeaderProcess</span>())
+	<span style="color:#a6e22e">RouteAPI</span>(<span style="color:#a6e22e">router</span>)
+
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">router</span>
+}
+
+<span style="color:#75715e">//统一处理请求返回结果
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">testHttpResponse</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>, <span style="color:#a6e22e">r</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">gin</span>.<span style="color:#a6e22e">Engine</span>, <span style="color:#a6e22e">req</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Request</span>, <span style="color:#a6e22e">f</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">w</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">httptest</span>.<span style="color:#a6e22e">ResponseRecorder</span>) <span style="color:#66d9ef">error</span>) {
+	<span style="color:#a6e22e">w</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">httptest</span>.<span style="color:#a6e22e">NewRecorder</span>()
+	<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">ServeHTTP</span>(<span style="color:#a6e22e">w</span>, <span style="color:#a6e22e">req</span>)
+
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">f</span>(<span style="color:#a6e22e">w</span>); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#a6e22e">err</span>)
+	}
+}
+</code></pre></div><h4 id="测试用例">测试用例</h4>
+<p>下面是具体的测试用例。我们构造了一个<code>Json</code>数据格式的<code>POST</code>请求，然后通过调用<code>testHttpResponse</code>方法来读取接口的响应数据。</p>
+<p>关于<code>NewRequest</code>方法，它参数<code>body</code>传递一个<code>io.Reader</code>接口类型。从源代码可以看出，实现了该接口的分别是：<code>bytes.Buffer</code>   、<code>bytes.Reader</code>、<code>strings.Reader</code>。</p>
+<pre><code>func TestWeChatRecharge(t *testing.T) {
+	router := getRouter()
+
+	//构造json的请求体
+	params := map[string]interface{}{
+		&quot;open_id&quot;:     &quot;olFg1s3gPcISnooRX9WSkX_E-cww&quot;,
+		&quot;device_type&quot;: &quot;ANDROID&quot;,
+	}
+	jsonParams, _ := json.Marshal(params)
+	readParams := bytes.NewReader(jsonParams)
+	req, _ := http.NewRequest(&quot;POST&quot;, &quot;/pay/wx/recharge&quot;, readParams)
+	req.Header.Set(&quot;Content-type&quot;, &quot;application/json&quot;)
+
+	//发送请求
+	testHttpResponse(t, router, req, func(w *httptest.ResponseRecorder) error {
+		p, err := ioutil.ReadAll(w.Body)
+		if err != nil {
+			return err
+		}
+
+		t.Logf(&quot;%+v&quot;, string(p))
+		return nil
+	})
+}
+</code></pre><h4 id="小结">小结</h4>
+<p>通过上述的步骤，我们实现了直接在<code>Test</code>中做接口测试。</p>
+<h2 id="middleware"><code>Middleware</code></h2>
+<p>声明一个<code>middleware</code>函数，返回类型为<code>type HandlerFunc func(*Context)</code>。</p>
+<pre><code>func setUserStatus() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		fmt.Println(&quot;set status&quot;)
+	}
+}
+</code></pre><p>如果需要将函数应用于所有的请求，使用<code>Use</code>方法。比如统一的请求头转换、错误输出、日志打印等</p>
+<pre><code>//Use adds middleware to the group
+router.Use(setUserStatus())
+</code></pre><p>下面是给具体的请求设置中间件。从这里可以看出，中间件处理函数和正常的业务处理函数类型是相同的。</p>
+<pre><code>//Use a particular middleware
+articleRoutes.GET(&quot;/create&quot;, setUserStatus(), showArticleCreationPage)
+</code></pre><p>最后系统依次调用注册的<code>handler</code>完成请求处理：</p>
+<pre><code>func (c *Context) Next() {
+	c.index++
+	for s := int8(len(c.handlers)); c.index &lt; s; c.index++ {
+		c.handlers[c.index](c)
+	}
+}
+</code></pre><hr>
+<p>参考文章：</p>
+<ol>
+<li><a href="https://semaphoreci.com/community/tutorials/building-go-web-applications-and-microservices-using-gin"><code>Building Go Web Applications and Microservices Using Gin</code></a></li>
+<li><a href="https://semaphoreci.com/community/tutorials/test-driven-development-of-go-web-applications-with-gin#"><code>Test-driven Development of Go Web Applications with Gin</code></a></li>
+</ol>
+
+  
+
+    
+    
+  </div>
+</article>
+
+
+      <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2022  渐行渐远 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/">主页</a></li>
+         
+        <li><a href="/blog">技术</a></li>
+         
+        <li><a href="/greatperson">生活</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+  </div>
+</body>
+
+<link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
+<script src=/lib/jquery/jquery.min.js></script>
+<script src=/js/main.js></script>
+</html>

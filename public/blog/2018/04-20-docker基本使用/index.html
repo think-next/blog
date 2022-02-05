@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> docker基本使用 | 渐行渐远</title>
+  <meta name="description" content="Neojos Personal blog about everything">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="docker基本使用" />
+<meta property="og:description" content="知道一点比完全不知道要好，对问题有深入了解比仅知道皮毛要好。作为docker的一个初学者，现在对docker做简单记录。希望随着工作、生活，更深入的了解学习docker。这也是一件很有意义的事。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://neojos.com/blog/2018/04-20-docker%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" />
+<meta property="article:published_time" content="2018-04-20T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-04-20T00:00:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="docker基本使用"/>
+<meta name="twitter:description" content="知道一点比完全不知道要好，对问题有深入了解比仅知道皮毛要好。作为docker的一个初学者，现在对docker做简单记录。希望随着工作、生活，更深入的了解学习docker。这也是一件很有意义的事。"/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+
+  
+  
+
+  <style>
+    :root {
+      font-size: 1em;
+      --main-font: orange;
+    }
+
+    .featured {
+      width: 20em;
+      height: calc(6em - 16px);
+      font-size: 1rem;
+      border-radius: .15em;
+      background-color: var(--main-font);
+      box-shadow: .45em .25em #6f9090;
+    }
+  </style>
+</head>
+
+<body class="column mx-auto px3 ltr">
+  <div class="column-left">左边栏</div>
+  <div class="max-width column-right">
+    <div class="content index py4">
+
+      <header id="header">
+  <a href="https://neojos.com/">
+  
+    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+  
+  <div id="title">
+    <h1>渐行渐远</h1>
+  </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/blog">技术</a></li>
+      
+        <li><a href="/greatperson">生活</a></li>
+      
+    </ul>
+  </div>
+</header>
+
+
+
+      
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <h1 id="title">docker基本使用</h1>文章 407 字
+  <aside>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#安装redis">安装redis</a>
+      <ul>
+        <li><a href="#bitmap-使用">bitmap 使用</a></li>
+      </ul>
+    </li>
+    <li><a href="#example"><code>Example</code></a></li>
+    <li><a href="#dockerfile指令"><code>Dockerfile</code>指令</a>
+      <ul>
+        <li><a href="#from"><code>FROM</code></a></li>
+        <li><a href="#run"><code>RUN</code></a></li>
+        <li><a href="#env"><code>ENV</code></a></li>
+        <li><a href="#copy"><code>COPY</code></a></li>
+        <li><a href="#cmd"><code>CMD</code></a></li>
+        <li><a href="#entrypoint"><code>ENTRYPOINT</code></a></li>
+        <li><a href="#expose"><code>EXPOSE</code></a></li>
+        <li><a href="#workdir"><code>WORKDIR</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#多阶段构建">多阶段构建</a>
+      <ul>
+        <li><a href="#example-1"><code>Example</code></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </aside>
+  <div class="content" itemprop="articleBody">
+  
+    <p>知道一点比完全不知道要好，对问题有深入了解比仅知道皮毛要好。作为<code>docker</code>的一个初学者，现在对<code>docker</code>做简单记录。希望随着工作、生活，更深入的了解学习<code>docker</code>。这也是一件很有意义的事。</p>
+<h2 id="安装redis">安装redis</h2>
+<p>在容器中启动redis服务的基本步骤。</p>
+<pre><code>➜  one-case docker pull redis:latest
+➜  one-case docker images
+➜  one-case docker run -itd --name redis-test -p 6379:6379 redis
+</code></pre><p>docker run中的属性<code>-i</code>表示启动交互模式；<code>-d</code>表示后台运行容器；<code>-t</code>经常和<code>-i</code>一起使用，表示为容器分配一个伪输入终端；</p>
+<h3 id="bitmap-使用">bitmap 使用</h3>
+<p>查看bitmap占用空间的大小，设置一个最大的offset。然后，通过统计大key来查看所占用空间。</p>
+<pre><code>setbit biguid 4294967296 1
+-ERR bit offset is not an integer or out of range
+setbit biguid 4294967295 1
+:0
+</code></pre><p>通过输出结果，biguid 占用512M的存储空间。也验证了一个结论：bitmap占用的空间，完全取决于最大的offset值。</p>
+<pre><code>➜  one-case docker exec -it redis-test /bin/bash
+root@2661fdf6847f:/data# redis-cli -p 6379 --bigkeys
+
+# Scanning the entire keyspace to find biggest keys as well as
+# average sizes per key type.  You can use -i 0.1 to sleep 0.1 sec
+# per 100 SCAN commands (not usually needed).
+
+[00.00%] Biggest string found so far 'biguid' with 536870912 bytes
+
+-------- summary -------
+
+Sampled 1 keys in the keyspace!
+Total key length in bytes is 6 (avg len 6.00)
+
+Biggest string found 'biguid' has 536870912 bytes
+
+1 strings with 536870912 bytes (100.00% of keys, avg size 536870912.00)
+0 lists with 0 items (00.00% of keys, avg size 0.00)
+0 hashs with 0 fields (00.00% of keys, avg size 0.00)
+0 streams with 0 entries (00.00% of keys, avg size 0.00)
+0 sets with 0 members (00.00% of keys, avg size 0.00)
+0 zsets with 0 members (00.00% of keys, avg size 0.00)
+</code></pre><h2 id="example"><code>Example</code></h2>
+<p><code>docker</code>有几个相关的概念：</p>
+<ol>
+<li><code>image</code> 镜像</li>
+<li><code>container</code> 容器</li>
+</ol>
+<p>我觉得之所以说<code>docker</code>好用，是因为<a href="https://hub.docker.com/explore/"><code>Docker Hub</code></a>提供了很多镜像，比如<code>MySQL</code>、<code>Redis</code>等。对它们安装、卸载异常方便。</p>
+<p>我们想搭建测试服务，安装<code>MySQL</code>，<code>Redis</code>等依赖。我们将他们当作一个项目的依赖，声明一个配置文件·<code>db.yml</code>，然后将这些依赖，类似于<code>composer</code>编辑：</p>
+<pre><code>version: &quot;3&quot;
+
+services:
+
+  db:
+    image: mysql:5.7
+    volumes:
+      - /Users/neojos/dockerData/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: paytest
+      MYSQL_DATABASE: paytest
+      MYSQL_USER: neojos
+      MYSQL_PASSWORD: neojos-pwd
+    ports:
+      - &quot;3306:3306&quot;
+
+  myredis:
+    image: redis
+    restart: always
+    volumes:
+      - /Users/neojos/dockerData/redis
+    ports:
+      - &quot;6379:6379&quot;
+    command: redis-server --appendonly yes
+</code></pre><p>执行如下命令，<code>MySQL</code>和<code>Redis</code>的服务就启动了</p>
+<pre><code>docker-composer -f db.yml up
+</code></pre><p>可以通过执行如下命令查看，确认是否有两个容器在运行。</p>
+<pre><code>docker container ls
+</code></pre><p>这样很好，但当我想进去<code>MySQL</code>的容器内执行一些命令时，该怎么办呢？比如，我想确认下面的<code>MySQL</code>连接语句是否正确,而且我还一定要进去容器内执行<code>MySQL</code>命令行语句：</p>
+<pre><code>mysql -h 127.0.0.1 -P 3306 -u neojos -p'neojos-pwd' paytest
+</code></pre><p>很简单,只需要执行如下指令。可以发现，已经进到<code>MySQL</code>命令行了。</p>
+<pre><code>docker container exec -it 9008f76b728d mysql -h 127.0.0.1 -P 3306 -u neojos -pneojos-pwd paytest
+</code></pre><p>上面的命令可能看不太明白，所以我复制一下命令的说明：</p>
+<pre><code>See 'docker container exec --help'.
+
+Usage:  docker container exec [OPTIONS] CONTAINER COMMAND [ARG...] [flags]
+</code></pre><h2 id="dockerfile指令"><code>Dockerfile</code>指令</h2>
+<p><code>Dockerfile</code>是一个文本文件，其内包含了一条条的指令(<code>Instruction</code>)，每一条指令构建一层，每一条指令的内容，就是描述该层应如何构建。</p>
+<h3 id="from"><code>FROM</code></h3>
+<p>所谓定制镜像，一定是以一个镜像为基础，在其上进行定制。而<code>FROM</code>就是用于指定基础镜像。因为<code>Dockerfile</code>中<code>FROM</code>是必备的指令，而且必须是第一条指令。</p>
+<h3 id="run"><code>RUN</code></h3>
+<p>新建一层，在其上执行命令。执行结束后，<code>commit</code>这一层的修改，构成新的镜像。</p>
+<h3 id="env"><code>ENV</code></h3>
+<p>用于设置环境变量：<code>ENV KEY VALUE</code>或者<code>ENV KEY=VALUE</code></p>
+<h3 id="copy"><code>COPY</code></h3>
+<p>将从构建<strong>上下文目录</strong>中源路径的文件/目录复制到新的一层的镜像内的目标路径的位置。</p>
+<h3 id="cmd"><code>CMD</code></h3>
+<p>指定默认的容器<strong>主进程</strong>的启动命令。容器就是进程，那么在启动容器的时候，需要指定所运行的程序及参数。</p>
+<pre><code>docker run image command
+</code></pre><p>跟在镜像名后的是<code>command</code>，运行时会替换<code>CMD</code>的默认值。</p>
+<h3 id="entrypoint"><code>ENTRYPOINT</code></h3>
+<p>和<code>CMD</code>一样，都是指定容器启动程序和参数。当指定了<code>ENTRYPOINT</code>之后，<code>CMD</code>的含义就发生了改变，不再是直接运行其命令，而是将<code>CMD</code>作为参数传递给<code>ENTRYPOINT</code>指令。</p>
+<h3 id="expose"><code>EXPOSE</code></h3>
+<p>声明运行时容器提供服务端口</p>
+<h3 id="workdir"><code>WORKDIR</code></h3>
+<p>用于指定工作目录，以后各层的当前目录就被改为指定的目录。如果目录不存在，系统会创建目录。</p>
+<h2 id="多阶段构建">多阶段构建</h2>
+<p>原理：事先在一个<code>Dockerfile</code>将项目及其依赖编译测试打包好后，再将其拷贝到运行环境中。</p>
+<p>主要使用的指令：</p>
+<pre><code># 方便后续构建阶段引用
+FROM image[:tag | @digest] AS stage
+
+# 指明引用前面哪一个构建阶段的成果
+COPY --from=stage ...
+</code></pre><h3 id="example-1"><code>Example</code></h3>
+<p>下面是精简版示例：</p>
+<pre><code>FROM registry.cn-beijing.aliyuncs.com/golang:1.10 AS build-env
+ADD . /go/src/baby
+WORKDIR /go/src/baby
+
+RUN go build -x -o /build/baby main.go \
+    &amp;&amp; go build -x -o /build/task_monitor scripts/task_monitor/task_monitor.go \
+    &amp;&amp; go build -x -o /build/task_notify scripts/task_notify/task_notify.go 
+
+
+FROM registry-internal.cn-beijing.aliyuncs.com/alpine:3.7
+COPY --from=build-env /build/baby /data/src/baby
+COPY --from=build-env /build/task_monitor /data/src/task_monitor
+COPY --from=build-env /build/task_notify /data/src/iap_notify
+
+COPY conf.simulation.toml /data/src/conf.simulation.toml
+COPY conf.online.toml /data/src/conf.online.toml
+COPY conf.test.toml /data/src/conf.test.toml
+
+COPY docker/entrypoint.sh /data/src/
+
+EXPOSE 3600
+
+ENTRYPOINT [&quot;/data/src/entrypoint.sh&quot;]
+CMD [&quot;bash&quot;, &quot;-c&quot;, &quot;/data/src/${RUN_PROG:=baby} --log_dir=/data/logs/$RUN_PROG -c /data/src/conf.toml&quot;]
+</code></pre>
+  
+
+    
+    
+  </div>
+</article>
+
+
+      <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2022  渐行渐远 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/">主页</a></li>
+         
+        <li><a href="/blog">技术</a></li>
+         
+        <li><a href="/greatperson">生活</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+  </div>
+</body>
+
+<link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
+<script src=/lib/jquery/jquery.min.js></script>
+<script src=/js/main.js></script>
+</html>

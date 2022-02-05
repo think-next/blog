@@ -1,0 +1,843 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>渐行渐远</title>
+    <link>https://neojos.com/</link>
+    <description>Recent content on 渐行渐远</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 02 Dec 2021 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://neojos.com/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>unsafe类型转换</title>
+      <link>https://neojos.com/blog/2021/004.-unsafe-%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/</link>
+      <pubDate>Thu, 02 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2021/004.-unsafe-%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/</guid>
+      <description>reflect.Value 的类型定义,下面是我机器上的代码路径。typ 存储了元素的真实类型， ptr 是元素实际存储的值</description>
+    </item>
+    
+    <item>
+      <title>CSS阴影</title>
+      <link>https://neojos.com/blog/2021/003.-css-%E9%98%B4%E5%BD%B1/</link>
+      <pubDate>Wed, 01 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2021/003.-css-%E9%98%B4%E5%BD%B1/</guid>
+      <description>别小看下面的 CSS 代码，对于一个 CSS 门外汉来说，隐藏的信息是足够丰富的。比如属性的长度单位，一些人可能还不知道 px、em、rem 的区别。简单来说， em 是基于 font-size 的继承属性，rem 是在 em 的基础上重新定义了一个参照标准。默认情况下，1 em = 16 px。一般来说，使用 rem 设置字号，em 设置其他大部分的属性</description>
+    </item>
+    
+    <item>
+      <title>回溯算法</title>
+      <link>https://neojos.com/blog/2021/002.-%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Mon, 29 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2021/002.-%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95/</guid>
+      <description>遇到计算排列或者组合的问题，总是可以通过回溯的思想来解决。回溯的处理思路，就是遇到了岔路口，按照顺序依次去走每一个小路，当前的小路走不通时， 重新回到上一个岔路口，记录走另一条没有走的路。</description>
+    </item>
+    
+    <item>
+      <title>算法题 - 组合总数</title>
+      <link>https://neojos.com/blog/2021/001.-%E7%AE%97%E6%B3%95%E9%A2%98-%E7%BB%84%E5%90%88%E6%80%BB%E6%95%B0/</link>
+      <pubDate>Sun, 28 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2021/001.-%E7%AE%97%E6%B3%95%E9%A2%98-%E7%BB%84%E5%90%88%E6%80%BB%E6%95%B0/</guid>
+      <description>力扣上的一道算法题，39题，内容如下</description>
+    </item>
+    
+    <item>
+      <title>Go 反射入门</title>
+      <link>https://neojos.com/blog/2021/go-%E5%8F%8D%E5%B0%84%E5%85%A5%E9%97%A8/</link>
+      <pubDate>Mon, 19 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2021/go-%E5%8F%8D%E5%B0%84%E5%85%A5%E9%97%A8/</guid>
+      <description>鸡汤：～</description>
+    </item>
+    
+    <item>
+      <title>Oh My ZSH使用</title>
+      <link>https://neojos.com/blog/2020/%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%ADgit%E8%87%AA%E5%8A%A8%E6%8F%90%E7%A4%BA/</link>
+      <pubDate>Tue, 11 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2020/%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%ADgit%E8%87%AA%E5%8A%A8%E6%8F%90%E7%A4%BA/</guid>
+      <description>访问 oh-my-zsh 的官网，直接进行安装，但安装过程出现了下面的错误提示：</description>
+    </item>
+    
+    <item>
+      <title>跳表</title>
+      <link>https://neojos.com/blog/2020/%E8%B7%B3%E8%A1%A8/</link>
+      <pubDate>Fri, 07 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2020/%E8%B7%B3%E8%A1%A8/</guid>
+      <description>跳表是基于链表的，在链表的基础上加了多层索引结构。在 Redis 的有序集中就使用了跳表，但 Redis 在跳表的基础上做了定制。</description>
+    </item>
+    
+    <item>
+      <title>乐观锁</title>
+      <link>https://neojos.com/blog/2020/%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E6%98%AF%E5%90%A6%E4%BC%9A%E5%BD%B1%E5%93%8D%E4%B9%90%E8%A7%82%E9%94%81/</link>
+      <pubDate>Mon, 03 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2020/%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E6%98%AF%E5%90%A6%E4%BC%9A%E5%BD%B1%E5%93%8D%E4%B9%90%E8%A7%82%E9%94%81/</guid>
+      <description>MySQL 事务的隔离级别包括下面四种，以及不同隔离级别的影响：</description>
+    </item>
+    
+    <item>
+      <title>Go使用Pprof定位问题</title>
+      <link>https://neojos.com/blog/2020/go%E4%BD%BF%E7%94%A8-pprof-%E5%AE%9A%E4%BD%8D%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Sun, 02 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2020/go%E4%BD%BF%E7%94%A8-pprof-%E5%AE%9A%E4%BD%8D%E9%97%AE%E9%A2%98/</guid>
+      <description>两种使用 pprof 定位问题的形式：</description>
+    </item>
+    
+    <item>
+      <title>秘密项目</title>
+      <link>https://neojos.com/greatperson/%E7%A7%98%E5%AF%86%E9%A1%B9%E7%9B%AE/</link>
+      <pubDate>Wed, 22 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/greatperson/%E7%A7%98%E5%AF%86%E9%A1%B9%E7%9B%AE/</guid>
+      <description>孤独，能够让人大胆的思考。</description>
+    </item>
+    
+    <item>
+      <title>让时间给结果</title>
+      <link>https://neojos.com/greatperson/%E8%AE%A9%E6%97%B6%E9%97%B4%E7%BB%99%E7%BB%93%E6%9E%9C/</link>
+      <pubDate>Sat, 18 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/greatperson/%E8%AE%A9%E6%97%B6%E9%97%B4%E7%BB%99%E7%BB%93%E6%9E%9C/</guid>
+      <description>想起了余光中的一句话：“年轻人你的职责是平整土地，而非焦虑时光。你做三四月的事情，在八九月份自然会得到答案。”</description>
+    </item>
+    
+    <item>
+      <title>protocol stack</title>
+      <link>https://neojos.com/blog/2019/19-12-08-protocol-stack/</link>
+      <pubDate>Sun, 08 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-12-08-protocol-stack/</guid>
+      <description>盗了一张图，小小确幸一下</description>
+    </item>
+    
+    <item>
+      <title>mongo中hint的使用</title>
+      <link>https://neojos.com/blog/2019/blog.016.mongo%E4%B8%ADhint%E7%9A%84%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Wed, 13 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/blog.016.mongo%E4%B8%ADhint%E7%9A%84%E4%BD%BF%E7%94%A8/</guid>
+      <description>mongo官方文档对hint的解释如下：</description>
+    </item>
+    
+    <item>
+      <title>go.1.13中的Modules</title>
+      <link>https://neojos.com/blog/2019/blog.015-go.1.13%E4%B8%AD%E7%9A%84modules.2019.11.12/</link>
+      <pubDate>Tue, 12 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/blog.015-go.1.13%E4%B8%AD%E7%9A%84modules.2019.11.12/</guid>
+      <description>环境变量GOPRIVATE</description>
+    </item>
+    
+    <item>
+      <title>runtime中P的理解</title>
+      <link>https://neojos.com/blog/2019/blog.014-runtime%E4%B8%ADp%E7%9A%84%E7%90%86%E8%A7%A3.2019.11.11/</link>
+      <pubDate>Mon, 11 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/blog.014-runtime%E4%B8%ADp%E7%9A%84%E7%90%86%E8%A7%A3.2019.11.11/</guid>
+      <description>P是在Go1.1引入的概念，初始默认等于CPU核的数量。P只是一个逻辑概念，跟CPU也没有任何关系。</description>
+    </item>
+    
+    <item>
+      <title>变异性的数值特征-方差</title>
+      <link>https://neojos.com/blog/2019/blog.013-%E5%8F%98%E5%BC%82%E6%80%A7%E7%9A%84%E6%95%B0%E5%80%BC%E7%89%B9%E5%BE%81-%E6%96%B9%E5%B7%AE.2019.10.14/</link>
+      <pubDate>Mon, 14 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/blog.013-%E5%8F%98%E5%BC%82%E6%80%A7%E7%9A%84%E6%95%B0%E5%80%BC%E7%89%B9%E5%BE%81-%E6%96%B9%E5%B7%AE.2019.10.14/</guid>
+      <description>文章主要介绍通过样本方差来了解数据集变化的原理。</description>
+    </item>
+    
+    <item>
+      <title>如何工作和学习</title>
+      <link>https://neojos.com/blog/2019/blog.012-%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E5%92%8C%E5%AD%A6%E4%B9%A0.2019.10.08.md/</link>
+      <pubDate>Tue, 08 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/blog.012-%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E5%92%8C%E5%AD%A6%E4%B9%A0.2019.10.08.md/</guid>
+      <description>给自己的工作制定一套系统的指导体系，或者处理问题的方法。要想从无休止的重复劳动中解脱出来，就需要对重复劳动做提炼。</description>
+    </item>
+    
+    <item>
+      <title>MySQL增量数据订阅和消费</title>
+      <link>https://neojos.com/blog/2019/2019-10-01-mysql%E5%A2%9E%E9%87%8F%E6%95%B0%E6%8D%AE%E8%AE%A2%E9%98%85%E5%92%8C%E6%B6%88%E8%B4%B9/</link>
+      <pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/2019-10-01-mysql%E5%A2%9E%E9%87%8F%E6%95%B0%E6%8D%AE%E8%AE%A2%E9%98%85%E5%92%8C%E6%B6%88%E8%B4%B9/</guid>
+      <description>在订单交付系统中，做到保证权益数据的实时一致性非常难，很多都选择保证数据的最终一致性。在我们的生产环境中，为了保证数据的最终一致性，专门有一个微服务来处理检验异常订单、发告警通知、及时补偿修复异常订单。</description>
+    </item>
+    
+    <item>
+      <title>IO多路复用</title>
+      <link>https://neojos.com/blog/2019/19-09-20-io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/</link>
+      <pubDate>Fri, 20 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-09-20-io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/</guid>
+      <description>引言 结合文章我读过的最好的epoll讲解，认识select和epoll的基本工作原理。</description>
+    </item>
+    
+    <item>
+      <title>分布式会话跟踪系统架构设计与实践</title>
+      <link>https://neojos.com/blog/2019/19-08-25-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BC%9A%E8%AF%9D%E8%B7%9F%E8%B8%AA%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E8%B7%B5/</link>
+      <pubDate>Sun, 25 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-08-25-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BC%9A%E8%AF%9D%E8%B7%9F%E8%B8%AA%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E8%B7%B5/</guid>
+      <description>调用链trace系统可以帮助技术人员快速的定位问题，查看整个请求的调用链路，及各个链路的耗时情况。方便技术人员针对性的对服务进行性能优化。</description>
+    </item>
+    
+    <item>
+      <title>故障排查</title>
+      <link>https://neojos.com/blog/2019/19-07-28-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/</link>
+      <pubDate>Sun, 28 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-07-28-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/</guid>
+      <description>测试提Bug的基本要素，主要包括：</description>
+    </item>
+    
+    <item>
+      <title>database.sql.driver</title>
+      <link>https://neojos.com/blog/2019/19-07-17-database.sql.driver/</link>
+      <pubDate>Wed, 17 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-07-17-database.sql.driver/</guid>
+      <description>在事务操作中，要求事务的各个阶段都使用一个Conn连接。在连接被关闭之前，还需要执行rollback操作。</description>
+    </item>
+    
+    <item>
+      <title>里氏替换&amp;开放关闭</title>
+      <link>https://neojos.com/blog/2019/19-06-06-%E9%87%8C%E6%B0%8F%E6%9B%BF%E6%8D%A2%E5%BC%80%E6%94%BE%E5%85%B3%E9%97%AD/</link>
+      <pubDate>Thu, 06 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-06-06-%E9%87%8C%E6%B0%8F%E6%9B%BF%E6%8D%A2%E5%BC%80%E6%94%BE%E5%85%B3%E9%97%AD/</guid>
+      <description>里氏替换  Let Φ(x) be a property provable about objects x of type T.</description>
+    </item>
+    
+    <item>
+      <title>database package</title>
+      <link>https://neojos.com/blog/2019/19-06-03-database-package/</link>
+      <pubDate>Mon, 03 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-06-03-database-package/</guid>
+      <description>清除无效连接 在database库下清除过期连接时，使用了如下的代码逻辑。其中freeConn是空闲连接池，d是连接可被重复使用的最长时间，nowFunc返回的是当前时间。最新生成的连接在freeConn的末尾，而清除的过程则是使用最新的、次新的连接依次替换最早过期的、次早过期的连接。</description>
+    </item>
+    
+    <item>
+      <title>mongo中ObjectId</title>
+      <link>https://neojos.com/blog/2019/19-06-11-mongo%E4%B8%ADobjectid/</link>
+      <pubDate>Mon, 03 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-06-11-mongo%E4%B8%ADobjectid/</guid>
+      <description>ObjectId在mongo中是自动生成的_id字段，充当数据表的主键ID。按照_id排序基本上等于按照记录的创建时间排序，但还是必须注意：_id并不是严格单调递增的，前4个byte的也只是精确到了秒级，同一秒内的_id并不能保证有序。</description>
+    </item>
+    
+    <item>
+      <title>数据一致性（三）</title>
+      <link>https://neojos.com/blog/2019/19-05-18-%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7/</link>
+      <pubDate>Sat, 18 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-05-18-%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7/</guid>
+      <description>一个人的时候多一点努力，才能让自己的爱情，少一点条件，多一点纯粹</description>
+    </item>
+    
+    <item>
+      <title>mongo EOF（二）</title>
+      <link>https://neojos.com/blog/2019/19-05-11-mongo-eof%E4%BA%8C/</link>
+      <pubDate>Sat, 11 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-05-11-mongo-eof%E4%BA%8C/</guid>
+      <description>任何事情的成功都需要掐准时间</description>
+    </item>
+    
+    <item>
+      <title>mongo EOF</title>
+      <link>https://neojos.com/blog/2019/19-04-27-mongo-eof/</link>
+      <pubDate>Sat, 27 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-04-27-mongo-eof/</guid>
+      <description>很多事情仅仅的是严肃的提出问题都感觉很难，更何况还得要先发现它。</description>
+    </item>
+    
+    <item>
+      <title>Kafka中消息分配策略</title>
+      <link>https://neojos.com/blog/2019/19-04-24-kafka%E4%B8%AD%E6%B6%88%E6%81%AF%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/</link>
+      <pubDate>Wed, 24 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-04-24-kafka%E4%B8%AD%E6%B6%88%E6%81%AF%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/</guid>
+      <description>非淡泊无以明，非宁静无以致远</description>
+    </item>
+    
+    <item>
+      <title>Go Module（一）</title>
+      <link>https://neojos.com/blog/2019/19-04-21-go-module%E4%B8%80/</link>
+      <pubDate>Sun, 21 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-04-21-go-module%E4%B8%80/</guid>
+      <description>这世上太多的人，宁愿吃生活苦，也不愿吃自律的苦。大概是因为生活的苦，躺着就来了，而自律的苦，得自己去找。但只有吃得下自律的苦，才有成功的自由，没有一种成功是走得了捷径的，通向真正成功的唯一道路只有自律。越成功，越自律。越自律，越成功。</description>
+    </item>
+    
+    <item>
+      <title>Go 调度模型（三）</title>
+      <link>https://neojos.com/blog/2019/19-04-14-go-%E8%B0%83%E5%BA%A6%E6%A8%A1%E5%9E%8B%E4%B8%89/</link>
+      <pubDate>Sun, 14 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-04-14-go-%E8%B0%83%E5%BA%A6%E6%A8%A1%E5%9E%8B%E4%B8%89/</guid>
+      <description>别抱怨，也别自怜，所有的现状都是你自己选择的</description>
+    </item>
+    
+    <item>
+      <title>设计模式-适配器模式</title>
+      <link>https://neojos.com/blog/2019/19-04-07-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Sun, 07 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-04-07-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/</guid>
+      <description>当你眼里只有赚钱的时候，你就永远无法把事情本身给做好，收获的也会很有限，最后可能还赚不到钱。- From Myself</description>
+    </item>
+    
+    <item>
+      <title>Go 调度模型（二）</title>
+      <link>https://neojos.com/blog/2019/19-03-30-go-%E8%B0%83%E5%BA%A6%E6%A8%A1%E5%9E%8B%E4%BA%8C/</link>
+      <pubDate>Sat, 30 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-03-30-go-%E8%B0%83%E5%BA%A6%E6%A8%A1%E5%9E%8B%E4%BA%8C/</guid>
+      <description>真的猛士，敢于直面惨淡的人生，敢于正视淋漓的鲜血。这是怎样的哀痛者和幸福者？然而造化又常常为庸人设计，以时间的流驶，来洗涤旧迹，仅使留下淡红的血色和微漠的悲哀。在这淡红的血色和微漠的悲哀中，又给人暂得偷生，维持着这似人非人的世界。我不知道这样的世界何时是一个尽头！</description>
+    </item>
+    
+    <item>
+      <title>基于Go的Cron Job实现</title>
+      <link>https://neojos.com/blog/2019/19-03-25-%E5%9F%BA%E4%BA%8Ego%E7%9A%84cron-job%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Mon, 25 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-03-25-%E5%9F%BA%E4%BA%8Ego%E7%9A%84cron-job%E5%AE%9E%E7%8E%B0/</guid>
+      <description>随风要稳，逆风要浪</description>
+    </item>
+    
+    <item>
+      <title>Go 调度模型（一）</title>
+      <link>https://neojos.com/blog/2019/19-03-24-go-%E8%B0%83%E5%BA%A6%E6%A8%A1%E5%9E%8B%E4%B8%80/</link>
+      <pubDate>Sun, 24 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-03-24-go-%E8%B0%83%E5%BA%A6%E6%A8%A1%E5%9E%8B%E4%B8%80/</guid>
+      <description>想清楚了就去做，做的时候不要再回头想。</description>
+    </item>
+    
+    <item>
+      <title>数据一致性（二）</title>
+      <link>https://neojos.com/blog/2019/19-03-16-%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7%E4%BA%8C/</link>
+      <pubDate>Sat, 16 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-03-16-%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7%E4%BA%8C/</guid>
+      <description>我们流连于事物的表象，满足浅尝辄止的片刻欢愉，却几乎从不久留。我们在人生的道路上争先恐后，却吝于用片刻思考目标和方向。</description>
+    </item>
+    
+    <item>
+      <title>Database Sharding</title>
+      <link>https://neojos.com/blog/2019/19-03-09-database-sharding/</link>
+      <pubDate>Sat, 09 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-03-09-database-sharding/</guid>
+      <description>Sharding 可以简单地认为Sharding就是对数据进行分组的过程，即将整个大的数据集按照某种规则分割成多个小数据集。类似于网站服务，针对不同的服务，提供服务的链接地址也不相同，而这其实也是一个Sharding的过程。在业务层实现的Sharding，关键就在Route的过程，即将具体的数据请求，发送到对的数据集上。</description>
+    </item>
+    
+    <item>
+      <title>MySQL事务（2）</title>
+      <link>https://neojos.com/blog/2019/19-02-28-mysql%E4%BA%8B%E5%8A%A12/</link>
+      <pubDate>Thu, 28 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-02-28-mysql%E4%BA%8B%E5%8A%A12/</guid>
+      <description>花繁柳密能拨开方见手段，风狂雨骤时可立定才是脚跟。</description>
+    </item>
+    
+    <item>
+      <title>HBase Region Split</title>
+      <link>https://neojos.com/blog/2019/19-02-22-hbase-region-split/</link>
+      <pubDate>Fri, 22 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-02-22-hbase-region-split/</guid>
+      <description>Tables are automatically partitioned horizontally by HBase into regions.</description>
+    </item>
+    
+    <item>
+      <title>Mark-sweep GC</title>
+      <link>https://neojos.com/blog/2019/19-02-15-mark-sweep-gc/</link>
+      <pubDate>Fri, 15 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-02-15-mark-sweep-gc/</guid>
+      <description>把事做成的才是赢家，在口头上压倒对手，真的没有那么重要！</description>
+    </item>
+    
+    <item>
+      <title>新年彩蛋之中大奖</title>
+      <link>https://neojos.com/blog/2019/19-02-08-%E6%96%B0%E5%B9%B4%E5%BD%A9%E8%9B%8B%E4%B9%8B%E4%B8%AD%E5%A4%A7%E5%A5%96/</link>
+      <pubDate>Sat, 09 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-02-08-%E6%96%B0%E5%B9%B4%E5%BD%A9%E8%9B%8B%E4%B9%8B%E4%B8%AD%E5%A4%A7%E5%A5%96/</guid>
+      <description>2019年计划通过福利彩票发家致富的，可以好好看一看这篇博客。作为新年彩蛋来送给大家，也希望大家能真的中大奖。—— 新年快乐，给每个有梦想的程序员</description>
+    </item>
+    
+    <item>
+      <title>垃圾回收之引用计数</title>
+      <link>https://neojos.com/blog/2019/19-02-01-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E4%B9%8B%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0/</link>
+      <pubDate>Fri, 01 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-02-01-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E4%B9%8B%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0/</guid>
+      <description>思来想去，决定总结一下垃圾回收机制。引用计数与我结缘最早，也比较简单、基础，遂决定从引用计数入手。</description>
+    </item>
+    
+    <item>
+      <title>gRPC入门</title>
+      <link>https://neojos.com/blog/2019/19-01-26-grpc%E5%85%A5%E9%97%A8/</link>
+      <pubDate>Sat, 26 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-01-26-grpc%E5%85%A5%E9%97%A8/</guid>
+      <description>时间飞逝 如一名携带信息的邮差 但那只不过是我们的比喻 人物是杜撰的 匆忙是假装的 携带的也不是人的讯息</description>
+    </item>
+    
+    <item>
+      <title>Float的基本介绍</title>
+      <link>https://neojos.com/blog/2019/19-01-16-float%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/</link>
+      <pubDate>Wed, 16 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-01-16-float%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/</guid>
+      <description>关于浮点数，为什么它生来就可能存在误差？带着好奇查阅了一些介绍，然后做了简单汇总。这只是一段知识的开始，后续还会继续完善。</description>
+    </item>
+    
+    <item>
+      <title>探讨分布式ID生成系统</title>
+      <link>https://neojos.com/blog/2019/19-01-11-%E6%8E%A2%E8%AE%A8%E5%88%86%E5%B8%83%E5%BC%8Fid%E7%94%9F%E6%88%90%E7%B3%BB%E7%BB%9F/</link>
+      <pubDate>Fri, 11 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-01-11-%E6%8E%A2%E8%AE%A8%E5%88%86%E5%B8%83%E5%BC%8Fid%E7%94%9F%E6%88%90%E7%B3%BB%E7%BB%9F/</guid>
+      <description>全称Universally Unique Identifier，UUID占128bit，也就是16个英文字符的长度（16byte），需要强调的是，它的生成无需中心处理程序。</description>
+    </item>
+    
+    <item>
+      <title>Gin使用</title>
+      <link>https://neojos.com/blog/2019/19-01-06-gin%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Sat, 05 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-01-06-gin%E4%BD%BF%E7%94%A8/</guid>
+      <description>Gin对net/http包做了封装，支持路由、中间件等特性，极大的方便对Http Server的开发。文章通过一个Test例子，来简要介绍。对于特别基础的部分，请阅读参考文章。</description>
+    </item>
+    
+    <item>
+      <title>How to use godog</title>
+      <link>https://neojos.com/blog/2018/12-29-how-to-use-godog/</link>
+      <pubDate>Sat, 29 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/12-29-how-to-use-godog/</guid>
+      <description>首先访问Git的地址：Godog，它也是用来做Go Test一样的事情，只是换了一种形式。引入了一个概念：BDD。通俗的讲，就是虚拟现实场景，完成一个业务的测试。</description>
+    </item>
+    
+    <item>
+      <title>Net Transport</title>
+      <link>https://neojos.com/blog/2018/12-09-net-transport/</link>
+      <pubDate>Sat, 08 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/12-09-net-transport/</guid>
+      <description>在调用第三方请求时，正确使用Client也不是一件非常容易的事。</description>
+    </item>
+    
+    <item>
+      <title>Deafult Decimal</title>
+      <link>https://neojos.com/blog/2018/12-01-deafult-decimal/</link>
+      <pubDate>Sat, 01 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/12-01-deafult-decimal/</guid>
+      <description>版本 0.</description>
+    </item>
+    
+    <item>
+      <title>NSS初窥</title>
+      <link>https://neojos.com/blog/2018/11-20-nss%E5%88%9D%E7%AA%A5/</link>
+      <pubDate>Tue, 20 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/11-20-nss%E5%88%9D%E7%AA%A5/</guid>
+      <description>版本 0.</description>
+    </item>
+    
+    <item>
+      <title>singleton pattern</title>
+      <link>https://neojos.com/blog/2018/11-03-singleton-pattern/</link>
+      <pubDate>Sat, 03 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/11-03-singleton-pattern/</guid>
+      <description>版本 0.</description>
+    </item>
+    
+    <item>
+      <title>数据一致性（一）</title>
+      <link>https://neojos.com/blog/2018/10-20-%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7%E4%B8%80/</link>
+      <pubDate>Sat, 20 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/10-20-%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7%E4%B8%80/</guid>
+      <description>MySQL的事务是数据一致性的典范，事务内的执行要么都成功，要么都失败。但业务系统涉及系统间的相互调用，涉及的数据库也不尽相同，所以实现数据一致性还是有挑战的。</description>
+    </item>
+    
+    <item>
+      <title>Go Interface 类型</title>
+      <link>https://neojos.com/blog/2018/10-12-go-interface-%E7%B1%BB%E5%9E%8B/</link>
+      <pubDate>Fri, 12 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/10-12-go-interface-%E7%B1%BB%E5%9E%8B/</guid>
+      <description>introduction duck typing 很形象的解释了interface的本意。它是一种特别的数据类型，内部声明了一组要实现的方法集合，任何实现了这些方法的数据类型都可以认为实现了这个interface。这跟其他语言中的抽象类有异曲同工之处，但却不需要去明确声明实现这个interface。</description>
+    </item>
+    
+    <item>
+      <title>Go net 超时处理</title>
+      <link>https://neojos.com/blog/2018/10-10-go-net-%E8%B6%85%E6%97%B6%E5%A4%84%E7%90%86/</link>
+      <pubDate>Wed, 10 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/10-10-go-net-%E8%B6%85%E6%97%B6%E5%A4%84%E7%90%86/</guid>
+      <description>序 这篇文章详细介绍了，net/http包中对应HTTP的各个阶段，如何使用timeout来进行读/写超时控制以及服务端和客户端支持设置的timeout类型。本质上，这些timeout都是代码层面对各个函数设置的处理时间。比如，读取客户端读取请求头、读取响应体的时间，本质上都是响应函数的超时时间。</description>
+    </item>
+    
+    <item>
+      <title>Tcp Bulk Data</title>
+      <link>https://neojos.com/blog/2018/09-24-tcp-bulk-data/</link>
+      <pubDate>Mon, 24 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/09-24-tcp-bulk-data/</guid>
+      <description>TCP在数据传输中有receive buffer和send buffer。通过连接中的window size可以看出数据的读取情况。</description>
+    </item>
+    
+    <item>
+      <title>sync.Once</title>
+      <link>https://neojos.com/blog/2018/09-03-sync.once/</link>
+      <pubDate>Mon, 03 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/09-03-sync.once/</guid>
+      <description>草稿0.0</description>
+    </item>
+    
+    <item>
+      <title>本地缓存BigCache</title>
+      <link>https://neojos.com/blog/2018/08-19-%E6%9C%AC%E5%9C%B0%E7%BC%93%E5%AD%98bigcache/</link>
+      <pubDate>Sun, 19 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/08-19-%E6%9C%AC%E5%9C%B0%E7%BC%93%E5%AD%98bigcache/</guid>
+      <description>BigCache的作者做了详细的阐述，尽在这里：Writing a very fast cache service with millions of entries in Go。不得不说，作者的表述非常完美，给它点赞。GitHub地址在：github.</description>
+    </item>
+    
+    <item>
+      <title>Golang下的Error</title>
+      <link>https://neojos.com/blog/2018/08-11-golang%E4%B8%8B%E7%9A%84error/</link>
+      <pubDate>Sat, 11 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/08-11-golang%E4%B8%8B%E7%9A%84error/</guid>
+      <description>感觉error确实没啥可说的，这个简单到极致的package总共也不超过10行有效代码。而且常用的fmt也提供了很方便的返回error的方法：</description>
+    </item>
+    
+    <item>
+      <title>Shell必备基础（1）</title>
+      <link>https://neojos.com/blog/2018/08-09-shell%E5%BF%85%E5%A4%87%E5%9F%BA%E7%A1%801/</link>
+      <pubDate>Thu, 09 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/08-09-shell%E5%BF%85%E5%A4%87%E5%9F%BA%E7%A1%801/</guid>
+      <description>Shell是对Linux命令的深加工，用得好，事半功倍。 本来只想加深Array的用法，但一不小心，又变成了一篇基础大全。</description>
+    </item>
+    
+    <item>
+      <title>Git撤销本地修改</title>
+      <link>https://neojos.com/blog/2018/08-07-git%E6%92%A4%E9%94%80%E6%9C%AC%E5%9C%B0%E4%BF%AE%E6%94%B9/</link>
+      <pubDate>Tue, 07 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/08-07-git%E6%92%A4%E9%94%80%E6%9C%AC%E5%9C%B0%E4%BF%AE%E6%94%B9/</guid>
+      <description>懂得了好多大道理，但还是过不好这一生！</description>
+    </item>
+    
+    <item>
+      <title>IP Routing</title>
+      <link>https://neojos.com/blog/2018/08-04-ip-routing/</link>
+      <pubDate>Sat, 04 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/08-04-ip-routing/</guid>
+      <description>假设你在跟小米公司对接服务，那你有没有好奇过：自家的服务器是如何找到小米公司的服务器的。为了安全，公司的服务器可都是在内网的，用户是无法直接访问到的。好好了解一下Ip Routing，它可以给你部分答案。</description>
+    </item>
+    
+    <item>
+      <title>ngrep抓包</title>
+      <link>https://neojos.com/blog/2018/08-01-ngrep%E6%8A%93%E5%8C%85/</link>
+      <pubDate>Wed, 01 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/08-01-ngrep%E6%8A%93%E5%8C%85/</guid>
+      <description>简单的工具其实挺有用的。警告：不许瞧不起工具，尤其是你还不会用的工具。</description>
+    </item>
+    
+    <item>
+      <title>Tcp Server Design</title>
+      <link>https://neojos.com/blog/2018/07-28-tcp-server-design/</link>
+      <pubDate>Sat, 28 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/07-28-tcp-server-design/</guid>
+      <description>绝大多数的TCP服务都是支持并发的。当一个连接请求到达时，服务端接收这个连接，然后创建一个新的线程(或进程)来处理这个连接。</description>
+    </item>
+    
+    <item>
+      <title>重试</title>
+      <link>https://neojos.com/blog/2018/07-24-%E9%87%8D%E8%AF%95/</link>
+      <pubDate>Tue, 24 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/07-24-%E9%87%8D%E8%AF%95/</guid>
+      <description>为了克服网络问题，重试是我们常用的手段之一。但必须记住：重试的姿势非常重要。照应一句古话：“差若毫厘，谬以千里”。</description>
+    </item>
+    
+    <item>
+      <title>siege压测</title>
+      <link>https://neojos.com/blog/2018/07-19-siege%E5%8E%8B%E6%B5%8B/</link>
+      <pubDate>Thu, 19 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/07-19-siege%E5%8E%8B%E6%B5%8B/</guid>
+      <description>关于压测，首先要了解TPS和并发用户数之间的关系：</description>
+    </item>
+    
+    <item>
+      <title>Kafka的offset初窥(1)</title>
+      <link>https://neojos.com/blog/2018/07-14-kafka%E7%9A%84offset%E5%88%9D%E7%AA%A51/</link>
+      <pubDate>Sat, 14 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/07-14-kafka%E7%9A%84offset%E5%88%9D%E7%AA%A51/</guid>
+      <description>kafka适用的场景很多，但用它来异步通知却是让我略感头痛！</description>
+    </item>
+    
+    <item>
+      <title>Linux查看监听的端口进程</title>
+      <link>https://neojos.com/blog/2018/07-10-linux%E6%9F%A5%E7%9C%8B%E7%9B%91%E5%90%AC%E7%9A%84%E7%AB%AF%E5%8F%A3%E8%BF%9B%E7%A8%8B/</link>
+      <pubDate>Tue, 10 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/07-10-linux%E6%9F%A5%E7%9C%8B%E7%9B%91%E5%90%AC%E7%9A%84%E7%AB%AF%E5%8F%A3%E8%BF%9B%E7%A8%8B/</guid>
+      <description>Netstat 是一款命令行工具，可用于列出系统上所有的网络套接字连接情况，包括 tcp, udp 以及 unix 套接字。另外它还能列出处于监听状态（即等待接入请求）的套接字。经常使用 netstat 用于查看网络连接信息和系统开启的端口号。</description>
+    </item>
+    
+    <item>
+      <title>mitmproxy使用</title>
+      <link>https://neojos.com/blog/2018/07-06-mitmproxy%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Fri, 06 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/07-06-mitmproxy%E4%BD%BF%E7%94%A8/</guid>
+      <description>介绍一款非常好用的抓包工具，官网地址：https://www.mitmproxy.org。实际上，在调试苹果IAP支付时，始终没有抓成功过，反而因为设置了代理，导致苹果沙盒用户无法成功支付。它名字的全拼是Man-in-the-middle-proxy，代表中间人攻击。</description>
+    </item>
+    
+    <item>
+      <title>MySQL事务</title>
+      <link>https://neojos.com/blog/2018/07-01-mysql%E4%BA%8B%E5%8A%A1/</link>
+      <pubDate>Sun, 01 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/07-01-mysql%E4%BA%8B%E5%8A%A1/</guid>
+      <description>关于MySQL事务的诡异问题，至今没有调查出原因。但却也是一个契机，带我重新回忆之前的遇到的事务问题。</description>
+    </item>
+    
+    <item>
+      <title>TIME_WAIT状态解读</title>
+      <link>https://neojos.com/blog/2018/06-15-time_wait%E7%8A%B6%E6%80%81%E8%A7%A3%E8%AF%BB/</link>
+      <pubDate>Fri, 15 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/06-15-time_wait%E7%8A%B6%E6%80%81%E8%A7%A3%E8%AF%BB/</guid>
+      <description>版本：0.01</description>
+    </item>
+    
+    <item>
+      <title>订单系统初识</title>
+      <link>https://neojos.com/blog/2018/06-08-%E8%AE%A2%E5%8D%95%E7%B3%BB%E7%BB%9F%E5%88%9D%E8%AF%86/</link>
+      <pubDate>Fri, 08 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/06-08-%E8%AE%A2%E5%8D%95%E7%B3%BB%E7%BB%9F%E5%88%9D%E8%AF%86/</guid>
+      <description>计划将订单系统做一下梳理，包括之前写的IAP支付。其中一些细节，自己描述的也不是特别满意。后续慢慢的完善。</description>
+    </item>
+    
+    <item>
+      <title>Go反射</title>
+      <link>https://neojos.com/blog/2018/05-31-go%E5%8F%8D%E5%B0%84/</link>
+      <pubDate>Thu, 31 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/05-31-go%E5%8F%8D%E5%B0%84/</guid>
+      <description>人生的挫折感并不取决于境遇本身，而取决于境遇和自我期待之间的落差。</description>
+    </item>
+    
+    <item>
+      <title>shell操作文本实例</title>
+      <link>https://neojos.com/blog/2018/05-15-shell%E6%93%8D%E4%BD%9C%E6%96%87%E6%9C%AC%E5%AE%9E%E4%BE%8B/</link>
+      <pubDate>Tue, 15 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/05-15-shell%E6%93%8D%E4%BD%9C%E6%96%87%E6%9C%AC%E5%AE%9E%E4%BE%8B/</guid>
+      <description>从掌握awk的基本指令，到在工作中熟练使用，中间还有一段路要走！通过总结一些工作中需要的案例，来加深理解。</description>
+    </item>
+    
+    <item>
+      <title>代码重构</title>
+      <link>https://neojos.com/blog/2018/05-12-%E4%BB%A3%E7%A0%81%E9%87%8D%E6%9E%84/</link>
+      <pubDate>Sat, 12 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/05-12-%E4%BB%A3%E7%A0%81%E9%87%8D%E6%9E%84/</guid>
+      <description>重构自己的代码是一件幸福的事，重构别人的代码确是一件不幸的事。尤其是被重构代码的人还没有离职的时候&amp;hellip;</description>
+    </item>
+    
+    <item>
+      <title>MySQL使用总结(一)</title>
+      <link>https://neojos.com/blog/2018/05-09-mysql%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93%E4%B8%80-/</link>
+      <pubDate>Wed, 09 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/05-09-mysql%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93%E4%B8%80-/</guid>
+      <description>查询的执行时间 第一次遇到查询时候报超时。很好奇，别的工具是如何修改查询的操时时间。</description>
+    </item>
+    
+    <item>
+      <title>Go test基础用法</title>
+      <link>https://neojos.com/blog/2018/05-02-go-test%E5%9F%BA%E7%A1%80%E7%94%A8%E6%B3%95/</link>
+      <pubDate>Wed, 02 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/05-02-go-test%E5%9F%BA%E7%A1%80%E7%94%A8%E6%B3%95/</guid>
+      <description>当直接使用IDE进行单元测试时，有没有好奇它时如何实现的？比如GoLand写的测试用例。</description>
+    </item>
+    
+    <item>
+      <title>Saga Pattern</title>
+      <link>https://neojos.com/blog/2018/04-24-saga-pattern/</link>
+      <pubDate>Tue, 24 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/04-24-saga-pattern/</guid>
+      <description>在微服务中，用的比较多的分布式事务模式：SAGA。下面是lysu/go-saga库中的描述：</description>
+    </item>
+    
+    <item>
+      <title>docker基本使用</title>
+      <link>https://neojos.com/blog/2018/04-20-docker%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/04-20-docker%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</guid>
+      <description>知道一点比完全不知道要好，对问题有深入了解比仅知道皮毛要好。作为docker的一个初学者，现在对docker做简单记录。希望随着工作、生活，更深入的了解学习docker。这也是一件很有意义的事。</description>
+    </item>
+    
+    <item>
+      <title>xorm使用reverse指令创建模版</title>
+      <link>https://neojos.com/blog/2018/04-19-xorm%E4%BD%BF%E7%94%A8reverse%E6%8C%87%E4%BB%A4%E5%88%9B%E5%BB%BA%E6%A8%A1%E7%89%88/</link>
+      <pubDate>Thu, 19 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/04-19-xorm%E4%BD%BF%E7%94%A8reverse%E6%8C%87%E4%BB%A4%E5%88%9B%E5%BB%BA%E6%A8%A1%E7%89%88/</guid>
+      <description>这只能算作一次小的功能介绍</description>
+    </item>
+    
+    <item>
+      <title>了解Laravel依赖注入</title>
+      <link>https://neojos.com/blog/2018/04-05-%E4%BA%86%E8%A7%A3laravel%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/</link>
+      <pubDate>Thu, 05 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/04-05-%E4%BA%86%E8%A7%A3laravel%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/</guid>
+      <description>随笔 突然想了解一下Laravel，然后发现：它没有我想象的那么简单，很多的调用都找不到入口。加载view的逻辑，看了很长时间，还是没有搞明白：一个值传递的参数，怎么好好的就变了呢？下面都是看别的的文章的总结，我还要继续完善，直到搞清楚这个view是怎么实现的。</description>
+    </item>
+    
+    <item>
+      <title>包管理工具</title>
+      <link>https://neojos.com/blog/2018/03-31-%E5%8C%85%E7%AE%A1%E7%90%86/</link>
+      <pubDate>Fri, 30 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/03-31-%E5%8C%85%E7%AE%A1%E7%90%86/</guid>
+      <description>反思之前的过程，一直没有试图跟上技术的发展。恍然觉得，其实技术比买股票更能让我找到快乐。新的技术越来越多，能做的便是，持续保持蜗牛锲而不舍的精神，慢慢爬！</description>
+    </item>
+    
+    <item>
+      <title>HTTP总结-状态码</title>
+      <link>https://neojos.com/blog/2018/03-17-http%E6%80%BB%E7%BB%93-%E7%8A%B6%E6%80%81%E7%A0%81/</link>
+      <pubDate>Sat, 17 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/03-17-http%E6%80%BB%E7%BB%93-%E7%8A%B6%E6%80%81%E7%A0%81/</guid>
+      <description>给别人轻松讲明白一个问题，才能算自己真正了解这个问题。</description>
+    </item>
+    
+    <item>
+      <title>Nginx总结</title>
+      <link>https://neojos.com/blog/2018/03-01-nginx%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Sat, 10 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/03-01-nginx%E6%80%BB%E7%BB%93/</guid>
+      <description>location 指令 工作中经常用到的一个指令，用来对某个路径的请求做特殊处理。比如同样的链接在PC和Web显示不同的页面。</description>
+    </item>
+    
+    <item>
+      <title>IAP支付初识</title>
+      <link>https://neojos.com/blog/2018/02-08-iap%E6%94%AF%E4%BB%98%E5%88%9D%E8%AF%86/</link>
+      <pubDate>Wed, 28 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/02-08-iap%E6%94%AF%E4%BB%98%E5%88%9D%E8%AF%86/</guid>
+      <description>IAP全称In-App Purchase，也可以叫内购。查看百度百科，IAP是一种智能移动终端应用程序的付费模式。大概的意思：用户在APP内通过付费，来享受APP内提供的服务或体验。</description>
+    </item>
+    
+    <item>
+      <title>WebSocket基础开发</title>
+      <link>https://neojos.com/blog/2018/02-25-websocket%E5%9F%BA%E7%A1%80%E5%BC%80%E5%8F%91/</link>
+      <pubDate>Sun, 25 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/02-25-websocket%E5%9F%BA%E7%A1%80%E5%BC%80%E5%8F%91/</guid>
+      <description>WebSocket是一种网络通讯协议。在服务器端可以将HTTP请求升级为WebSocket请求。区别于普通的HTTP请求，WebSocket中存在特殊的字段标识：</description>
+    </item>
+    
+    <item>
+      <title>Protobufs在Logstash中的应用</title>
+      <link>https://neojos.com/blog/2018/01-30-protobufs%E5%9C%A8logstash%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/</link>
+      <pubDate>Tue, 30 Jan 2018 20:10:33 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/01-30-protobufs%E5%9C%A8logstash%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/</guid>
+      <description>ELK 分别是Elasticsearch、Logstash、Kibana技术栈的结合。主要解决的问题在于：系统服务器多，日志数据分散难以查找，日志数据量大，查询速度慢，或者不够实时。</description>
+    </item>
+    
+    <item>
+      <title>RequireJS初识</title>
+      <link>https://neojos.com/blog/2018/01-29-requirejs%E5%88%9D%E8%AF%86-/</link>
+      <pubDate>Mon, 29 Jan 2018 20:10:33 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/01-29-requirejs%E5%88%9D%E8%AF%86-/</guid>
+      <description>开发上想找一个时间选择控件，无意中就找到了layDate 日期与时间组件。</description>
+    </item>
+    
+    <item>
+      <title>Memcached遇到的json_decode问题</title>
+      <link>https://neojos.com/blog/2018/01-21-memcached%E9%81%87%E5%88%B0%E7%9A%84json_decode%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Sun, 21 Jan 2018 15:48:33 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/01-21-memcached%E9%81%87%E5%88%B0%E7%9A%84json_decode%E9%97%AE%E9%A2%98/</guid>
+      <description>Memcached 是一个高性能的分布式缓存系统，使用Key-Value存储字符串和对象。通常来说，它主要用于缓存从数据库中检索到的数据以及第三方服务的数据等。简单的说，它可以提升服务器的性能。几乎所有的程序语言都可以接入它的API。如下例子所示：</description>
+    </item>
+    
+    <item>
+      <title>Git分支模型</title>
+      <link>https://neojos.com/blog/2018/01-14-git%E5%88%86%E6%94%AF%E6%A8%A1%E5%9E%8B/</link>
+      <pubDate>Sun, 14 Jan 2018 20:10:33 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/01-14-git%E5%88%86%E6%94%AF%E6%A8%A1%E5%9E%8B/</guid>
+      <description>Git分支模型 文章将围绕下图来描述我们所使用的分支模型。主要包括master和develop两个主线分支以及feature、release、hotfixes分支。</description>
+    </item>
+    
+    <item>
+      <title>Redis学习的惨痛经历</title>
+      <link>https://neojos.com/blog/2018/01-01-redis%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%83%A8%E7%97%9B%E7%BB%8F%E5%8E%86/</link>
+      <pubDate>Mon, 01 Jan 2018 20:10:33 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2018/01-01-redis%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%83%A8%E7%97%9B%E7%BB%8F%E5%8E%86/</guid>
+      <description>我们开发的产品类似于 trivago hotel search，Redis也多用来缓存临时数据。比如将操作频繁的流水数据先存储到redis，之后迁移到关系型数据库做持久化。</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>https://neojos.com/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/about/</guid>
+      <description>网站是使用hugo + GitHub搭建的静态网页。在这之前，一直用的是hexo，自从无意间看到了https://yihui.</description>
+    </item>
+    
+    <item>
+      <title>Using context cancellation in Go</title>
+      <link>https://neojos.com/blog/2019/19-06-23-using-context-cancellation-in-go/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2019/19-06-23-using-context-cancellation-in-go/</guid>
+      <description>爱因斯坦曾说过：“每当我的头脑没有问题思考时，我就喜欢将知道的定理重新验证一番，这样做并没有什么目的，只是让自己有机会重新享受一下专心思考的快乐”</description>
+    </item>
+    
+  </channel>
+</rss>

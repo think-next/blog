@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> IO多路复用 | 渐行渐远</title>
+  <meta name="description" content="Neojos Personal blog about everything">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="IO多路复用" />
+<meta property="og:description" content="引言 结合文章我读过的最好的epoll讲解，认识select和epoll的基本工作原理。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://neojos.com/blog/2019/19-09-20-io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/" />
+<meta property="article:published_time" content="2019-09-20T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-09-20T00:00:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="IO多路复用"/>
+<meta name="twitter:description" content="引言 结合文章我读过的最好的epoll讲解，认识select和epoll的基本工作原理。"/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+
+  
+  
+
+  <style>
+    :root {
+      font-size: 1em;
+      --main-font: orange;
+    }
+
+    .featured {
+      width: 20em;
+      height: calc(6em - 16px);
+      font-size: 1rem;
+      border-radius: .15em;
+      background-color: var(--main-font);
+      box-shadow: .45em .25em #6f9090;
+    }
+  </style>
+</head>
+
+<body class="column mx-auto px3 ltr">
+  <div class="column-left">左边栏</div>
+  <div class="max-width column-right">
+    <div class="content index py4">
+
+      <header id="header">
+  <a href="https://neojos.com/">
+  
+    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+  
+  <div id="title">
+    <h1>渐行渐远</h1>
+  </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/blog">技术</a></li>
+      
+        <li><a href="/greatperson">生活</a></li>
+      
+    </ul>
+  </div>
+</header>
+
+
+
+      
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <h1 id="title">IO多路复用</h1>文章 361 字
+  <aside>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#引言">引言</a></li>
+    <li><a href="#io多路复用"><code>I/O</code>多路复用</a></li>
+    <li><a href="#epoll"><code>epoll</code></a></li>
+    <li><a href="#go语言"><code>Go</code>语言</a></li>
+    <li><a href="#epoll的lt和et模式"><code>epoll</code>的<code>LT</code>和<code>ET</code>模式</a></li>
+    <li><a href="#select"><code>SELECT</code></a></li>
+  </ul>
+</nav>
+  </aside>
+  <div class="content" itemprop="articleBody">
+  
+    <h2 id="引言">引言</h2>
+<p>结合文章<a href="https://zhuanlan.zhihu.com/p/36764771"><code>我读过的最好的epoll讲解</code></a>，认识<code>select</code>和<code>epoll</code>的基本工作原理。</p>
+<p>假设：启动一个<code>WEB</code>服务，服务端每<code>accept</code>一个连接，在内核中就会生成一个相应的文件描述符。现在服务器成功建立了10个连接，我们需要知道其中哪些连接发送过来了新的数据，然后对其进行处理和响应。</p>
+<p>通过一个基本的循环，我们就可以实现：</p>
+<pre><code>while true: 
+    for x in open_connections:
+        if has_new_input(x):
+            process_input(x)
+</code></pre><p>这也是我们常用的“轮询”模式，不停的询问服务器“数据是否已经准备就绪”，而这非常浪费<code>CPU</code>的时间。</p>
+<p>为了避免<code>CPU</code>的空转（无限的<code>for</code>循环），系统引入了一个<code>select</code>的代理。这个代理比较厉害，可以同时观察许多流的<code>I/O</code>事件。在空闲的时候，会把当前线程阻塞掉。当有一个或多个流有I/O事件时，就从阻塞态中醒来。于是，代码调整成这样：</p>
+<pre><code>while true: 
+    select(open_connections)
+    for x in open_connections:
+        if has_new_input(x):
+            process_input(x)
+</code></pre><p>调整之后，如果没有<code>I/O</code>事件产生，我们的程序就会阻塞在<code>select</code>处。但这样依然有个问题：我们从<code>select</code>那里仅仅知道，有<code>I/O</code>事件发生了，但却并不知道是那几个流（可能有一个，多个，甚至全部），我们只能无差别进行轮询，找出能读出或写入数据的流，对他们进行操作。使用<code>select</code>，我们有O(n)的无差别轮询复杂度，同时处理的流越多，每一次无差别轮询时间就越长。</p>
+<p><code>epoll</code>被用来优化<code>select</code>的问题，它会将哪个流发生了怎样的<code>I/O</code>事件通知我们。此时我们对这些流的操作都是有意义的（复杂度降低到了<code>O(k)</code>，k为产生<code>I/O</code>事件流的个数）。最后，代码调整了这样：</p>
+<pre><code>while true: 
+    active_conns = epoll(open_connections)
+    for x in active_conns:
+        process_input(x)
+</code></pre><h2 id="io多路复用"><code>I/O</code>多路复用</h2>
+<p>多路复用的本质是同步非阻塞I/O，多路复用的优势并不是单个连接处理的更快，而是在于能处理更多的连接。类似服务对外提供了一个批量接口。</p>
+<p>I/O编程过程中，需要同时处理多个客户端接入请求时，可以利用多线程或者I/O多路复用技术进行处理。 I/O多路复用技术通过把多个I/O的阻塞复用到同一个select阻塞上，一个进程监视多个描述符，一旦某个描述符就位， 能够通知程序进行读写操作。因为多路复用本质上是同步I/O，都需要应用程序在读写事件就绪后自己负责读写。 最大的优势是系统开销小，不需要创建和维护额外线程或进程。</p>
+<p><img src="https://i.loli.net/2019/09/20/E4rio9ymNcSxVPJ.png" alt="pic-3.png"></p>
+<p>结合多路复用，来看一下异步非阻塞<code>I/O</code>:</p>
+<p>对比异步非阻塞<code>I/O</code>，读请求会立即返回，说明请求已经成功发起，应用程序不被阻塞，继续执行其它处理操作。当<code>read</code>响应到达，将数据拷贝到用户空间，产生信号或者执行一个基于线程回调函数完成<code>I/O</code>处理。应用程序不用在多个任务之间切换。</p>
+<p><img src="https://i.loli.net/2019/09/20/AhzRY2WELVwtNQf.png" alt="pic-2.png"></p>
+<p>可以看出，阻塞<code>I/O</code>在<code>wait for data</code>和<code>copy data from kernel to user</code>两个阶段都是阻塞的。而只有异步<code>I/O</code>的<code>receivefrom</code>是不阻塞的。</p>
+<h2 id="epoll"><code>epoll</code></h2>
+<p><code>epoll</code>的系统调用方法包括：<code>epoll_create</code>、<code>epoll_ctl</code>、<code>epoll_wait</code>，</p>
+<ol>
+<li><code>epoll_create</code>创建一个<code>epoll</code>对象：</li>
+</ol>
+<pre><code>epollfd = epoll_create()
+</code></pre><ol start="2">
+<li><code>epoll_ctl</code>往epoll对象中增加/删除某一个流的某一个事件：</li>
+</ol>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">// 有缓冲区内有数据时epoll_wait返回
+</span><span style="color:#75715e"></span>epoll_ctl(epollfd, EPOLL_CTL_ADD, socket, EPOLLIN);
+
+<span style="color:#75715e">//缓冲区可写入时epoll_wait返回
+</span><span style="color:#75715e"></span>epoll_ctl(epollfd, EPOLL_CTL_DEL, socket, EPOLLOUT);
+</code></pre></div><ol start="3">
+<li><code>epoll_wait</code>等待直到注册的事件发生。</li>
+</ol>
+<h2 id="go语言"><code>Go</code>语言</h2>
+<p><code>go</code>语法上提供了<code>select</code>语句，来实现多路复用。<code>select</code>语句中可以监听多个<code>channel</code>，只要其中任意一个<code>channel</code>有事件返回，<code>select</code>就会返回。否则，程序会一直阻塞在<code>select</code>上。通过结合<code>default</code>，还可以实现反复轮询的效果。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">select</span> {
+<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">tick</span>:
+	<span style="color:#75715e">// Do nothing.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">abort</span>:
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;Launch aborted!&#34;</span>)
+	<span style="color:#66d9ef">return</span>
+}
+</code></pre></div><p><a href="https://github.com/golang/go/blob/91c9b0d568e41449f26858d88eb2fd085eaf306d/src/runtime/netpoll_epoll.go"><code>netpoll_epoll.go</code></a>中实现的<code>epoll</code>方法，依次通过调用<code>netpollinit</code>、<code>netpollopen</code>、<code>netpoll</code>来实现。可能是调用太清晰了，整个文件除了下面的注释外，再也没有别的有效注释了。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// polls for ready network connections
+</span><span style="color:#75715e">// returns list of goroutines that become runnable
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">netpoll</span>(<span style="color:#a6e22e">block</span> <span style="color:#66d9ef">bool</span>) <span style="color:#f92672">*</span><span style="color:#a6e22e">g</span> {}
+</code></pre></div><h2 id="epoll的lt和et模式"><code>epoll</code>的<code>LT</code>和<code>ET</code>模式</h2>
+<p><strong><code>epoll</code>的两种触发模式：<code>Level triggered</code>和<code>Edge triggered</code></strong></p>
+<p>两者的差异在于<code>level-trigger</code>模式下只要某个<code>socket</code>处于<code>readable/writable</code>状态，无论什么时候进行<code>epoll_wait</code>都会返回该<code>socket</code>。而<code>edge-trigger</code>模式下只有某个<code>socket</code>从<code>unreadable</code>变为<code>readable</code>或从<code>unwritable</code>变为<code>writable</code>时，<code>epoll_wait</code>才会返回该<code>socket</code>。</p>
+<p><img src="https://i.loli.net/2019/09/20/dAkVHQmTFz1YKyw.png" alt="ET-LT.png"></p>
+<p>所以, 在<code>epoll</code>的<code>ET</code>模式下, 正确的读写方式为:</p>
+<ol>
+<li>读: 只要可读, 就一直读, 直到返回0, 或者 errno = EAGAIN</li>
+<li>写: 只要可写, 就一直写, 直到数据发送完, 或者 errno = EAGAIN</li>
+</ol>
+<p>关于这两种模式，博客<a href="https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/"><code>Epoll is fundamentally broken 1/2</code></a>也做了解释，它通过内核负载均衡<code>accept()</code>的例子来进行说明。这里也尝试简单介绍一下，因为例子读起来确实有趣，也方便我们加深理解。</p>
+<p>在开发一个高吞吐量的<code>HTTP Server</code>(服务大量的短连接)时，因为请求量非常大，我们希望充分利用计算机多核资源，将<code>accept</code>操作分配到不同的核来并发处理。但想要实现连接的负载均衡，直到内核<code>4.5</code>版本才变成可能。</p>
+<p><strong>水平触发 - 不需要的唤醒</strong></p>
+<p>一个天真的解决办法是：我们全局创建一个<code>epoll</code>对象，多个工作线程来同时<code>wait</code>它。但是<code>level triggere</code>模式存在“惊群现象”（前提：没有给<code>epoll</code>指定具体的<code>flag</code>），对于每一个到来的新连接，所有的工作线程都会被唤醒。</p>
+<pre><code>   Kernel： 接收到一个新连接
+   Kernel： 通知正在等待的线程`Thread A`和`Thread B`
+ Thread A： epoll_wait()返回.
+ Thread B： epoll_wait()返回.
+ Thread A： 执行`accept()`, 操作成功.
+ Thread B： 执行`accept()`, 操作失败，返回`EAGAIN`.
+</code></pre><p>在这个过程中，唤醒<code>Thread B</code>是完全没有必要的，并且浪费了系统资源。所以，<code>level-triggered</code>模式在水平扩展上非常差。</p>
+<p><strong>边缘触发 - 不需要的唤醒和饥饿</strong></p>
+<p>我们已经介绍了<code>level-triggered</code>模式的问题，那么<code>edge-triggered</code>模式会不会做到更好呢？</p>
+<p>并不是，下面是可能的运行情况：</p>
+<pre><code>   Kernel： 收到一个新连接，此时线程`A`和`B`都在等待。因为现在是&quot;edge-triggered&quot;模式，所以仅仅会有一个线程被通知，假设是`A`.
+ Thread A： `epoll_wait()`返回.
+ Thread A： 执行`accept()`, 操作成功.
+   Kernel： accpet队列变空, `event-triggered socket`状态由&quot;readable&quot;变为&quot;non readable&quot;
+   Kernel： 接收到第二个连接.
+   Kernel： 现在只剩下线程`B`在执行`epoll_wait()`. 于是唤醒`B`.
+ Thread A： 继续执行`accept()`，原本希望返回`EAGAIN`，但是返回了第二个连接
+ Thread B： 执行`accept()`, 返回`EAGAIN`. 
+ Thread A： 继续执行`accept()`, 返回`EAGAIN`.
+</code></pre><p>上述过程中，<code>B</code>的唤醒是完全不需要的。而且，<code>B</code>会感到非常困惑。此外，<code>edge-triggered</code>模式也很难避免线程饥饿的情况</p>
+<pre><code>   Kernel： 接收到两个连接，此时`A`和`B`都在等待. 假设`A`收到通知.
+ Thread A： `epoll_wait()`返回.
+ Thread A： 执行`accept()`, 操作成功
+   Kernel： 接收到第3个连接.`event-triggered socket`是&quot;readable&quot;状态, 现在依然是&quot;readable&quot;. 
+ Thread A： 必须执行`accept()`, 希望返回`EGAIN`, 但是返回了第三个连接.
+   Kernel： 接收到第4个连接.
+ Thread A： 继续执行`accept()`, 希望返回`EGAIN`, 但是返回了第四个连接.
+</code></pre><p>在这个例子中，<code>event-triggered socket</code>状态只是从<code>non-readable</code>变为了<code>readable</code>。因为在<code>edge-trigger</code>模式下，内核只会唤醒其中一个线程。所以，例子中所有的连接都会被线程A处理，负载均衡无法实现。</p>
+<h2 id="select"><code>SELECT</code></h2>
+<p><code>select</code>和<code>poll</code>类似，主要操作包括两步：</p>
+<ol>
+<li>传递给它们一个文件描述符集合</li>
+<li>它们返回集合中的哪些可以进行读/写操作</li>
+</ol>
+<p>程序调用<code>select</code>将会被阻塞，直到存在可用的文件描述符，或者执行超时。当返回成功时，各个<code>fd_set</code>集合会被修改为仅包含可用的文件描述符。所以，每次调用<code>select</code>还需要重置它的参数列表。</p>
+<p><strong>函数解释：</strong></p>
+<pre><code>int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
+</code></pre><p><code>nfds</code>被设置为三个集合中最高的文件描述符数值<code>+1</code>，这表明每个集合中的文件描述符都会被检查，直到达到这个限制。</p>
+<p>三个独立的文件描述符集合会被监控：<code>readfds</code>中的文件描述符是否可读，<code>writefds</code>是否有空间可写，<code>exceptfds</code>是否异常的情况。在函数退出时，文件描述符集合会被修改，来标识被改变状态的文件标识符。如果没有文件描述符需要被监控，这三个集合都可以指定为<code>NULL</code>。</p>
+<p>当这三个集合都为<code>NULL</code>，而<code>timeval</code>不为空时，等价于系统执行<code>sleep</code>的效果。如果<code>timeval</code>结构体的两个字段都为0，就类似于轮询的效果了。以下是<code>timeval</code>的结构体：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"> <span style="color:#66d9ef">struct</span> timeval {
+   <span style="color:#66d9ef">long</span>    tv_sec;         <span style="color:#75715e">/* seconds */</span>
+   <span style="color:#66d9ef">long</span>    tv_usec;        <span style="color:#75715e">/* microseconds */</span>
+};
+</code></pre></div><p>在<code>select</code>中有4个宏函数被提供：<code>FD_ZERO()</code>用于清除一个集合，<code>FD_SET()</code>和<code>FD_CLR()</code>用来增加和删除一个给定的描述符，<code>FD_ISSET()</code>用来检查文件描述符是否是集合的一部分。</p>
+<p><strong>为什么我们在<code>io</code>操作中不使用<code>select</code>，而选择使用<code>epoll</code>？</strong></p>
+<p>节选自<a href="https://jvns.ca/blog/2017/06/03/async-io-on-linux--select--poll--and-epoll/"><code>Async IO on Linux: select, poll, and epoll</code></a>的描述：</p>
+<blockquote>
+<p><code>On each call to select() or poll(), the kernel must check all of the specified file descriptors to see if they are ready. When monitoring a large number of file descriptors that are in a densely packed range, the timed required for this operation greatly outweights [the rest of the stuff they have to do]</code></p>
+</blockquote>
+<p>参考文章：</p>
+<ol>
+<li><a href="https://jvns.ca/blog/2017/06/03/async-io-on-linux--select--poll--and-epoll/"><code>Async IO on Linux: select, poll, and epoll</code></a></li>
+<li><a href="https://devarea.com/linux-io-multiplexing-select-vs-poll-vs-epoll/#.XW8vMpMzZ-V"><code>LINUX – IO MULTIPLEXING – SELECT VS POLL VS EPOLL</code></a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/36764771"><code>我读过的最好的epoll讲解</code></a></li>
+<li><a href="https://www.iteye.com/blog/kenby-1162853"><code>Epoll在LT和ET模式下的读写方式</code></a></li>
+<li><a href="https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/"><code>Epoll is fundamentally broken 1/2</code></a></li>
+<li><a href="http://www.rainybowe.com/blog/2016/09/12/IO%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/index.html"><code>I/O模型与多路复用</code></a></li>
+<li><a href="https://draveness.me/redis-io-multiplexing"><code>Redis 和 I/O 多路复用</code></a></li>
+<li><a href="http://man7.org/linux/man-pages/man2/select.2.html"><code>SELECT(2)</code></a></li>
+</ol>
+
+  
+
+    
+    
+  </div>
+</article>
+
+
+      <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2022  渐行渐远 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/">主页</a></li>
+         
+        <li><a href="/blog">技术</a></li>
+         
+        <li><a href="/greatperson">生活</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+  </div>
+</body>
+
+<link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
+<script src=/lib/jquery/jquery.min.js></script>
+<script src=/js/main.js></script>
+</html>

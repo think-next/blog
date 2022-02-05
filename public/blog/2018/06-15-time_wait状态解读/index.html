@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> TIME_WAIT状态解读 | 渐行渐远</title>
+  <meta name="description" content="Neojos Personal blog about everything">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="TIME_WAIT状态解读" />
+<meta property="og:description" content="版本：0.01" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://neojos.com/blog/2018/06-15-time_wait%E7%8A%B6%E6%80%81%E8%A7%A3%E8%AF%BB/" />
+<meta property="article:published_time" content="2018-06-15T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-06-15T00:00:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="TIME_WAIT状态解读"/>
+<meta name="twitter:description" content="版本：0.01"/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+
+  
+  
+
+  <style>
+    :root {
+      font-size: 1em;
+      --main-font: orange;
+    }
+
+    .featured {
+      width: 20em;
+      height: calc(6em - 16px);
+      font-size: 1rem;
+      border-radius: .15em;
+      background-color: var(--main-font);
+      box-shadow: .45em .25em #6f9090;
+    }
+  </style>
+</head>
+
+<body class="column mx-auto px3 ltr">
+  <div class="column-left">左边栏</div>
+  <div class="max-width column-right">
+    <div class="content index py4">
+
+      <header id="header">
+  <a href="https://neojos.com/">
+  
+    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+  
+  <div id="title">
+    <h1>渐行渐远</h1>
+  </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/blog">技术</a></li>
+      
+        <li><a href="/greatperson">生活</a></li>
+      
+    </ul>
+  </div>
+</header>
+
+
+
+      
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <h1 id="title">TIME_WAIT状态解读</h1>文章 89 字
+  <aside>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#time_wait-status"><code>time_wait status</code></a></li>
+    <li><a href="#2mls"><code>2MLS</code></a></li>
+    <li><a href="#shell查询time_wait连接"><code>shell</code>查询<code>time_wait</code>连接</a></li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
+</nav>
+  </aside>
+  <div class="content" itemprop="articleBody">
+  
+    <p><em><strong>版本：0.01</strong></em></p>
+<p>突然想梳理一下<code>TIME_WAIT</code>,毕竟自己遇到它好多次了。经常一块出现的问题：<code>too many open file</code>，当然，这个问题本身跟<code>TIME_WAIT</code>状态没啥必然的关系。</p>
+<p>截取一下官方对<code>TIME_WAIT</code>的描述：</p>
+<blockquote>
+<p><code>The socket connection has been closed by the local application, the remote peer has closed its half of the connection, and the system is waiting to be sure that the remote peer received the last acknowledgement.</code></p>
+</blockquote>
+<h2 id="time_wait-status"><code>time_wait status</code></h2>
+<p><code>time_wait</code>作为<code>HTTP</code>连接关闭的一个正常状态。当系统<code>time_wait</code>过多，超过操作系统设定的文件套接字上限时，就会导致整个服务不可用。</p>
+<p>唯一确定连接的4个组成部分，它们是客户端及服务端的<code>IP</code>和<code>PORT</code>。一般来说，处于<code>time_wait</code>状态的<code>port</code>在<code>2mls</code>内是无法被重复使用的。所以瞬间的<code>wait_wait</code>过多，直接导致整个系统无法服务。</p>
+<p>关闭连接包含4次握手，<code>TCP</code>是全双工的，有一端需要主动提出关闭。相应的，对端来被动来关闭。对于我们常见的<code>CS</code>模式，主动和被动的角色是没有明确界限的。</p>
+<!-- raw HTML omitted -->
+<p><img src="https://i.loli.net/2019/04/23/5cbe604d4fcab.png" alt="image"></p>
+<!-- raw HTML omitted -->
+<p><code>active close</code>端的系统中才会出现<code>time_wait</code>的状态。拿请求<code>https://google.com</code>来举例，客户端在创建连接时，其实并不关心连接的端口号，它是系统随机创建的。<code>google</code>服务存在一个<code>443</code>端口,一直处于<code>listen</code>状态。当客户端断开连接时，客户端系统其实就会出现<code>time_wait</code>。当服务端主动断开连接时，客户端会出现<code>close_wait</code>状态。</p>
+<h2 id="2mls"><code>2MLS</code></h2>
+<p><code>time_wait</code>也被称为<code>2MLS wait</code>。全名<code>maximum segment lifetime</code>, 表示一个数据块在被丢弃之前，在网络中能存在的最长时间。<code>TCP</code>的数据包是作为<code>IP</code>数据传输的，而<code>IP</code>数据包是否有效受限于设置的<code>TTL</code>，所以该<code>MSL</code>存在上限。</p>
+<ol>
+<li>在<code>2MLS</code>内，该连接不会处理那些迟到的请求，占用的端口号也无法被系统的其他程序使用。</li>
+<li>在<code>TCP</code>连接中,<code>ACK</code>消息本身是不安全，因为<code>peer</code>不需要对<code>ACK</code>回复<code>ACK</code>。所以，<code>2MLS</code>保证了当被动关闭的一端没有收到<code>ACK</code>时，重新发送一次<code>FIN</code>报文。</li>
+</ol>
+<p>可以通过<code>tcp_tw_reuse</code>来重用<code>time_wait</code>状态的端口号。</p>
+<h2 id="shell查询time_wait连接"><code>shell</code>查询<code>time_wait</code>连接</h2>
+<p>查看连接的状态，主要有两个命令<code>netstat</code>和<code>ss</code>。<code>netstat</code>有的<code>ss</code>都有，而且运行非常快。</p>
+<pre><code>netstat -n | awk '/^tcp/ {++S[$NF]} END {for(a in S) {print a, S[a]} }'
+</code></pre><p>匹配<code>tcp</code>连接，声明了数组<code>S</code>，<code>$NF</code>用于获取最后一列的数据，也就是<code>tcp status</code>，最后通过<code>for</code>语句输出。</p>
+<pre><code>ss -o state time-wait '( sport = :http )'    #timewait是中划线 
+</code></pre><p>通过<code>ss</code>还可以方便的过滤出源端口是80的，状态是<code>time_wait</code>的连接</p>
+<h2 id="总结">总结</h2>
+<p>在开发中，可以适当考虑使用长连接。而且，现在基本所有的库都自带连接池功能。</p>
+
+  
+
+    
+    
+  </div>
+</article>
+
+
+      <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2022  渐行渐远 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/">主页</a></li>
+         
+        <li><a href="/blog">技术</a></li>
+         
+        <li><a href="/greatperson">生活</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+  </div>
+</body>
+
+<link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
+<script src=/lib/jquery/jquery.min.js></script>
+<script src=/js/main.js></script>
+</html>

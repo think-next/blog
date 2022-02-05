@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> 变异性的数值特征-方差 | 渐行渐远</title>
+  <meta name="description" content="Neojos Personal blog about everything">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="变异性的数值特征-方差" />
+<meta property="og:description" content="文章主要介绍通过样本方差来了解数据集变化的原理。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://neojos.com/blog/2019/blog.013-%E5%8F%98%E5%BC%82%E6%80%A7%E7%9A%84%E6%95%B0%E5%80%BC%E7%89%B9%E5%BE%81-%E6%96%B9%E5%B7%AE.2019.10.14/" />
+<meta property="article:published_time" content="2019-10-14T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-10-14T00:00:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="变异性的数值特征-方差"/>
+<meta name="twitter:description" content="文章主要介绍通过样本方差来了解数据集变化的原理。"/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+
+  
+  
+
+  <style>
+    :root {
+      font-size: 1em;
+      --main-font: orange;
+    }
+
+    .featured {
+      width: 20em;
+      height: calc(6em - 16px);
+      font-size: 1rem;
+      border-radius: .15em;
+      background-color: var(--main-font);
+      box-shadow: .45em .25em #6f9090;
+    }
+  </style>
+</head>
+
+<body class="column mx-auto px3 ltr">
+  <div class="column-left">左边栏</div>
+  <div class="max-width column-right">
+    <div class="content index py4">
+
+      <header id="header">
+  <a href="https://neojos.com/">
+  
+    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+  
+  <div id="title">
+    <h1>渐行渐远</h1>
+  </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/blog">技术</a></li>
+      
+        <li><a href="/greatperson">生活</a></li>
+      
+    </ul>
+  </div>
+</header>
+
+
+
+      
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <h1 id="title">变异性的数值特征-方差</h1>文章 24 字
+  <aside>
+    <nav id="TableOfContents"></nav>
+  </aside>
+  <div class="content" itemprop="articleBody">
+  
+    <p>文章主要介绍通过<code>样本方差</code>来了解数据集变化的原理。</p>
+<p>我们对两个数据集做观察，数据集A和数据集B：</p>
+<pre><code>A: 1,2,3,4,5
+B: 2,3,3,3,4
+</code></pre><p>对于定量数据集，最常用、也最容易理解的集中趋势测度是数据集的算数平均数。类比我们学生年代，经常谈论的班级平均分。那么，我们对数据集A、B做平均数计算：</p>
+<pre><code>A: 3
+B: 3
+</code></pre><p>两个样本集的均值都是3。接着，我们计算每个值与均值之间的差值，观察这些偏差数据：</p>
+<pre><code>A: (1-3),(2-3),(3-3),(4-3),(5-3)
+B: (2-3),(3-3),(3-3),(3-3),(4-3)
+</code></pre><p>从距离的角度，我们在坐标图上做体现。数据集中的每个点跟均值的距离：</p>
+<p><img src="https://i.loli.net/2019/10/14/7jfzAxvJT1eol3O.png" alt="distance.png"></p>
+<p>从图上可以看出，数据集A这些点是向外分散的，或者说有较大的变异。数据集B的点都集中在均值3附近，没有太大的变异。</p>
+<p>下一步是要将这些有关偏差的信息精简为变异程度的数字度量。距离平均值的偏差有正数，也有负数，取平均值是不可取的。那么，消除偏差的负号的方法就是进行平方处理。</p>
+<p>在统计学上，一个含有n个测量值的样本的样本方差等于距离均值的偏差平方和除以(n-1)。</p>
+<p>方差的单位是具体单位的平方，我们再对数据做一次处理，计算样本方差的平方根。即标准差。最后，我们通过标准差认为样本值到均值之前的“典型”距离。</p>
+<p>在整个过程中，我们通过抽象，最终使用标准差来表示样本的变异性。需要注意的是，计算样本方差的时候，分母是<code>n-1</code>而不是<code>n</code>，主要是因为在使用了<code>n</code>后，会降低总体方差。</p>
+<p>参考文章：</p>
+<ol>
+<li><a href="https://book.douban.com/subject/26410924/">商务与经济统计学</a></li>
+</ol>
+
+  
+
+    
+    
+  </div>
+</article>
+
+
+      <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2022  渐行渐远 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/">主页</a></li>
+         
+        <li><a href="/blog">技术</a></li>
+         
+        <li><a href="/greatperson">生活</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+  </div>
+</body>
+
+<link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
+<script src=/lib/jquery/jquery.min.js></script>
+<script src=/js/main.js></script>
+</html>

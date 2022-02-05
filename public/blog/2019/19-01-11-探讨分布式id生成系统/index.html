@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> 探讨分布式ID生成系统 | 渐行渐远</title>
+  <meta name="description" content="Neojos Personal blog about everything">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="探讨分布式ID生成系统" />
+<meta property="og:description" content="全称Universally Unique Identifier，UUID占128bit，也就是16个英文字符的长度（16byte），需要强调的是，它的生成无需中心处理程序。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://neojos.com/blog/2019/19-01-11-%E6%8E%A2%E8%AE%A8%E5%88%86%E5%B8%83%E5%BC%8Fid%E7%94%9F%E6%88%90%E7%B3%BB%E7%BB%9F/" />
+<meta property="article:published_time" content="2019-01-11T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-01-11T00:00:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="探讨分布式ID生成系统"/>
+<meta name="twitter:description" content="全称Universally Unique Identifier，UUID占128bit，也就是16个英文字符的长度（16byte），需要强调的是，它的生成无需中心处理程序。"/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+
+  
+  
+
+  <style>
+    :root {
+      font-size: 1em;
+      --main-font: orange;
+    }
+
+    .featured {
+      width: 20em;
+      height: calc(6em - 16px);
+      font-size: 1rem;
+      border-radius: .15em;
+      background-color: var(--main-font);
+      box-shadow: .45em .25em #6f9090;
+    }
+  </style>
+</head>
+
+<body class="column mx-auto px3 ltr">
+  <div class="column-left">左边栏</div>
+  <div class="max-width column-right">
+    <div class="content index py4">
+
+      <header id="header">
+  <a href="https://neojos.com/">
+  
+    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+  
+  <div id="title">
+    <h1>渐行渐远</h1>
+  </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/blog">技术</a></li>
+      
+        <li><a href="/greatperson">生活</a></li>
+      
+    </ul>
+  </div>
+</header>
+
+
+
+      
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <h1 id="title">探讨分布式ID生成系统</h1>文章 339 字
+  <aside>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#uuid构成"><code>UUID</code>构成</a></li>
+    <li><a href="#mongodbs-objectid"><code>MongoDB's ObjectId</code></a></li>
+    <li><a href="#twitter-snowflake"><code>Twitter Snowflake</code></a></li>
+    <li><a href="#database-ticket-servers"><code>Database Ticket Servers</code></a></li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
+</nav>
+  </aside>
+  <div class="content" itemprop="articleBody">
+  
+    <p>全称<code>Universally Unique Identifier</code>，<code>UUID</code>占128<code>bit</code>，也就是16个英文字符的长度（16<code>byte</code>），需要强调的是，它的生成无需中心处理程序。</p>
+<p><code>UUID</code>被用来标识<code>URN(Uniform Resource Names)</code>，对于<code>Transaction ID</code>以及其他需要唯一标志的场景都可以使用它。</p>
+<p><code>UUID</code>是空间和时间上的唯一标识，它长度固定，内部中包含时间信息。如果服务器时间存在不同步的情况，<code>UUID</code>可能会出现重复。</p>
+<h2 id="uuid构成"><code>UUID</code>构成</h2>
+<p>基本格式，由6部分组成：</p>
+<pre><code>time-low - time-mide - time-high-and-version - clock-seq-and-reserved &amp; clock-seq-low - node
+</code></pre><p>一个<code>URN</code>示例：<code>f81d4fae-7dec-11d0-a765-00a0c91e6bf6</code>。</p>
+<p>因为<code>UUID</code>占128<code>bit</code>，16进制数占4<code>bit</code>，所以转换成16进制<code>0-f</code>的字符串总共有32位。组成的各个部分具体由几位16进制表示，请查阅 <a href="https://www.ietf.org/rfc/rfc4122.txt"><code>Namespace Registration Template</code></a></p>
+<p>因为<code>UUID</code>太长且无序，导致其不适合做<code>MySQL</code>的主键索引。而且<code>MySQL</code>自带的<code>auto-increment</code>功能，选择<code>bigint</code>的话也只占用<code>64bit</code>。</p>
+<blockquote>
+<p>All indexes other than the clustered index are known as <a href="https://dev.mysql.com/doc/refman/5.7/en/glossary.html#glos_secondary_index">secondary indexes</a>. In <code>InnoDB</code>, each record in a secondary index contains the primary key columns for the row, as well as the columns specified for the secondary index. <code>InnoDB</code> uses this primary key value to search for the row in the clustered index.</p>
+<p>If the primary key is long, the secondary indexes use more space, so it is advantageous to have a short primary key.</p>
+</blockquote>
+<h2 id="mongodbs-objectid"><code>MongoDB's ObjectId</code></h2>
+<p><a href="https://docs.mongodb.com/manual/reference/method/ObjectId/#description"><code>ObjectId</code></a>由占4-<code>byte</code>的时间戳、3-<code>byte</code>的机器标识、2-<code>byte</code>的进程<code>ID</code>以及3-<code>byte</code>的计数组成，总共还是占用<code>96bit</code>。</p>
+<p>这些<code>ID</code>组成包括时间、机器标识、随机数，在<code>UUID</code>生成时还使用到<code>MAC</code>地址。这些参数中时间是关键，保证集群服务器的时钟准确非常重要。</p>
+<h2 id="twitter-snowflake"><code>Twitter Snowflake</code></h2>
+<p><code>Twitter Snowflake</code>生成的<code>ID</code>占64<code>bit</code>，跟<code>bigint</code>大小一致。由<code>41 bit</code>毫秒精度的时间戳、<code>10bit</code>的机器<code>ID</code>以及<code>12 bit</code>的序列号组成（计数每4096就重新开始一轮），剩下的<code>1 bit</code>奉献给未来。</p>
+<p>作者修改了它的原始设定，将剩下的<code>1 bit</code>给了时间戳。使用机器<code>MAC</code>地址的<code>HASH</code>值作为当前机器的<code>ID</code>。</p>
+<p>服务全局保存最近一次生成<code>ID</code>的时间戳<code>lastTimestamp</code>，作为生成新<code>ID</code>的判断依据，避免时间回溯。详细代码请参照<code>[1]</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// Block and wait till next millisecond
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">long</span> <span style="color:#a6e22e">waitNextMillis</span><span style="color:#f92672">(</span><span style="color:#66d9ef">long</span> currentTimestamp<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span>currentTimestamp <span style="color:#f92672">==</span> lastTimestamp<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        currentTimestamp <span style="color:#f92672">=</span> timestamp<span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">return</span> currentTimestamp<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>同时将<code>sequence</code>也声明为全局变量，每间隔4096次就重新开始计数。主要用于应对：当时间戳相同时保证生成的<code>ID</code>是不同的。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>currentTimestamp <span style="color:#f92672">==</span> lastTimestamp<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    sequence <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>sequence <span style="color:#f92672">+</span> 1<span style="color:#f92672">)</span> <span style="color:#f92672">&amp;</span> maxSequence<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>sequence <span style="color:#f92672">==</span> 0<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#75715e">// Sequence Exhausted, wait till next millisecond.
+</span><span style="color:#75715e"></span>        currentTimestamp <span style="color:#f92672">=</span> waitNextMillis<span style="color:#f92672">(</span>currentTimestamp<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+    <span style="color:#75715e">// reset sequence to start with zero for the next millisecond
+</span><span style="color:#75715e"></span>    sequence <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>最终生成<code>ID</code>的部分如下。正常情况下，当前时间戳是一个十位的整数，拿<code>1547209358(s not ms)</code>举例。转换为二进制的话也才31位<code>bit</code>而已：<code>1011100001110001000101010001110</code>。抛开下面的代码，我们给时间戳分配32位<code>bit</code>的话，也就是左移<code>1</code>bit，最终的结果便是：<code>3094418716</code>。而<code>32bit</code>最大的值是<code>4294967295</code>,可以撑到<code>2106/2/7</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">long</span> id <span style="color:#f92672">=</span> currentTimestamp <span style="color:#f92672">&lt;&lt;</span> <span style="color:#f92672">(</span>TOTAL_BITS <span style="color:#f92672">-</span> EPOCH_BITS<span style="color:#f92672">);</span>
+id <span style="color:#f92672">|=</span> <span style="color:#f92672">(</span>nodeId <span style="color:#f92672">&lt;&lt;</span> <span style="color:#f92672">(</span>TOTAL_BITS <span style="color:#f92672">-</span> EPOCH_BITS <span style="color:#f92672">-</span> NODE_ID_BITS<span style="color:#f92672">));</span>
+id <span style="color:#f92672">|=</span> sequence<span style="color:#f92672">;</span>
+</code></pre></div><h2 id="database-ticket-servers"><code>Database Ticket Servers</code></h2>
+<p>该方式通过中心的<code>DB</code>服务来生成唯一自增<code>ID</code>，但<code>DB</code>服务的写操作会成为系统的瓶颈。如果后台是单个<code>DB</code>服务的话，存在单点问题。</p>
+<p>参考<code>Flickr</code>的方法，后台使用两个<code>DB</code>来生成<code>ID</code>，其中<code>auto-increment</code>一个按照奇数步长增长，另一个按照偶数步长增长。<code>MySQL</code>内部使用<code>REPLACE</code>来实现，通过一条冲突的记录，来持续生成自增的主键<code>ID</code>。</p>
+<blockquote>
+<p><a href="https://dev.mysql.com/doc/refman/5.5/en/replace.html"><code>REPLACE</code></a> makes sense only if a table has a <code>PRIMARY KEY</code> or <code>UNIQUE</code> index. Otherwise, it becomes equivalent to <a href="https://dev.mysql.com/doc/refman/5.5/en/insert.html"><code>INSERT</code></a>, because there is no index to be used to determine whether a new row duplicates another.</p>
+</blockquote>
+<p>结合<code>Twitter Snowflake</code>对<code>ID</code>做如下调整：41-<code>bit</code>的毫秒时间戳、13-<code>bit</code>的数据逻辑分区以及10-<code>bit</code>的自增序列。自增序列对1024取余，每个分区每毫秒内能生成<code>1024</code>个自增<code>ID</code>。</p>
+<p><code>Flickr</code>中各个数据表按照不同的步长增长，当需要分表的时候就会存在巨复杂的数据迁移问题。为了解决这个问题，便引入了逻辑分区<code>Shard ID</code>。通过逻辑上的<code>Shard</code>，将数据分散在不同的数据表中。这样后续的分库分表都可以通过操作逻辑上<code>Shard</code>来实现，将<code>DB</code>从具体的实现中解脱出来。</p>
+<p>关于获取<code>MySQL</code>自增<code>ID</code>，代码无法批量获取插入的全部自增<code>ID</code>列表，<code>MySQL</code>只会返回第一条记录的自增<code>ID</code>。因为自增<code>ID</code>是连续的，所以可以通过计算的方式来计算出<code>ID</code>列表。</p>
+<blockquote>
+<p>If you insert multiple rows using a single <a href="https://dev.mysql.com/doc/refman/8.0/en/insert.html"><code>INSERT</code></a> statement, <a href="https://dev.mysql.com/doc/refman/8.0/en/information-functions.html#function_last-insert-id"><code>LAST_INSERT_ID()</code></a> returns the value generated for the <em>first</em> inserted row <em>only</em>. The reason for this is to make it possible to reproduce easily the same <a href="https://dev.mysql.com/doc/refman/8.0/en/insert.html"><code>INSERT</code></a> statement against some other server.</p>
+</blockquote>
+<p>关于<code>Shard</code>可以查看<a href="http://neojos.com/blog/2018/08-19-%E6%9C%AC%E5%9C%B0%E7%BC%93%E5%AD%98bigcache/"><code>本地缓存BigCache</code></a>，很有参考意义（我觉得）。</p>
+<h2 id="总结">总结</h2>
+<p>文中介绍了<code>ID</code>的两种生成方式，核心的区别在于：整个系统的<code>ID</code>是否支持单调递增。<code>Twitter Snowflake</code>以及<code>UUID</code>可以保证生成的数据唯一，但多台服务器的话，无法保证生成的数据有序。而<code>Ticket Servers</code>通过结合<code>MySQL</code>的<code>auto-increment</code>解决了这个问题。</p>
+<hr>
+<p>参考文章：</p>
+<ol>
+<li><a href="https://www.callicoder.com/distributed-unique-id-sequence-number-generator/"><code>Generating unique IDs in a distributed environment at high scale</code></a></li>
+<li><a href="https://www.ietf.org/rfc/rfc4122.txt"><code>A Universally Unique IDentifier (UUID) URN Namespace</code></a></li>
+<li><a href="https://dev.mysql.com/doc/refman/5.6/en/innodb-index-types.html"><code>Clustered and Secondary Indexes</code></a></li>
+<li><a href="https://instagram-engineering.com/sharding-ids-at-instagram-1cf5a71e5a5c"><code>Sharding &amp; IDs at Instagram</code></a></li>
+<li><a href="http://code.flickr.net/2010/02/08/ticket-servers-distributed-unique-primary-keys-on-the-cheap/"><code>Ticket Server: Distributed Unique Primary Keys on the Cheap</code></a></li>
+<li><a href="http://mzorro.me/2017/08/18/mysql-batch-insert-generated-id-problem/"><code>MySQL批量插入返回自增ID的问题</code></a></li>
+<li><a href="https://tech.meituan.com/MT_Leaf.html"><code>Leaf——美团点评分布式ID生成系统</code></a></li>
+</ol>
+
+  
+
+    
+    
+  </div>
+</article>
+
+
+      <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2022  渐行渐远 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/">主页</a></li>
+         
+        <li><a href="/blog">技术</a></li>
+         
+        <li><a href="/greatperson">生活</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+  </div>
+</body>
+
+<link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
+<script src=/lib/jquery/jquery.min.js></script>
+<script src=/js/main.js></script>
+</html>

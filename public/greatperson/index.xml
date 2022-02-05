@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>渐行渐远</title>
+    <link>https://neojos.com/greatperson/</link>
+    <description>Recent content on 渐行渐远</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 22 Jul 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://neojos.com/greatperson/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>秘密项目</title>
+      <link>https://neojos.com/greatperson/%E7%A7%98%E5%AF%86%E9%A1%B9%E7%9B%AE/</link>
+      <pubDate>Wed, 22 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/greatperson/%E7%A7%98%E5%AF%86%E9%A1%B9%E7%9B%AE/</guid>
+      <description>孤独，能够让人大胆的思考。</description>
+    </item>
+    
+    <item>
+      <title>让时间给结果</title>
+      <link>https://neojos.com/greatperson/%E8%AE%A9%E6%97%B6%E9%97%B4%E7%BB%99%E7%BB%93%E6%9E%9C/</link>
+      <pubDate>Sat, 18 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/greatperson/%E8%AE%A9%E6%97%B6%E9%97%B4%E7%BB%99%E7%BB%93%E6%9E%9C/</guid>
+      <description>想起了余光中的一句话：“年轻人你的职责是平整土地，而非焦虑时光。你做三四月的事情，在八九月份自然会得到答案。”</description>
+    </item>
+    
+  </channel>
+</rss>

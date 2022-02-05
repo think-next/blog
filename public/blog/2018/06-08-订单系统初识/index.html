@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> 订单系统初识 | 渐行渐远</title>
+  <meta name="description" content="Neojos Personal blog about everything">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="订单系统初识" />
+<meta property="og:description" content="计划将订单系统做一下梳理，包括之前写的IAP支付。其中一些细节，自己描述的也不是特别满意。后续慢慢的完善。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://neojos.com/blog/2018/06-08-%E8%AE%A2%E5%8D%95%E7%B3%BB%E7%BB%9F%E5%88%9D%E8%AF%86/" />
+<meta property="article:published_time" content="2018-06-08T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-06-08T00:00:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="订单系统初识"/>
+<meta name="twitter:description" content="计划将订单系统做一下梳理，包括之前写的IAP支付。其中一些细节，自己描述的也不是特别满意。后续慢慢的完善。"/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+
+  
+  
+
+  <style>
+    :root {
+      font-size: 1em;
+      --main-font: orange;
+    }
+
+    .featured {
+      width: 20em;
+      height: calc(6em - 16px);
+      font-size: 1rem;
+      border-radius: .15em;
+      background-color: var(--main-font);
+      box-shadow: .45em .25em #6f9090;
+    }
+  </style>
+</head>
+
+<body class="column mx-auto px3 ltr">
+  <div class="column-left">左边栏</div>
+  <div class="max-width column-right">
+    <div class="content index py4">
+
+      <header id="header">
+  <a href="https://neojos.com/">
+  
+    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+  
+  <div id="title">
+    <h1>渐行渐远</h1>
+  </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/blog">技术</a></li>
+      
+        <li><a href="/greatperson">生活</a></li>
+      
+    </ul>
+  </div>
+</header>
+
+
+
+      
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <h1 id="title">订单系统初识</h1>文章 30 字
+  <aside>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#订单号">订单号</a>
+      <ul>
+        <li><a href="#订单再支付">订单再支付</a></li>
+        <li><a href="#订单统一管理">订单统一管理</a></li>
+      </ul>
+    </li>
+    <li><a href="#交付">交付</a>
+      <ul>
+        <li><a href="#实物商品">实物商品</a></li>
+        <li><a href="#虚拟商品">虚拟商品</a></li>
+      </ul>
+    </li>
+    <li><a href="#签收">签收</a>
+      <ul>
+        <li><a href="#拆单">拆单</a></li>
+        <li><a href="#签收-1">签收</a></li>
+        <li><a href="#表结构设计">表结构设计</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </aside>
+  <div class="content" itemprop="articleBody">
+  
+    <p>计划将订单系统做一下梳理，包括之前写的<code>IAP</code>支付。其中一些细节，自己描述的也不是特别满意。后续慢慢的完善。</p>
+<p>整个订单系统，概括的讲，其实就是<code>创建订单</code>、<code>支付订单</code>、<code>交付权益</code>这三个过程。但里面涉及的东西，可能必我们想象的要多很多。</p>
+<h2 id="订单号">订单号</h2>
+<p>在调用支付时，一般都会要求创建订单号。该订单号是标识本地交易的凭证，必须做到系统唯一。</p>
+<p>创建订单号也有很多学问。最差也得做到：首先，不重复；其次，别人不能通过订单号，推测出任何有意义的信息；再次，订单号长度一定要做好控制。</p>
+<h3 id="订单再支付">订单再支付</h3>
+<p>描述一个场景：用户下单之后，并没有立即支付，而是过了一段时间，重新支付之前下的订单。这种情况，如果涉及到扣减库存，还会设置订单的过期时间。</p>
+<p>重新支付的时候可能会有点问题：很多支付接口，不允许使用同一个订单号支付两次，即使上一次没有支付成功。换句话说，当你想重新支付时，系统需要生成一个新的订单号。</p>
+<p>这样会导致：用户仅仅成功购买了一个商品，后台却生成了数笔订单。后期的统计变得麻烦了不少。</p>
+<p>我们的做法便是：在确认支付时，生成两个订单，一个父订单，一个子订单。父订单用来标识用户的购买行为，子订单用户跟第三方支付。</p>
+<h3 id="订单统一管理">订单统一管理</h3>
+<p>对于业务简单的部门来说，订单号自己创建，自己管理完全足够了。</p>
+<p>但公司想汇总各个部门的订单数据时会变得异常麻烦。所以需要统一的订单创建平台。该平台负责订单的创建、以及后续订单的状态管理。</p>
+<p>整个系统也开始变得复杂起来了。订单创建、订单状态更新都需要通知“订单系统”。数据也开始出现不一致。</p>
+<h2 id="交付">交付</h2>
+<p>在用户下单、支付成功之后，将购买的商品或权益给到用户。</p>
+<h3 id="实物商品">实物商品</h3>
+<p>将用户的购买行为添加到他的购买记录等，让快递员将商品送到用户手中等。</p>
+<h3 id="虚拟商品">虚拟商品</h3>
+<p>用户在王者荣耀上买了一套皮肤，这就属于购买虚拟商品。最终腾讯只需要给用户的数据库写一条权益记录就好，不存在发货的过程。</p>
+<h2 id="签收">签收</h2>
+<h3 id="拆单">拆单</h3>
+<p>用户可能一次性购买多个商品，但系统只生成一个订单。对于实物商品，会涉及的拆单流程。比如用户买了肥皂和书，后台系统需要将肥皂交给卖家A来发货，将书交给卖家B来发。同样的商品，可能还会根据卖家和买家的距离来拆单。</p>
+<h3 id="签收-1">签收</h3>
+<p>那么当更新订单签收状态时，就有疑问了。一个订单，它可能对应多个商品，那么只有商品全部被签收成功，才应该修改为已签收状态。但这种全部成功或者全部失败的状态，本身就很难保证。</p>
+<p>所以签收应该针对具体商品。商城系统中，有两个常用的概念：<code>SPU</code>和<code>SKU</code>。那小米手机来举例，<code>小米Note</code>可以当作是一个<code>SPU</code>,而具体的<code>红色-32G</code>等能具体到一个实际的个体的就是<code>SKU</code>。</p>
+<p>最终，签收状态应该是<code>订单号</code>+<code>SKU_ID</code>来决定的。</p>
+<h3 id="表结构设计">表结构设计</h3>
+<p>在用户下单、支付的过程中，跟订单内部商品的<code>SKU</code>关系不大，而且为了保证订单的<code>幂等性</code>,将订单设置为唯一索引是必须的。</p>
+<p>在签收的过程中，无法做到针对订单来签收，而应该对订单下的<code>SKU</code>做签收。所以<code>签收表</code>应该独立出来。</p>
+
+  
+
+    
+    
+  </div>
+</article>
+
+
+      <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2022  渐行渐远 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/">主页</a></li>
+         
+        <li><a href="/blog">技术</a></li>
+         
+        <li><a href="/greatperson">生活</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+  </div>
+</body>
+
+<link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
+<script src=/lib/jquery/jquery.min.js></script>
+<script src=/js/main.js></script>
+</html>

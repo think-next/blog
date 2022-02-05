@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html lang="{{ .Site.LanguageCode }}">
 {{ partial "head.html" . }}
-<body class="max-width mx-auto px3 ltr">
-  <div class="content index py4">
-
-    {{ partial "header.html" . }}
-
-    {{ block "main" . }}
-    {{ end }}
-
-    {{ partial "footer.html" . }}
+<body class="column mx-auto px3 ltr">
+  <div class="column-left">
+      {{ .TableOfContents }}
   </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
+      {{ partial "header.html" . }}
+
+      {{ block "main" . }}
+      {{ end }}
+
+      {{ partial "footer.html" . }}
+    </div>
+  </div>
+  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href={{ "lib/font-awesome/css/all.min.css" | relURL }}>

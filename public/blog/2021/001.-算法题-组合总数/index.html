@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> 算法题 - 组合总数 | 渐行渐远</title>
+  <meta name="description" content="Neojos Personal blog about everything">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="算法题 - 组合总数" />
+<meta property="og:description" content="力扣上的一道算法题，39题，内容如下" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://neojos.com/blog/2021/001.-%E7%AE%97%E6%B3%95%E9%A2%98-%E7%BB%84%E5%90%88%E6%80%BB%E6%95%B0/" />
+<meta property="article:published_time" content="2021-11-28T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-11-28T00:00:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="算法题 - 组合总数"/>
+<meta name="twitter:description" content="力扣上的一道算法题，39题，内容如下"/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+
+  
+  
+
+  <style>
+    :root {
+      font-size: 1em;
+      --main-font: orange;
+    }
+
+    .featured {
+      width: 20em;
+      height: calc(6em - 16px);
+      font-size: 1rem;
+      border-radius: .15em;
+      background-color: var(--main-font);
+      box-shadow: .45em .25em #6f9090;
+    }
+  </style>
+</head>
+
+<body class="column mx-auto px3 ltr">
+  <div class="column-left">左边栏</div>
+  <div class="max-width column-right">
+    <div class="content index py4">
+
+      <header id="header">
+  <a href="https://neojos.com/">
+  
+    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+  
+  <div id="title">
+    <h1>渐行渐远</h1>
+  </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/blog">技术</a></li>
+      
+        <li><a href="/greatperson">生活</a></li>
+      
+    </ul>
+  </div>
+</header>
+
+
+
+      
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <h1 id="title">算法题 - 组合总数</h1>文章 232 字
+  <aside>
+    <nav id="TableOfContents"></nav>
+  </aside>
+  <div class="content" itemprop="articleBody">
+  
+    <p>力扣上的一道算法题，39题，内容如下</p>
+<pre><code>给定一个无重读的正整数数组 candidates 和一个正整数 target，找出
+ candidates 中所有可能使数字和为目标 target 的唯一组合
+ 
+输入: candidates = [2,3,6,7], target = 7
+输出: [[7],[2,2,3]]
+</code></pre><p>感觉这是一道动态规划的问题，因为非常像是经典的背包问题：装或者不装。但动态规划求解的都是计数类问题，这个问题要求给出组合集。
+加入求解的是动态方程，我们可以假设已知函数 f(i, j) 计算数组 [0&hellip;i] 的数据范围内和为 j 的数量。因为数据可以重复使用，所以，计算的时候可以
+包含当前的元素，也可以不包含当前的元素。</p>
+<pre><code>    包含i的情况
+    f(i, j) = f(i, j-candidates[i]) + 1
+    
+    不包含i的情况
+    f(i, j) = f(i-1, j-candidates[i]) + 1
+</code></pre><p>现在要计算结果集，求解的是组合，而为排列。计算这种结果集问题都使用的是回溯思想，本质上还是需要抽象成一个树的结构。怎么能构造成树的结构呢，靠减法。
+根节点一般都是空，减法之后第一层节点变成了 [7-2, 7-3, 7-6, 7-7], 这个时候树上有了 4 个。然后非常让每个节点继续和 [2, 3, 6, 7] 做减法，去
+创建分支。如果节点值变成了0，就是符合条件的一个解，如果大于0，重复上述的流程。如果等于 0 或者小于 0，就不需要创建子节点了。</p>
+<p>转念一想，这其实就是一个四叉树的构造和遍历。按照上面的流程写递归的代码</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#888;font-style:italic">// 回溯所有遇到的情况
+</span><span style="color:#888;font-style:italic"></span><span style="color:#00f">func</span> <span style="color:#000">find</span>(<span style="color:#000">candidates</span> []<span style="color:#00f">int</span>, <span style="color:#000">target</span> <span style="color:#00f">int</span>, <span style="color:#000">temp</span> []<span style="color:#00f">int</span>) {
+
+    <span style="color:#00f">for</span> <span style="color:#000">i</span> := <span style="color:#3af">0</span>; <span style="color:#000">i</span> &lt; <span style="color:#000">len</span>(<span style="color:#000">candidates</span>); <span style="color:#000">i</span>++ {
+        
+        <span style="color:#000">less</span> := <span style="color:#000">target</span> - <span style="color:#000">candidates</span>[<span style="color:#000">i</span>]
+        <span style="color:#00f">if</span> <span style="color:#000">less</span> &lt; <span style="color:#3af">0</span> {
+            <span style="color:#00f">continue</span>
+        }
+
+        <span style="color:#000">temp</span> = <span style="color:#000">append</span>(<span style="color:#000">temp</span>, <span style="color:#000">candidates</span>[<span style="color:#000">i</span>])
+        <span style="color:#00f">if</span> <span style="color:#000">less</span> == <span style="color:#3af">0</span> {
+            <span style="color:#000">gloablResult</span> = <span style="color:#000">append</span>(<span style="color:#000">gloablResult</span>, <span style="color:#000">append</span>([]<span style="color:#00f">int</span>{}, <span style="color:#000">temp</span>...))
+        } <span style="color:#00f">else</span> {
+            <span style="color:#000">find</span>(<span style="color:#000">candidates</span>, <span style="color:#000">target</span> - <span style="color:#000">candidates</span>[<span style="color:#000">i</span>], <span style="color:#000">temp</span>)
+        }
+        
+        <span style="color:#000">temp</span> = <span style="color:#000">temp</span>[:<span style="color:#000">len</span>(<span style="color:#000">temp</span>)-<span style="color:#3af">1</span>]
+    }
+}</code></pre></td></tr></table>
+</div>
+</div>
+<p>这样写完之后，求的其实是一个排列的结果，为什么会这样呢？
+正常我们遍历的时候都是从前向后遍历的，但是上面的代码中，当我们遍历到 3 的时候，它还会去排在它前面的数据中找合适的配对数据，就是有查回去了。
+这样的操作其实是需要排查掉的。</p>
+<p>这有点类似于，动态规划中，我们将二维的动态数组调整成一维的动态数组时，结果的计算顺序可能需要导致一下，因为后面的计算依赖前面的计算，但前面的
+计算结果又被修改了</p>
+<p>知道问题的原因之后，我们加一个标志，保证搜索到一个位置之后，不再向它之前搜索过得元素去找
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span></span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#888;font-style:italic">// 回溯所有遇到的情况
+</span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="color:#888;font-style:italic"></span><span style="color:#00f">func</span> <span style="color:#000">find</span>(<span style="color:#000">candidates</span> []<span style="color:#00f">int</span>, <span style="color:#000">target</span> <span style="color:#00f">int</span>, <span style="color:#000">start</span> <span style="color:#00f">int</span>, <span style="color:#000">temp</span> []<span style="color:#00f">int</span>) {
+</span>
+    <span style="color:#00f">for</span> <span style="color:#000">i</span> := <span style="color:#000">start</span>; <span style="color:#000">i</span> &lt; <span style="color:#000">len</span>(<span style="color:#000">candidates</span>); <span style="color:#000">i</span>++ {
+        
+        <span style="color:#000">less</span> := <span style="color:#000">target</span> - <span style="color:#000">candidates</span>[<span style="color:#000">i</span>]
+        <span style="color:#00f">if</span> <span style="color:#000">less</span> &lt; <span style="color:#3af">0</span> {
+            <span style="color:#00f">continue</span>
+        }
+
+        <span style="color:#000">temp</span> = <span style="color:#000">append</span>(<span style="color:#000">temp</span>, <span style="color:#000">candidates</span>[<span style="color:#000">i</span>])
+        <span style="color:#00f">if</span> <span style="color:#000">less</span> == <span style="color:#3af">0</span> {
+            <span style="color:#000">gloablResult</span> = <span style="color:#000">append</span>(<span style="color:#000">gloablResult</span>, <span style="color:#000">append</span>([]<span style="color:#00f">int</span>{}, <span style="color:#000">temp</span>...))
+        } <span style="color:#00f">else</span> {
+            <span style="color:#000">find</span>(<span style="color:#000">candidates</span>, <span style="color:#000">target</span> - <span style="color:#000">candidates</span>[<span style="color:#000">i</span>], <span style="color:#000">i</span>, <span style="color:#000">temp</span>)
+        }
+        
+        <span style="color:#000">temp</span> = <span style="color:#000">temp</span>[:<span style="color:#000">len</span>(<span style="color:#000">temp</span>)-<span style="color:#3af">1</span>]
+    }
+}</code></pre></td></tr></table>
+</div>
+</div></p>
+
+  
+
+    
+    
+  </div>
+</article>
+
+
+      <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2022  渐行渐远 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/">主页</a></li>
+         
+        <li><a href="/blog">技术</a></li>
+         
+        <li><a href="/greatperson">生活</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+  </div>
+</body>
+
+<link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
+<script src=/lib/jquery/jquery.min.js></script>
+<script src=/js/main.js></script>
+</html>

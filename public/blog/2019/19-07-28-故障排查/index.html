@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> 故障排查 | 渐行渐远</title>
+  <meta name="description" content="Neojos Personal blog about everything">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="故障排查" />
+<meta property="og:description" content="测试提Bug的基本要素，主要包括：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://neojos.com/blog/2019/19-07-28-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/" />
+<meta property="article:published_time" content="2019-07-28T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-07-28T00:00:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="故障排查"/>
+<meta name="twitter:description" content="测试提Bug的基本要素，主要包括："/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+
+  
+  
+
+  <style>
+    :root {
+      font-size: 1em;
+      --main-font: orange;
+    }
+
+    .featured {
+      width: 20em;
+      height: calc(6em - 16px);
+      font-size: 1rem;
+      border-radius: .15em;
+      background-color: var(--main-font);
+      box-shadow: .45em .25em #6f9090;
+    }
+  </style>
+</head>
+
+<body class="column mx-auto px3 ltr">
+  <div class="column-left">左边栏</div>
+  <div class="max-width column-right">
+    <div class="content index py4">
+
+      <header id="header">
+  <a href="https://neojos.com/">
+  
+    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+  
+  <div id="title">
+    <h1>渐行渐远</h1>
+  </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/blog">技术</a></li>
+      
+        <li><a href="/greatperson">生活</a></li>
+      
+    </ul>
+  </div>
+</header>
+
+
+
+      
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <h1 id="title">故障排查</h1>文章 34 字
+  <aside>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#go开发排查问题"><code>Go</code>开发排查问题</a>
+      <ul>
+        <li><a href="#q1">Q1</a></li>
+        <li><a href="#q2">Q2</a></li>
+      </ul>
+    </li>
+    <li><a href="#珍惜bug">珍惜<code>Bug</code></a></li>
+  </ul>
+</nav>
+  </aside>
+  <div class="content" itemprop="articleBody">
+  
+    <p>测试提<code>Bug</code>的基本要素，主要包括：</p>
+<ol>
+<li>期望得到的结果</li>
+<li>实际得到的结果</li>
+<li>如何重现问题</li>
+</ol>
+<p>生产环境出了故障，当然也脱离不开这3个要点。只不过相对重现问题会略微复杂。毕竟，故障总是我们意外之外的情况。</p>
+<p>根据<code>Bug</code>发生的现象，我们会提出很多假设，然后进行逐步排除。</p>
+<p>当问题发生时，最应想到的是：系统最近是否有过改动。很大概率上，一个正常工作的服务会一直维持工作，直到某种外力出现。如果确实是新功能上线导致的，可以结合具体情况，考虑是否回滚到老版本。但有些时候，回滚可能还会引发二次问题，需要特别注意。</p>
+<p>接下来：</p>
+<p>继续保存冷静，简要评估问题的严重程度，及时给外部作出反馈。这里的反馈特别重要，不仅可以让大家了解故障的进展情况，而且，大家还可能提供非常有价值的建议。</p>
+<p>接下来：</p>
+<p>仔细分析故障发生的现象，不要忽略错误日志的任何细节。这个过程中，日志显得尤为重要。一个好的日志记录，必须能还原或推断出当时故障的现场。日志信息主要包括：上下文信息、报错信息。</p>
+<p>当然，有时候故障会涉及多个微服务，最好能有一个<code>trace_id</code>，用来跟踪故障的发生过程，以及具体是微服务中的哪台服务器发生的故障。</p>
+<p>接下来：</p>
+<p>如果无法绝对确定故障的原因，我们需要复现<code>Bug</code>，也就是前文提到的逐个排除。这开发过程中，追加重要服务的测试用例非常重要，可能会节约好多宝贵的时间。</p>
+<p>但也存在难点，比如一些伪相关的原因误导我们的判断。故障一般都有连锁反应，有时候会很难分辨问题的主次。</p>
+<h2 id="go开发排查问题"><code>Go</code>开发排查问题</h2>
+<h3 id="q1">Q1</h3>
+<p>服务发生<code>panic</code>时，结合日志中打印的堆栈信息，可以很容易定位到出错的代码，并作出很多可能的推测。然后，结合具体的上下文信息，能很快复现问题。整个过程中，日志是问题排查的关键。</p>
+<p>日志必须包含<code>panic</code>的堆栈信息，最好有链路的<code>trace_id</code>信息。如果在开发过程中，有对应的<code>Test</code>就更好了。</p>
+<h3 id="q2">Q2</h3>
+<p>对于接口响应慢的情况，可以依靠<code>pprof</code>工具进行诊断。其中，最可能的是调用外部服务慢，比如经典的<code>MySQL</code>慢查询。</p>
+<p>如果排除了外部依赖的问题，那很可能是程序代码自身问题。通过<code>pprof</code>的各种信息展示，也能很快定位。</p>
+<h2 id="珍惜bug">珍惜<code>Bug</code></h2>
+<p>不要放过任何<code>Bug</code>，对<code>Bug</code>的处理过程要做好梳理、总结。下面是总结的模版：</p>
+<pre><code>-- 细节
+-- 灾难响应
+-- 事后总结
+    -- 做的好的地方
+    -- 做的不好的地方
+</code></pre>
+  
+
+    
+    
+  </div>
+</article>
+
+
+      <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2022  渐行渐远 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/">主页</a></li>
+         
+        <li><a href="/blog">技术</a></li>
+         
+        <li><a href="/greatperson">生活</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+  </div>
+</body>
+
+<link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
+<script src=/lib/jquery/jquery.min.js></script>
+<script src=/js/main.js></script>
+</html>

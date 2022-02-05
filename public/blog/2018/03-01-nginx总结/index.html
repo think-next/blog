@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> Nginx总结 | 渐行渐远</title>
+  <meta name="description" content="Neojos Personal blog about everything">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="Nginx总结" />
+<meta property="og:description" content="location 指令 工作中经常用到的一个指令，用来对某个路径的请求做特殊处理。比如同样的链接在PC和Web显示不同的页面。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://neojos.com/blog/2018/03-01-nginx%E6%80%BB%E7%BB%93/" />
+<meta property="article:published_time" content="2018-03-10T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-03-10T00:00:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Nginx总结"/>
+<meta name="twitter:description" content="location 指令 工作中经常用到的一个指令，用来对某个路径的请求做特殊处理。比如同样的链接在PC和Web显示不同的页面。"/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+
+  
+  
+
+  <style>
+    :root {
+      font-size: 1em;
+      --main-font: orange;
+    }
+
+    .featured {
+      width: 20em;
+      height: calc(6em - 16px);
+      font-size: 1rem;
+      border-radius: .15em;
+      background-color: var(--main-font);
+      box-shadow: .45em .25em #6f9090;
+    }
+  </style>
+</head>
+
+<body class="column mx-auto px3 ltr">
+  <div class="column-left">左边栏</div>
+  <div class="max-width column-right">
+    <div class="content index py4">
+
+      <header id="header">
+  <a href="https://neojos.com/">
+  
+    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+  
+  <div id="title">
+    <h1>渐行渐远</h1>
+  </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/blog">技术</a></li>
+      
+        <li><a href="/greatperson">生活</a></li>
+      
+    </ul>
+  </div>
+</header>
+
+
+
+      
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <h1 id="title">Nginx总结</h1>文章 122 字
+  <aside>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#location-指令">location 指令</a>
+      <ul>
+        <li><a href="#location修饰符">location修饰符</a></li>
+        <li><a href="#location匹配规则">location匹配规则</a></li>
+        <li><a href="#举个例子">举个例子</a></li>
+      </ul>
+    </li>
+    <li><a href="#error_page-返回状态码">error_page 返回状态码</a>
+      <ul>
+        <li><a href="#举个例子-1">举个例子</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </aside>
+  <div class="content" itemprop="articleBody">
+  
+    <h2 id="location-指令">location 指令</h2>
+<p>工作中经常用到的一个指令，用来对某个路径的请求做特殊处理。比如同样的链接在<code>PC</code>和<code>Web</code>显示不同的页面。</p>
+<h3 id="location修饰符">location修饰符</h3>
+<p>location block匹配request url中domain name 或者ip/por之后的请求部分，即请求资源的路径。</p>
+<p>形式如下：</p>
+<pre><code>location optional_modifier location_match {
+
+}
+</code></pre><p>如下是<code>optional_modifier</code>的类型：</p>
+<!-- raw HTML omitted -->
+<h3 id="location匹配规则">location匹配规则</h3>
+<ol>
+<li>nginx会查找一个精确匹配。如果匹配到了 =  modifier，匹配会立即终止，该location就会被选择处理这个请求。</li>
+<li>如果没有精确匹配（= modifier），nginx继续进行前缀匹配，对于给定的url，选择最长的前缀匹配。然后依据下列规则，继续匹配。</li>
+<li>如果最长的前缀匹配有（^~ modifier），nginx会立即结束查询，选择该location。如果没有 ^~ modifier，该匹配会被暂时存起来，以便搜索可以继续。</li>
+<li>最长的匹配被存起来后，nginx会继续匹配正则表达式。nginx移动到 location list 的顶部，然后试着去匹配正则表达式，第一个被匹配的正则表达式会立即被选择处理请求，结束匹配。</li>
+<li>如果没有正则表达式被匹配，则之前存储的最长location被选择用来处理请求。</li>
+</ol>
+<p>特别需要理解的：nginx正则匹配结果优先于前缀匹配。但是前缀匹配在先，同时允许通过 ^~ 和 = 来改变这种趋势。</p>
+<p>前缀匹配一般选择最长，最精确的匹配，而正则匹配在第一个匹配发现时，匹配就会终止。也就是说，正则匹配跟配置文件中规则的定义位置有很大关系。
+如果匹配上该location，请求会跳出匹配。</p>
+<h3 id="举个例子">举个例子</h3>
+<p>当前想修改一下，针对某个请求<code>/fuhui/twenty/index.html</code>静态文件的根路径，即所以请求该路径的静态资源，统一到<code>/src/www/fuhui/twenty</code>目录下查找。</p>
+<p>在<code>nginx</code>中做了如下配置。所以<code>nginx</code>按照流程，前缀匹配到<code>/fuhui/twenty</code>之后，判断它其实就是前缀匹配中最长的匹配。同时，它的修饰符为<code>^~</code>，<code>location</code>匹配完成。</p>
+<p>假设②将修饰符修改为普通的前缀匹配（none），则①的<code>location</code>会匹配成功。</p>
+<pre><code># 1
+location ~* \.html$ {
+    add_header Pragma &quot;no-cache&quot;;
+    try_files $uri /resource/html/$uri =404;
+}
+
+# 2
+location ^~ /fuhui/twenty {
+    root /src/www/fuhui/twenty;
+} 
+</code></pre><h2 id="error_page-返回状态码">error_page 返回状态码</h2>
+<p>语法：</p>
+<pre><code>error_page code [code...] [=|=answer-code] url | @named_location
+</code></pre><p>当对于某个请求返回错误码时，如果匹配上了error_page中设置的code,则重定向到新的url中，例如：</p>
+<pre><code>error_page 404 /404.html
+error_page 502 503 /50x.html
+</code></pre><p>注意，虽然重定向了url，但是返回的http错误码还是与原来的相同，用户可以通过=号来更改返回的错误码</p>
+<pre><code>    error_page 404 =200 /empty.gif
+</code></pre><p>也可以不指定确切的返回错误码，而由重定向后实际处理的真实结果来决定，这是，只要把=后面的错误码去掉即可</p>
+<pre><code>    error_page 404 = /empty.gif
+</code></pre><h3 id="举个例子-1">举个例子</h3>
+<p>禁用外网IP访问内网服务器，返回<code>403 forbidden</code>。</p>
+<pre><code>location / {
+    # 允许内网ip访问
+    allow 10.xx.xx.xx/24;
+    
+    # 禁止其他所有ip访问
+    deny all;
+}
+
+error_page 403 @403error
+
+location @403error {
+    rewrite /403.html;
+    
+    # 重要
+    allow all;
+}
+</code></pre><p>未完待续，敬请期待&hellip;..</p>
+
+  
+
+    
+    
+  </div>
+</article>
+
+
+      <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2022  渐行渐远 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/">主页</a></li>
+         
+        <li><a href="/blog">技术</a></li>
+         
+        <li><a href="/greatperson">生活</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+  </div>
+</body>
+
+<link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
+<script src=/lib/jquery/jquery.min.js></script>
+<script src=/js/main.js></script>
+</html>

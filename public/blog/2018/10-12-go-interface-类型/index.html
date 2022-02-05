@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> Go Interface 类型 | 渐行渐远</title>
+  <meta name="description" content="Neojos Personal blog about everything">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="Go Interface 类型" />
+<meta property="og:description" content="introduction duck typing 很形象的解释了interface的本意。它是一种特别的数据类型，内部声明了一组要实现的方法集合，任何实现了这些方法的数据类型都可以认为实现了这个interface。这跟其他语言中的抽象类有异曲同工之处，但却不需要去明确声明实现这个interface。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://neojos.com/blog/2018/10-12-go-interface-%E7%B1%BB%E5%9E%8B/" />
+<meta property="article:published_time" content="2018-10-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-10-12T00:00:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go Interface 类型"/>
+<meta name="twitter:description" content="introduction duck typing 很形象的解释了interface的本意。它是一种特别的数据类型，内部声明了一组要实现的方法集合，任何实现了这些方法的数据类型都可以认为实现了这个interface。这跟其他语言中的抽象类有异曲同工之处，但却不需要去明确声明实现这个interface。"/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+
+  
+  
+
+  <style>
+    :root {
+      font-size: 1em;
+      --main-font: orange;
+    }
+
+    .featured {
+      width: 20em;
+      height: calc(6em - 16px);
+      font-size: 1rem;
+      border-radius: .15em;
+      background-color: var(--main-font);
+      box-shadow: .45em .25em #6f9090;
+    }
+  </style>
+</head>
+
+<body class="column mx-auto px3 ltr">
+  <div class="column-left">左边栏</div>
+  <div class="max-width column-right">
+    <div class="content index py4">
+
+      <header id="header">
+  <a href="https://neojos.com/">
+  
+    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+  
+  <div id="title">
+    <h1>渐行渐远</h1>
+  </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/blog">技术</a></li>
+      
+        <li><a href="/greatperson">生活</a></li>
+      
+    </ul>
+  </div>
+</header>
+
+
+
+      
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <h1 id="title">Go Interface 类型</h1>文章 450 字
+  <aside>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction"><code>introduction</code></a></li>
+    <li><a href="#protocol"><code>protocol</code></a></li>
+    <li><a href="#interface"><code>interface</code></a>
+      <ul>
+        <li><a href="#generic-algorithm"><code>generic algorithm</code></a></li>
+        <li><a href="#hiding-implement-detail"><code>hiding implement detail</code></a></li>
+        <li><a href="#providing-interception-points"><code>providing interception points</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#stream-io-interface">Stream IO interface</a></li>
+  </ul>
+</nav>
+  </aside>
+  <div class="content" itemprop="articleBody">
+  
+    <h2 id="introduction"><code>introduction</code></h2>
+<p><a href="https://en.wikipedia.org/wiki/Duck_typing"><code>duck typing</code></a> 很形象的解释了<code>interface</code>的本意。它是一种特别的数据类型，内部声明了一组要实现的方法集合，任何实现了这些方法的数据类型都可以认为实现了这个<code>interface</code>。这跟其他语言中的<code>抽象类</code>有异曲同工之处，但却不需要去明确声明实现这个<code>interface</code>。</p>
+<p>空的<code>interface</code>类型没有声明任何方法，所以<code>GO</code>中所有数据类型都实现了<code>interface{}</code>。这也为我们实现<code>泛型编程</code>提供了可能，虽然使用起来并不舒服。</p>
+<h2 id="protocol"><code>protocol</code></h2>
+<p><code>interface</code>可以做为一组不相关的对象进行交流的一种规范或约束，类比<a href="https://developers.google.com/protocol-buffers/"><code>protobuf</code></a>，数据字段必须严格按照声明进行传递。只不过<code>interface</code>约束的是待实现的方法。</p>
+<p>比如<code>error</code>接口，所有实现了<code>Error()</code>方法的类型都可以赋值给<code>error</code>类型变量，无需明确声明继承关系，就实现了<code>多态</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#75715e">// The error built-in interface type is the conventional interface for
+</span><span style="color:#75715e">// representing an error condition, with the nil value representing no error.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#66d9ef">error</span> <span style="color:#66d9ef">interface</span> {
+	<span style="color:#a6e22e">Error</span>() <span style="color:#66d9ef">string</span>
+}
+</code></pre></div><h2 id="interface"><code>interface</code></h2>
+<h3 id="generic-algorithm"><code>generic algorithm</code></h3>
+<p><code>interface</code>类型接受任意类型的参数，结合<code>reflect</code>或者<code>断言</code>可以确定参数的实际类型。比如<code>fmt</code>包就有这样用（具体需要深入方法内部）：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#75715e">// Println formats using the default formats for its operands and writes to standard output.
+</span><span style="color:#75715e">// Spaces are always added between operands and a newline is appended.
+</span><span style="color:#75715e">// It returns the number of bytes written and any write error encountered.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">a</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{}) (<span style="color:#a6e22e">n</span> <span style="color:#66d9ef">int</span>, <span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>) {
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">Fprintln</span>(<span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Stdout</span>, <span style="color:#a6e22e">a</span><span style="color:#f92672">...</span>)
+}
+</code></pre></div><p>通过<code>interface</code>约束一套行为，也可以实现泛型编程。比如<code>sort</code>包，只要实现了接口对应的方法，就可以使用<code>sort</code>包来进行排序。具体如何排序，操作什么数据类型，都由你自己来实现。要实现的方式依次是：获取集合的长度，两个元素比较大小以及如何交换两个元素。</p>
+<pre><code>// A type, typically a collection, that satisfies sort.Interface can be
+// sorted by the routines in this package. The methods require that the
+// elements of the collection be enumerated by an integer index.
+type Interface interface {
+	// Len is the number of elements in the collection.
+	Len() int
+	// Less reports whether the element with
+	// index i should sort before the element with index j.
+	Less(i, j int) bool
+	// Swap swaps the elements with indexes i and j.
+	Swap(i, j int)
+}
+</code></pre><h3 id="hiding-implement-detail"><code>hiding implement detail</code></h3>
+<p>当函数返回一个具体类型的<code>interface</code>，那么你就能调用<code>interface</code>实现的方法，而内部的具体实现可以一无所知。尤其是提供一个默认的接口实现时，就显得更加方便了。</p>
+<h3 id="providing-interception-points"><code>providing interception points</code></h3>
+<h4 id="unmarshal"><code>Unmarshal</code></h4>
+<p>当使用<code>Unmarshal</code>解析<code>json</code>时，为具体的类型实现<a href="https://golang.org/pkg/encoding/json/#Marshaler"><code>Unmarshaler</code></a>接口，就实现了自定义解析。</p>
+<blockquote>
+<p><code>To unmarshal JSON into a value implementing the Unmarshaler interface, Unmarshal calls that value's UnmarshalJSON method, including when the input is a JSON null.</code></p>
+</blockquote>
+<pre><code>// Unmarshaler is the interface implemented by types
+// that can unmarshal a JSON description of themselves.
+// The input can be assumed to be a valid encoding of
+// a JSON value. UnmarshalJSON must copy the JSON data
+// if it wishes to retain the data after returning.
+//
+// By convention, to approximate the behavior of Unmarshal itself,
+// Unmarshalers implement UnmarshalJSON([]byte(&quot;null&quot;)) as a no-op.
+type Unmarshaler interface {
+	UnmarshalJSON([]byte) error
+}
+</code></pre><p>当然还有<code>Marshaler</code>接口，按照自己的想法去解析<code>json</code></p>
+<pre><code> type Marshaler interface {
+    MarshalJSON() ([]byte, error)
+}
+</code></pre><h4 id="handler"><code>Handler</code></h4>
+<p>通过实现<code>Handler</code>接口，来处理不同的请求。</p>
+<pre><code>// A Handler responds to an HTTP request.
+//
+// ServeHTTP should write reply headers and data to the ResponseWriter
+// and then return. Returning signals that the request is finished; it
+// is not valid to use the ResponseWriter or read from the
+// Request.Body after or concurrently with the completion of the
+// ServeHTTP call.
+
+type Handler interface {
+	ServeHTTP(ResponseWriter, *Request)
+}
+</code></pre><p><code>ServeMux</code>也实现了<code>handler</code>接口，但它基于<code>request</code>实现了一个路由表。</p>
+<pre><code>// ServeHTTP dispatches the request to the handler whose
+// pattern most closely matches the request URL.
+func (mux *ServeMux) ServeHTTP(w ResponseWriter, r *Request) {
+	if r.RequestURI == &quot;*&quot; {
+		if r.ProtoAtLeast(1, 1) {
+			w.Header().Set(&quot;Connection&quot;, &quot;close&quot;)
+		}
+		w.WriteHeader(StatusBadRequest)
+		return
+	}
+	h, _ := mux.Handler(r)
+	h.ServeHTTP(w, r)
+}
+
+</code></pre><h2 id="stream-io-interface">Stream IO interface</h2>
+<p>工作中最常见的两个接口，io.Reader和io.Writer。</p>
+<pre><code>type Reader interface {
+    Read(p []byte) (n int, err error)
+}
+</code></pre><p>Read方法通过for循，结合io.EOF的方式，将读取到的数据写入到参数p中。Write方法将p中的数据写入到实现的对象里。</p>
+<pre><code>type Writer interface {
+    Write(p []byte) (n int, err error)
+}
+</code></pre><p>实现了Reader和Writer接口类型包括但不限于：</p>
+<ul>
+<li>os.File</li>
+<li>os.Stdout</li>
+<li>os.Stdin</li>
+<li>os.Stderr</li>
+</ul>
+<hr>
+<p>参考文章：</p>
+<ol>
+<li><a href="https://research.swtch.com/interfaces"><code>Go Data Structures: Interfaces</code></a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/32926119"><code>https://zhuanlan.zhihu.com/p/32926119</code></a></li>
+</ol>
+
+  
+
+    
+    
+  </div>
+</article>
+
+
+      <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2022  渐行渐远 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/">主页</a></li>
+         
+        <li><a href="/blog">技术</a></li>
+         
+        <li><a href="/greatperson">生活</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+  </div>
+</body>
+
+<link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
+<script src=/lib/jquery/jquery.min.js></script>
+<script src=/js/main.js></script>
+</html>
