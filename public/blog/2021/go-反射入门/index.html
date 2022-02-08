@@ -66,6 +66,7 @@
         <li><a href="#indirect">Indirect</a></li>
         <li><a href="#kind">Kind</a></li>
         <li><a href="#type">Type</a></li>
+        <li><a href="#方法">方法</a></li>
       </ul>
     </li>
   </ul>
@@ -105,7 +106,7 @@
       
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">Go 反射入门</h1>文章 1785 字
+  <h1 id="title">Go 反射入门</h1>文章 1793 字
   <aside>
 
   </aside>
@@ -786,6 +787,10 @@
 }</code></pre></td></tr></table>
 </div>
 </div>
+<h3 id="方法">方法</h3>
+<p>方法的反射使用的比较少，但很多情况非常有用。我们可以通过指定一个方法名称来查找某个类型中是否存在该方法，如果存在的话，我们还可以通过反射来实现调用。
+通俗的说，我们可以通过 <code>HTTP</code> 协议传递一个方法名，最终让服务端执行这个方法。</p>
+<p>通过 <code>reflect</code> 包我们可以获取到方法的入参个数、出参个数，执行方法、获取方法返回值、在运行时实现方法等操作。我通过几个例子来说明这些操作：</p>
 
   
 
