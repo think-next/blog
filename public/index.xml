@@ -6,7 +6,7 @@
     <description>Recent content on 渐行渐远</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 02 Dec 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 19 Feb 2022 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://neojos.com/index.xml" rel="self" type="application/rss+xml" />
     
@@ -819,6 +819,15 @@
       
       <guid>https://neojos.com/blog/2018/01-01-redis%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%83%A8%E7%97%9B%E7%BB%8F%E5%8E%86/</guid>
       <description>我们开发的产品类似于 trivago hotel search，Redis也多用来缓存临时数据。比如将操作频繁的流水数据先存储到redis，之后迁移到关系型数据库做持久化。</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://neojos.com/blog/2022/0219.-go-plugin/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2022/0219.-go-plugin/</guid>
+      <description></description>
     </item>
     
     <item>

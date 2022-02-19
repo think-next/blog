@@ -1437,7 +1437,7 @@ article .content blockquote {
 
 article .content > blockquote {
     color: #c07814;
-    border: .5em #c4e5b6 outset;
+    background-color: aliceblue;
 }
 
 article .content blockquote p {
