@@ -1,15 +1,33 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Go Plugin on 渐行渐远</title>
+    <title>渐行渐远</title>
     <link>https://neojos.com/blog/</link>
-    <description>Recent content in Go Plugin on 渐行渐远</description>
+    <description>Recent content on 渐行渐远</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 19 Feb 2022 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 20 Feb 2022 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://neojos.com/blog/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>博客样式迭代</title>
+      <link>https://neojos.com/blog/2022/0220-%E5%8D%9A%E5%AE%A2%E6%A0%B7%E5%BC%8F%E8%BF%AD%E4%BB%A3/</link>
+      <pubDate>Sun, 20 Feb 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2022/0220-%E5%8D%9A%E5%AE%A2%E6%A0%B7%E5%BC%8F%E8%BF%AD%E4%BB%A3/</guid>
+      <description>那些看到别人代码有点瑕疵就一顿乱骂，或者花尽心思去构思一个完美设计的人，往往都是因为没有树立正确的代码质量观，没有持续的重构意识</description>
+    </item>
+    
+    <item>
+      <title>Go Plugin</title>
+      <link>https://neojos.com/blog/2022/0219-go-plugin/</link>
+      <pubDate>Sat, 19 Feb 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2022/0219-go-plugin/</guid>
+      <description>有生之年，尽量低消耗地让肉身活着，享受简单本真的喜悦，接纳一切发生。尽量高消耗地让灵魂活着，学习、创新。然后干干净净离开</description>
+    </item>
     
     <item>
       <title>unsafe类型转换</title>
@@ -801,15 +819,6 @@
       
       <guid>https://neojos.com/blog/2018/01-01-redis%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%83%A8%E7%97%9B%E7%BB%8F%E5%8E%86/</guid>
       <description>我们开发的产品类似于 trivago hotel search，Redis也多用来缓存临时数据。比如将操作频繁的流水数据先存储到redis，之后迁移到关系型数据库做持久化。</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://neojos.com/blog/2022/0219.-go-plugin/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/blog/2022/0219.-go-plugin/</guid>
-      <description></description>
     </item>
     
     <item>
