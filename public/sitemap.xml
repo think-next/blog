@@ -4,14 +4,45 @@
   
   <url>
     <loc>https://neojos.com/</loc>
-    <lastmod>2022-02-20T00:00:00+00:00</lastmod>
+    <lastmod>2022-03-12T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://neojos.com/blog/</loc>
-    <lastmod>2022-02-20T00:00:00+00:00</lastmod>
+    <loc>https://neojos.com/greatperson/</loc>
+    <lastmod>2022-03-12T00:00:00+00:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://neojos.com/greatperson/2022.03.12.%E5%9D%9A%E6%8C%81%E4%B9%A0%E6%83%AF/</loc>
+    <lastmod>2022-03-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://neojos.com/greatperson/2022.03.12.%E7%9F%A5%E8%AF%86%E7%84%A6%E8%99%91/</loc>
+    <lastmod>2022-03-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://neojos.com/greatperson/2022.03.12.%E7%BB%93%E6%9E%84%E8%AF%9D%E6%80%9D%E7%BB%B4/</loc>
+    <lastmod>2022-03-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://neojos.com/greatperson/2022.03.12.%E8%82%A1%E7%A5%A8%E6%8A%95%E8%B5%84/</loc>
+    <lastmod>2022-03-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://neojos.com/blog/</loc>
+    <lastmod>2022-02-22T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://neojos.com/blog/2022/0222-go-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%84%E7%90%86/</loc>
+    <lastmod>2022-02-22T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -70,19 +101,8 @@
   </url>
   
   <url>
-    <loc>https://neojos.com/greatperson/</loc>
-    <lastmod>2020-07-22T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://neojos.com/greatperson/%E7%A7%98%E5%AF%86%E9%A1%B9%E7%9B%AE/</loc>
     <lastmod>2020-07-22T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://neojos.com/greatperson/%E8%AE%A9%E6%97%B6%E9%97%B4%E7%BB%99%E7%BB%93%E6%9E%9C/</loc>
-    <lastmod>2020-07-18T00:00:00+00:00</lastmod>
   </url>
   
   <url>

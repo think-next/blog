@@ -1,7 +1,14 @@
 {{ define "main"}}
 <div id="archive">
   <ul class="post-list">
-  {{ range (sort .Paginator.Pages "Date" "desc") }}
+    {{ if .Page.File }}
+      {{ with .Site.GetPage (string .Page.File) }}
+        {{ .Content }}
+      {{ end }}
+    {{ end }}
+
+
+    {{ range (sort .Paginator.Pages "Date" "desc") }}
     {{ $pageYear := (.Date.Format "2006") }}
     {{ if (ne $pageYear ($.Scratch.Get "year")) }}
     {{ $.Scratch.Set "year" $pageYear }}
