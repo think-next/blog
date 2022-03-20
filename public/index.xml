@@ -6,10 +6,19 @@
     <description>Recent content on 渐行渐远</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 12 Mar 2022 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 20 Mar 2022 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://neojos.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go 泛型使用</title>
+      <link>https://neojos.com/blog/2022/0320-go%E8%8C%83%E5%9E%8B%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Sun, 20 Mar 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2022/0320-go%E8%8C%83%E5%9E%8B%E4%BD%BF%E7%94%A8/</guid>
+      <description>泛型如何使用 函数 String 声明的参数列表中， str 类型被定义为泛型。支持泛型后，函数的签名中多出来 [T any] 部分，其中，any 表示泛型约束。在调用String函数时，也明确的指定了泛型类型为字符串。如果我们指定别的类型（和实际传入的类型不一致），编译会出错。</description>
+    </item>
     
     <item>
       <title>坚持习惯</title>

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> 博客样式迭代 | 渐行渐远</title>
-  <meta name="description" content="Neojos Personal blog about everything">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
@@ -62,6 +62,8 @@
       <nav id="TableOfContents">
   <ul>
     <li><a href="#引言">引言</a></li>
+    <li><a href="#_indexmd">_index.md</a></li>
+    <li><a href="#配置文件">配置文件</a></li>
   </ul>
 </nav>
   </div>
@@ -99,7 +101,7 @@
       
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">博客样式迭代</h1>文章 20 字
+  <h1 id="title">博客样式迭代</h1>文章 80 字
   <aside>
 
   </aside>
@@ -116,6 +118,20 @@
     <span style="color:#66d9ef">background-color</span>: <span style="color:#66d9ef">aliceblue</span>;
 }
 </code></pre></div><p>这便是设置引言的样式，<code>&gt;</code> 标识紧跟 <code>.content</code>  类出现的第一个 <code>blockquote</code> 标签。文章中如果存在多个引言，其实会触发这种样式多次。</p>
+<h2 id="_indexmd">_index.md</h2>
+<p>每个文件夹下的 <code>_index.md</code>是有特殊用途的，它作为整个文件夹第一个文件被加载，在列表页中，读取的就是这个文件。我们可以把一些内容写在 <code>_index.md</code> 文件中，在列表页进行展示。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">{{ <span style="color:#66d9ef">if</span> .<span style="color:#a6e22e">Page</span>.<span style="color:#a6e22e">File</span> }}
+	{{ <span style="color:#a6e22e">with</span> .<span style="color:#a6e22e">Site</span>.<span style="color:#a6e22e">GetPage</span> (<span style="color:#66d9ef">string</span> .<span style="color:#a6e22e">Page</span>.<span style="color:#a6e22e">File</span>) }}
+		{{ .<span style="color:#a6e22e">Content</span> }}
+	{{ <span style="color:#a6e22e">end</span> }}
+{{ <span style="color:#a6e22e">end</span> }}
+</code></pre></div><p><code>.Content</code>用来获取该文件中的内容。<code>.Site.GetPage</code>  的参数是文件路径，而 <code>.Page.File</code> 表示的是文件对象，通过 <code>string</code> 方法转换为路径字符串。其中，<code>if</code> 是逻辑函数，判断 <code>.Page.File</code> 是否是一个零值。</p>
+<h2 id="配置文件">配置文件</h2>
+<p>项目的配置文件是根目录下的 <code>config.toml</code>，可以通过全局对象 <code>.Site.Param</code> 读取。其中，<code>Param</code> 作为 toml 配置中的一个对象。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">{{ <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">isset</span> .<span style="color:#a6e22e">Site</span>.<span style="color:#a6e22e">Params</span> <span style="color:#e6db74">&#34;postsonhomepage&#34;</span> }}
+	{{ .<span style="color:#a6e22e">Scratch</span>.<span style="color:#a6e22e">Set</span> <span style="color:#e6db74">&#34;count&#34;</span> .<span style="color:#a6e22e">Site</span>.<span style="color:#a6e22e">Params</span>.<span style="color:#a6e22e">postsOnHomePage</span> }}
+{{ <span style="color:#a6e22e">end</span> }}
+</code></pre></div><p>代码中 <code>.Scratch</code> 是作为一个类似 <code>Context</code> 的作用存在，用来设置和读取数据。</p>
 
   
 
