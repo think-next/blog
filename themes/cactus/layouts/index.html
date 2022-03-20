@@ -4,7 +4,7 @@
     {{ .Site.Params.description }}
   {{ end }}
   {{ if isset .Site.Params "social" }}
-      <p>Find me on
+      <p>
       {{ $length := (len .Site.Params.social) }}
       {{ range $index, $elem := .Site.Params.social}}
       {{ if eq $elem.name "email" }}
@@ -29,7 +29,7 @@
         {{ else if (lt (add $index 1) $length) }}
           {{- print " and " -}}
         {{ else }}
-          {{- print "." -}}
+          {{- print "" -}}
         {{ end }}
       {{ end }}
       </p>
@@ -37,7 +37,13 @@
   </section>
 
   <section id="writing">
-    <span class="h1"><a href="{{ .Site.Params.mainSection | absURL }}">正在更新...</a></span>
+    {{ if .Page.File }}
+      {{ with .Site.GetPage (string .Page.File) }}
+        {{ .Content }}
+      {{ end }}
+    {{ end }}
+
+    <span class="h1"><a href="{{ .Site.Params.mainSection | absURL }}"></a></span>
     {{ if (and (and (isset .Site.Params "tagsoverview") (eq .Site.Params.tagsOverview true)) (gt (len .Site.Taxonomies.tags) 0)) }}
     <span class="h2">Topics</span>
     <span class="widget tagcloud">
@@ -53,36 +59,36 @@
 
     {{ $showAllPostsOnHomePage := false }}
     {{ if (isset .Site.Params "showallpostsonhomepage") }}
-      {{ $showAllPostsOnHomePage = .Site.Params.ShowAllPostsOnHomePage }}
+        {{ $showAllPostsOnHomePage = .Site.Params.ShowAllPostsOnHomePage }}
     {{ end }}
     {{ $dataFormat := .Site.Params.dateFormat | default "2006-01-02" }}
     {{ $mainPosts := (sort ( where site.RegularPages "Type" "in" site.Params.mainSections ) "Date" "desc") }}
     {{ if $showAllPostsOnHomePage }}
-    <ul class="post-list">
-      {{ range (.Paginate $mainPosts).Pages }}
-        <li class="post-item">
-          <div class="meta"><time datetime="{{ time .Date }}" itemprop="datePublished">{{ .Date.Format $dataFormat }}</time></div>
-          <span><a href="{{ .Permalink }}">{{ if .Title }} {{- .Title -}} {{ else }} {{- print "Untitled" -}}{{ end }}</a></span>
-        </li>
-      {{ end }}
-    </ul>
+      <ul class="post-list">
+          {{ range (.Paginate $mainPosts).Pages }}
+              <li class="post-item">
+                  <div class="meta"><time datetime="{{ time .Date }}" itemprop="datePublished">{{ .Date.Format $dataFormat }}</time></div>
+                  <span><a href="{{ .Permalink }}">{{ if .Title }} {{- .Title -}} {{ else }} {{- print "Untitled" -}}{{ end }}</a></span>
+              </li>
+          {{ end }}
+      </ul>
 
     {{ partial "pagination.html" . }}
 
     {{ else }}
     <ul class="post-list">
-      {{ .Scratch.Set "count" 5 }}
-      {{ if isset .Site.Params "postsonhomepage" }}
-        {{ .Scratch.Set "count" .Site.Params.postsOnHomePage }}
-      {{ end }}
-      {{ range (first (.Scratch.Get "count") $mainPosts) }}
-        {{ if eq .Params.Index true }}
-          <li class="post-item">
-            <div class="meta"><time datetime="{{ time .Date }}" itemprop="datePublished">{{ .Date.Format $dataFormat }}</time></div>
-            <span><a href="{{ .Permalink }}">{{ if .Title }} {{- .Title -}} {{ else }} {{- print "Untitled" -}}{{ end }}</a></span>
-          </li>
+        {{ .Scratch.Set "count" 5 }}
+        {{ if isset .Site.Params "postsonhomepage" }}
+            {{ .Scratch.Set "count" .Site.Params.postsOnHomePage }}
         {{ end }}
-      {{ end }}
+        {{ range (first (.Scratch.Get "count") $mainPosts) }}
+            {{ if eq .Params.Index true }}
+                <li class="post-item">
+                    <div class="meta"><time datetime="{{ time .Date }}" itemprop="datePublished">{{ .Date.Format $dataFormat }}</time></div>
+                    <span><a href="{{ .Permalink }}">{{ if .Title }} {{- .Title -}} {{ else }} {{- print "Untitled" -}}{{ end }}</a></span>
+                </li>
+            {{ end }}
+        {{ end }}
     </ul>
     {{ end }}
   </section>

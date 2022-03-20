@@ -37,7 +37,7 @@ summaryLength = 1
     weight = 4
 
 [Params]
-  description = "Neojos Personal blog about everything" # Site description. Used in meta description
+  description = "" # Site description. Used in meta description
   copyright = "Neojos" # Footer copyright holder, otherwise will use site title
   # opengraph = true # Enable OpenGraph if true
   schema = true # Enable Schema
@@ -57,11 +57,12 @@ summaryLength = 1
   customJS = ["js/custom.js"] # Include custom JS files
   colortheme = "white" # dark, light, white, or classic
   mainSection = "blog"
-  postsOnHomePage = 12
+  postsOnHomePage = 0
   tagsOverview = false
   #showProjectsList = true
   projectsUrl = "https://github.com/think-next"
   logo = "img/mifeng.jpeg"
+  showallpostsonhomepage = false
 
 # [Params.logo]
   # image = "img/mifeng.jpeg" # Logo image. Path relative to "static"
@@ -91,9 +92,9 @@ summaryLength = 1
   # title = "My Home Page"
   # url = "http://example.com"
 
-[[Params.social]]
-  name = "CSDN"
-  link = "https://neojos.blog.csdn.net/"
+#[[Params.social]]
+#  name = "CSDN"
+#  link = "https://neojos.blog.csdn.net/"
 
 [Params.comments]
   enabled = true
