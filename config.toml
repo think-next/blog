@@ -13,12 +13,6 @@ summaryLength = 1
   avatar = "img/mifeng.jpeg"
 
 [[menu.main]]
-  identifier = "Home"
-  name = "主页"
-  url = "/"
-  weight = 1
-
-[[menu.main]]
     identifier = "Blog"
     name = "技术"
     url = "/blog"
@@ -33,7 +27,7 @@ summaryLength = 1
 [[menu.main]]
     identifier = "about"
     name = "About"
-    url = "/about"
+    url = "/"
     weight = 4
 
 [Params]
@@ -60,7 +54,7 @@ summaryLength = 1
   postsOnHomePage = 0
   tagsOverview = false
   #showProjectsList = true
-  projectsUrl = "https://github.com/think-next"
+  projectsUrl = ""
   logo = "img/mifeng.jpeg"
   showallpostsonhomepage = false
 
@@ -92,9 +86,10 @@ summaryLength = 1
   # title = "My Home Page"
   # url = "http://example.com"
 
-#[[Params.social]]
-#  name = "CSDN"
-#  link = "https://neojos.blog.csdn.net/"
+# 没有作用
+[[Params.social]]
+  name = "CSDN"
+  link = "https://neojos.blog.csdn.net/?type=blog"
 
 [Params.comments]
   enabled = true

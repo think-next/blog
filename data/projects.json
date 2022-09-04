@@ -1,1 +1,19 @@
-{"list":[{"name":"Hexo","url":"https://hexo.io/","desc":"A fast, simple & powerful blog framework"},{"name":"Font Awesome","url":"http://fontawesome.io/","desc":"The iconic font and CSS toolkit"}]}
+{
+  "list": [
+    {
+      "name": "github",
+      "url": "https://github.com/think-next",
+      "desc": "..."
+    },
+    {
+      "name": "csdn",
+      "url": "https://neojos.blog.csdn.net/?type=blog",
+      "desc": "古之成大事者，不惟有超世之才，亦必有坚忍不拔之志"
+    },
+    {
+      "name": "segmentfault",
+      "url": "https://segmentfault.com/u/neojos/articles",
+      "desc": "说好的东风爽约了，我在雾霾中，等下一阵风"
+    }
+  ]
+}
