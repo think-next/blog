@@ -1,7 +1,7 @@
 baseurl = "https://neojos.com/"
 title = "渐行渐远"
 languageCode = "en-us"
-paginate = "12" # Number of posts per page
+paginate = "128" # Number of posts per page
 theme = "cactus"
 disqusShortname = "" # Enable Disqus comments by entering your Disqus shortname
 googleAnalytics = "" # Enable Google Analytics by entering your tracking id
