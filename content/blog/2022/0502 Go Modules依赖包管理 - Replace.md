@@ -1,5 +1,5 @@
 ---
-title: "Go Module 依赖包管理"
+title: "Go Module 依赖包管理 - Replace"
 date: "2022-05-02"
 lead: "replace"
 index: true
