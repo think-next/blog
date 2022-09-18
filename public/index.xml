@@ -6,10 +6,55 @@
     <description>Recent content on 渐行渐远</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 20 Mar 2022 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 04 Sep 2022 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://neojos.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Dockerfile ENTRYPOINT 原语</title>
+      <link>https://neojos.com/blog/2022/0904-dockerfile-entrypoint-%E5%8E%9F%E8%AF%AD/</link>
+      <pubDate>Sun, 04 Sep 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2022/0904-dockerfile-entrypoint-%E5%8E%9F%E8%AF%AD/</guid>
+      <description>Dockerfile 中会包含 Shell 命令，Shell 命令中自定义变量的解析，有时候没有按照预想的方式进行。发生这种问题是什么原因呢？</description>
+    </item>
+    
+    <item>
+      <title>服务保障信息同步</title>
+      <link>https://neojos.com/blog/2022/0601-%E6%9C%8D%E5%8A%A1%E4%BF%9D%E9%9A%9C%E4%BF%A1%E6%81%AF%E5%90%8C%E6%AD%A5/</link>
+      <pubDate>Wed, 01 Jun 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2022/0601-%E6%9C%8D%E5%8A%A1%E4%BF%9D%E9%9A%9C%E4%BF%A1%E6%81%AF%E5%90%8C%E6%AD%A5/</guid>
+      <description>发生问题时信息如何同步，能够第一时间意识到问题的影响范围。我们负责的业务线上告警了，是只有我们自身的业务出问题了，还是全集团的业务都出问题了？</description>
+    </item>
+    
+    <item>
+      <title>Goland Scratch File</title>
+      <link>https://neojos.com/blog/2022/0506-goland-scratch-file/</link>
+      <pubDate>Fri, 06 May 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2022/0506-goland-scratch-file/</guid>
+      <description>如果你也使用 Goland 作为 Go 的开发工具，遇到一些临时想要验证的 case 你都是如何处理的呢？我们总会经常有一些拿捏不准的函数或者方法，或者就是想通过 Go 来完成一个数学计算，再或者想整一个临时的 Job 跑一份数据。</description>
+    </item>
+    
+    <item>
+      <title>Go Module 依赖包管理 - Indirect</title>
+      <link>https://neojos.com/blog/2022/0503-go-modules%E4%BE%9D%E8%B5%96%E5%8C%85%E7%AE%A1%E7%90%86-indirect/</link>
+      <pubDate>Tue, 03 May 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2022/0503-go-modules%E4%BE%9D%E8%B5%96%E5%8C%85%E7%AE%A1%E7%90%86-indirect/</guid>
+      <description>如果 go.</description>
+    </item>
+    
+    <item>
+      <title>Go Module 依赖包管理 - Replace</title>
+      <link>https://neojos.com/blog/2022/0502-go-modules%E4%BE%9D%E8%B5%96%E5%8C%85%E7%AE%A1%E7%90%86-replace/</link>
+      <pubDate>Mon, 02 May 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2022/0502-go-modules%E4%BE%9D%E8%B5%96%E5%8C%85%E7%AE%A1%E7%90%86-replace/</guid>
+      <description>module 用来定义当前项目的模块路径，这个路径会作为其他命令路径的参考。比如，replace 命令指定模块到本地的时候，使用的相对路径就是模块路径。</description>
+    </item>
     
     <item>
       <title>Go 泛型使用</title>
@@ -18,6 +63,15 @@
       
       <guid>https://neojos.com/blog/2022/0320-go%E8%8C%83%E5%9E%8B%E4%BD%BF%E7%94%A8/</guid>
       <description>泛型如何使用 函数 String 声明的参数列表中， str 类型被定义为泛型。支持泛型后，函数的签名中多出来 [T any] 部分，其中，any 表示泛型约束。在调用String函数时，也明确的指定了泛型类型为字符串。如果我们指定别的类型（和实际传入的类型不一致），编译会出错。</description>
+    </item>
+    
+    <item>
+      <title>输出字符串的所有子串</title>
+      <link>https://neojos.com/blog/2022/0319-%E8%BE%93%E5%87%BA%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E6%89%80%E6%9C%89%E5%AD%90%E4%B8%B2/</link>
+      <pubDate>Sat, 19 Mar 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2022/0319-%E8%BE%93%E5%87%BA%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E6%89%80%E6%9C%89%E5%AD%90%E4%B8%B2/</guid>
+      <description>Go 语言打印输出字符串 abcd 的所有子串？</description>
     </item>
     
     <item>
