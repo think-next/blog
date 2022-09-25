@@ -21,6 +21,15 @@
     </item>
     
     <item>
+      <title>ratelimit 漏桶限流</title>
+      <link>https://neojos.com/blog/2022/0825-ratelimit-%E6%BC%8F%E6%A1%B6%E9%99%90%E6%B5%81/</link>
+      <pubDate>Thu, 25 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2022/0825-ratelimit-%E6%BC%8F%E6%A1%B6%E9%99%90%E6%B5%81/</guid>
+      <description>限流的策略多种多样，比较常见、也容易理解的是计数器限流，计数器限流还有固定窗口和滑动窗口的区别，如果只是停留在理论的层面上，那就还只是思想层面的较量，只有落实到实际的代码中，才能对这套理论有更深的理解。这篇文章，不讲计数器限流，先通过ratelimit这个库，来对漏桶限流做基本的了解。</description>
+    </item>
+    
+    <item>
       <title>服务保障信息同步</title>
       <link>https://neojos.com/blog/2022/0601-%E6%9C%8D%E5%8A%A1%E4%BF%9D%E9%9A%9C%E4%BF%A1%E6%81%AF%E5%90%8C%E6%AD%A5/</link>
       <pubDate>Wed, 01 Jun 2022 00:00:00 +0000</pubDate>
