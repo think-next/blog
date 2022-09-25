@@ -39,3 +39,5 @@ if newState.sleepFor < t.maxSlack {
 	newState.sleepFor = t.maxSlack
 }
 ```
+
+其他实现细节，大家可以去查看源码了解

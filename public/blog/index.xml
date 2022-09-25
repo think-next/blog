@@ -30,6 +30,15 @@
     </item>
     
     <item>
+      <title>Go Pprof 定位内存泄漏</title>
+      <link>https://neojos.com/blog/2022/0612-go-pprof-%E5%AE%9A%E4%BD%8D%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/</link>
+      <pubDate>Sun, 12 Jun 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2022/0612-go-pprof-%E5%AE%9A%E4%BD%8D%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/</guid>
+      <description>之前写过一篇 Go使用Pprof定位问题 , 内容主要是纠结 flat 和 cum 所表示的含义。重新去看了一遍，感觉还是挺特别的。虽然解释了名称的含义，但实际运用上却没有说出什么什么指导价值。</description>
+    </item>
+    
+    <item>
       <title>服务保障信息同步</title>
       <link>https://neojos.com/blog/2022/0601-%E6%9C%8D%E5%8A%A1%E4%BF%9D%E9%9A%9C%E4%BF%A1%E6%81%AF%E5%90%8C%E6%AD%A5/</link>
       <pubDate>Wed, 01 Jun 2022 00:00:00 +0000</pubDate>

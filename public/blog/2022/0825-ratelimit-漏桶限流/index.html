@@ -93,7 +93,7 @@
       
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">ratelimit 漏桶限流</h1>文章 46 字
+  <h1 id="title">ratelimit 漏桶限流</h1>文章 47 字
   <aside>
 
   </aside>
@@ -118,7 +118,8 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">newState</span>.<span style="color:#a6e22e">sleepFor</span> &lt; <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">maxSlack</span> {
 	<span style="color:#a6e22e">newState</span>.<span style="color:#a6e22e">sleepFor</span> = <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">maxSlack</span>
 }
-</code></pre></div>
+</code></pre></div><p>其他实现细节，大家可以去查看源码了解</p>
+
   
 
     
