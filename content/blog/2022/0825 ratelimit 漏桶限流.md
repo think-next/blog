@@ -18,15 +18,15 @@ lead: ""
 
 我截取 ratelimit 源码中的代码来理解。下面的 perRequest 代表 200ms，而它减去的时间就表示，这个时间块剩下的时间。
 
-```go
+{{< highlight go "linenos=table,hl_lines=,linenostart=1,style=abap,lineanchors=neojos" >}}
 newState.sleepFor += t.perRequest - now.Sub(oldState.last)
-```
+{{< / highlight >}}
 
 oldState 就是我们提到的全局变量，last表示上一个请求的结束时间。每次都从上一次请求的结束时间开始计算时间块，比如，第一次请求时在50ms，然后100ms的时候来了第二个请求，按照我们的理论，以50ms开始等待200ms的时间去执行第二个请求，第二个请求需要等待 150 ms才可以继续执行。这样想的话，我们会按照下面的方式去计算等待的时间，为什么源码要使用 += 这个操作呢？
 
-```go
+{{< highlight go "linenos=table,hl_lines=,linenostart=1,style=abap,lineanchors=neojos" >}}
 waitMs := t.perRequest - now.Sub(oldState.last)
-```
+{{< / highlight >}}
 
 这是一个数学计算式，`now.Sub(oldState.last)` 可能大于t.perRequest，也可能小于它。如果waitMs是一个正数的话，说明这两个请求时间相差200ms。如果waitMS是一个负数的话，说明已经超出了200ms，这时候使用负数的时间去执行Sleep操作，是不会发生阻塞的。
 
@@ -34,10 +34,10 @@ waitMs := t.perRequest - now.Sub(oldState.last)
 
 ratelimit 引入了一个叫松弛量的概念，用来存储waitMS，为什么将这个变量存起来呢，主要是因为这个变量有负数的情况，这个负数的情况就好比“余钱”一样，可以抵消部分“债务”。比如说，还是上面的例子，第50ms的时候执行了第一个请求，第250ms的时候执行完了第二个请求，如果第三个请求时500ms来进来的话，程序计算等待的时间其实是 -50ms。如果第4个请求在来的话，可以借用这50ms抵消一部分的等待逻辑。而为了避免这个时间保留的过大，所以代码限制的最大值
 
-```go
+{{< highlight go "linenos=table,hl_lines=,linenostart=1,style=abap,lineanchors=neojos" >}}
 if newState.sleepFor < t.maxSlack {
 	newState.sleepFor = t.maxSlack
 }
-```
+{{< / highlight >}}
 
 其他实现细节，大家可以去查看源码了解
