@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> Go 反射入门 | 渐行渐远</title>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="Go 反射入门" />
+<meta property="og:description" content="鸡汤：～" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://neojos.com/blog/2021/0419-go-%E5%8F%8D%E5%B0%84%E5%85%A5%E9%97%A8/" />
+<meta property="article:published_time" content="2021-04-19T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-04-19T00:00:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go 反射入门"/>
+<meta name="twitter:description" content="鸡汤：～"/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+
+  
+  
+
+  <style>
+    :root {
+      font-size: 1em;
+      --main-font: orange;
+    }
+
+    .featured {
+      width: 20em;
+      height: calc(6em - 16px);
+      font-size: 1rem;
+      border-radius: .15em;
+      background-color: var(--main-font);
+      box-shadow: .45em .25em #6f9090;
+    }
+  </style>
+</head>
+
+<body class="column mx-auto px3 ltr">
+  <div class="column-left">
+      <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#indirect">Indirect</a></li>
+        <li><a href="#kind">Kind</a></li>
+        <li><a href="#type">Type</a></li>
+        <li><a href="#方法">方法</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
+      <header id="header">
+  <a href="https://neojos.com/">
+  
+    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+  
+  <div id="title">
+    <h1>渐行渐远</h1>
+  </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      
+        <li><a href="/blog">技术</a></li>
+      
+        <li><a href="/greatperson">生活</a></li>
+      
+        <li><a href="/">About</a></li>
+      
+    </ul>
+  </div>
+</header>
+
+
+
+      
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <h1 id="title">Go 反射入门</h1>文章 1909 字
+  <aside>
+
+  </aside>
+  <div class="content" itemprop="articleBody">
+  
+    <blockquote>
+<p>鸡汤：～</p>
+<p>自己无论多么努力，似乎都得不到社会的进一步认可；相反，如果按部就班地做事情，好像也坏不到哪里去。冥冥之中似乎被这两条线给框死，其实这就是命。</p>
+</blockquote>
+<p>针对文章中代码的行号，我都在试图和源码保持一致，但源码也在不停地迭代，无法做到 100% 一致，主要还是看一个参考，了解一个脉络。</p>
+<h3 id="indirect">Indirect</h3>
+<p>通过下面的例子，我们来深入了解 <code>reflect</code> 数据包。我们定义 <code>People</code> 的结构体类型，来开始探索。</p>
+<p>我们先来熟悉一下 <code>reflect.Indirect</code> 方法的使用。<code>reflect.Indirect</code> 返回的是底层的值类型，所以，下面第 12 行代码中调用 <code>Kind</code> 返回的类型为 <code>struct</code>。
+而第 10 行代码输出结构体本身的 <code>Kind</code> 类型为 <code>ptr</code> 。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span></span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span></span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span></span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span></span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span></span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="display:block;width:100%;background-color:#e5e5e5"><span style="color:#00f">type</span> <span style="color:#000">People</span> <span style="color:#00f">struct</span> {
+</span><span style="display:block;width:100%;background-color:#e5e5e5">    <span style="color:#000">Age</span> <span style="color:#00f">int64</span>
+</span><span style="display:block;width:100%;background-color:#e5e5e5">}
+</span>
+<span style="color:#00f">func</span> <span style="color:#000">main</span>() {
+    <span style="color:#000">p</span> := &amp;<span style="color:#000">People</span>{
+        <span style="color:#000">Age</span>: <span style="color:#3af">30</span>,
+    }
+
+  	<span style="color:#000">fmt</span>.<span style="color:#000">Println</span>(<span style="color:#000">reflect</span>.<span style="color:#000">ValueOf</span>(<span style="color:#000">p</span>).<span style="color:#000">Kind</span>())		<span style="color:#888;font-style:italic">// ouput: ptr
+</span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="color:#888;font-style:italic"></span>    <span style="color:#000">value</span> := <span style="color:#000">reflect</span>.<span style="color:#000">Indirect</span>(<span style="color:#000">reflect</span>.<span style="color:#000">ValueOf</span>(<span style="color:#000">p</span>))
+</span><span style="display:block;width:100%;background-color:#e5e5e5">  	<span style="color:#000">fmt</span>.<span style="color:#000">Println</span>(<span style="color:#000">value</span>.<span style="color:#000">Kind</span>())		<span style="color:#888;font-style:italic">// output: struct
+</span></span><span style="color:#888;font-style:italic"></span>}</code></pre></td></tr></table>
+</div>
+</div>
+<p><code>Indriect</code> 英文的含义形容词 &ldquo;间接的&rdquo;。这算的上是 <code>reflect</code> 包中比较简单的方法了。间接和直接的区别在于是否使用到指针，因为 <code>Indirect</code>
+返回的是指针指向的值。如果参数本身不是指针类型，那就不需要做额外处理。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2339
+</span></span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2340
+</span></span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2341
+</span></span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2342
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2343
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2344
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2345
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2346
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2347
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="display:block;width:100%;background-color:#e5e5e5"><span style="color:#888;font-style:italic">// Indirect returns the value that v points to.
+</span></span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="color:#888;font-style:italic">// If v is a nil pointer, Indirect returns a zero Value.
+</span></span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="color:#888;font-style:italic">// If v is not a pointer, Indirect returns v.
+</span></span><span style="color:#888;font-style:italic"></span><span style="color:#00f">func</span> <span style="color:#000">Indirect</span>(<span style="color:#000">v</span> <span style="color:#000">Value</span>) <span style="color:#000">Value</span> {
+	<span style="color:#00f">if</span> <span style="color:#000">v</span>.<span style="color:#000">Kind</span>() != <span style="color:#000">Ptr</span> {
+		<span style="color:#00f">return</span> <span style="color:#000">v</span>
+	}
+	<span style="color:#00f">return</span> <span style="color:#000">v</span>.<span style="color:#000">Elem</span>()
+}</code></pre></td></tr></table>
+</div>
+</div>
+<p>在哪里会用到 <code>Indirect</code> 方法呢？主要是用来操作底层的数据结构。常见的就是结构体，如果入参是一个指针，我们只有获取到底层的结构体，才可以应用结构体的各种操作方法。
+诸如，获取结构体的值、标签等。</p>
+<h3 id="kind">Kind</h3>
+<p>我认为它算 <code>reflect</code> 包的灵魂之一了，虽然本质上只是 <code>uint</code> 的别名，但它本身的信息却足够巨大。整个 Go 的基础数据类型都在这里了。工程代码中我们会声明各种类型的结构体，
+比如示例代码中的 <code>People</code> 类型，它的 <code>Kind</code> 类型就是 <code>Struct</code>。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">230
+</span></span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">231
+</span></span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">232
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">233
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">234
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">235
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">236
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">237
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">238
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">239
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">240
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">241
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">242
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">243
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">244
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">245
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">246
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">247
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">248
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">249
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">250
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">251
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">252
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">253
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">254
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">255
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">256
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">257
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">258
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">259
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">260
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">261
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">262
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="display:block;width:100%;background-color:#e5e5e5"><span style="color:#888;font-style:italic">// A Kind represents the specific kind of type that a Type represents.
+</span></span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="color:#888;font-style:italic">// The zero Kind is not a valid kind.
+</span></span><span style="color:#888;font-style:italic"></span><span style="color:#00f">type</span> <span style="color:#000">Kind</span> <span style="color:#00f">uint</span>
+
+<span style="color:#00f">const</span> (
+	<span style="color:#000">Invalid</span> <span style="color:#000">Kind</span> = <span style="color:#00f">iota</span>
+	<span style="color:#000">Bool</span>
+	<span style="color:#000">Int</span>
+	<span style="color:#000">Int8</span>
+	<span style="color:#000">Int16</span>
+	<span style="color:#000">Int32</span>
+	<span style="color:#000">Int64</span>
+	<span style="color:#000">Uint</span>
+	<span style="color:#000">Uint8</span>
+	<span style="color:#000">Uint16</span>
+	<span style="color:#000">Uint32</span>
+	<span style="color:#000">Uint64</span>
+	<span style="color:#000">Uintptr</span>
+	<span style="color:#000">Float32</span>
+	<span style="color:#000">Float64</span>
+	<span style="color:#000">Complex64</span>
+	<span style="color:#000">Complex128</span>
+	<span style="color:#000">Array</span>
+	<span style="color:#000">Chan</span>
+	<span style="color:#000">Func</span>
+	<span style="color:#000">Interface</span>
+	<span style="color:#000">Map</span>
+	<span style="color:#000">Ptr</span>
+	<span style="color:#000">Slice</span>
+	<span style="color:#000">String</span>
+	<span style="color:#000">Struct</span>
+	<span style="color:#000">UnsafePointer</span>
+)</code></pre></td></tr></table>
+</div>
+</div>
+<p>知道这些有什么用呢？关键的一点，判断入参的类型，究竟是结构体、还是指针、或者别的类型。在框架类的代码中，经常有这种类型判断。简单举例说明一下：</p>
+<p>本质上讲，Go 语言中不外乎这两种定义类型的方式。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">type</span> <span style="color:#000">IString</span> <span style="color:#00f">string</span>
+<span style="color:#00f">type</span> <span style="color:#000">YString</span> = <span style="color:#00f">string</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>IString</code> 算是重新声明一个新的类型，它和 <code>string</code> 必须强制转换。<code>YString</code> 是类型的一个别名，
+本身和 <code>string</code> 类型就是完全相同的。项目代码中，其实存在很多像 <code>IString</code> 这样的类型，最常见的就是结构体声明。</p>
+<p>如果我们直接通过安全断言的方式来判断类型的话， 势必要写很多的条件语句，而通过 <code>Kind</code> 就不需要这么麻烦。 因为自定义的类型是无限的，而底层的数据类型是有限的。</p>
+<h3 id="type">Type</h3>
+<p>反射的 <code>ValueOf</code> 和 <code>TypeOf</code> 函数是使用反射的入口，分别对应于接口类型的具体值和动态类型。下面的例子中，
+第 5 行代码调用 <code>People</code> 对象 <code>Value</code> 的 <code>Type</code> 和第 6 行代码直接获取的 <code>Type</code> 做比较，输出值是相同的。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span></span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">9
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">	<span style="color:#000">p</span> := &amp;<span style="color:#000">People</span>{
+        <span style="color:#000">Age</span>: <span style="color:#3af">30</span>,
+    }
+
+<span style="display:block;width:100%;background-color:#e5e5e5">    <span style="color:#000">valueType</span> := <span style="color:#000">reflect</span>.<span style="color:#000">ValueOf</span>(<span style="color:#000">p</span>).<span style="color:#000">Type</span>()
+</span><span style="display:block;width:100%;background-color:#e5e5e5">    <span style="color:#000">dynamicType</span> := <span style="color:#000">reflect</span>.<span style="color:#000">TypeOf</span>(<span style="color:#000">p</span>)
+</span>    <span style="color:#00f">if</span> <span style="color:#000">valueType</span> == <span style="color:#000">dynamicType</span> {
+      	<span style="color:#000">fmt</span>.<span style="color:#000">Println</span>(<span style="color:#5a2">&#34;equal&#34;</span>)		<span style="color:#888;font-style:italic">// output: equal
+</span><span style="color:#888;font-style:italic"></span>    }</code></pre></td></tr></table>
+</div>
+</div>
+<p>一些博客文章介绍了反射类型的转换关系，<code>Value</code>、<code>Type</code>、<code>interface</code> 三种类型之间相互转换。这个例子侧面说明了 <code>Value</code> 和 <code>Type</code> 的转换，但在源码的实现上，
+通过调用 <code>Value</code> 类型的 <code>Type</code> 方法和直接使用 <code>TypeOf</code> 差别其实挺大的。</p>
+<p>如果对底层的实现细节不清楚，这个转换关系其实挺让人困惑的。这究竟是一个&quot;恒等式&rdquo;，还是只针对某些具体的类型，这样的转换才成立。我其实就特别困惑，
+我不仅仅是困惑 <code>Value</code> 类型到 <code>Type</code> 类型的转换，还困惑通过直接调用 <code>TypeOf</code> 获取 <code>Type</code> 和通过调用 <code>ValueOf</code> 获取 <code>Type</code> 两者的效率差异。</p>
+<h4 id="typeof">TypeOf</h4>
+<p><code>TypeOf</code>的逻辑比较简单，通过使用 <code>unsafe</code> 包将接口类型强转一个 <code>emptyInterface</code> 类型，然后直接返回 <code>emptyInterface</code> 类型的 <code>typ</code> 属性。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1366
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1367
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1368
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1369
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1370
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1371
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#888;font-style:italic">// TypeOf returns the reflection Type that represents the dynamic type of i.
+</span><span style="color:#888;font-style:italic">// If i is a nil interface value, TypeOf returns nil.
+</span><span style="color:#888;font-style:italic"></span><span style="color:#00f">func</span> <span style="color:#000">TypeOf</span>(<span style="color:#000">i</span> <span style="color:#00f">interface</span>{}) <span style="color:#000">Type</span> {
+	<span style="color:#000">eface</span> := *(*<span style="color:#000">emptyInterface</span>)(<span style="color:#000">unsafe</span>.<span style="color:#000">Pointer</span>(&amp;<span style="color:#000">i</span>))
+	<span style="color:#00f">return</span> <span style="color:#000">toType</span>(<span style="color:#000">eface</span>.<span style="color:#000">typ</span>)
+}</code></pre></td></tr></table>
+</div>
+</div>
+<p><code>TypeOf</code> 函数很简单，我们只需要查看 <code>emptyInterface</code> 的类型定义，然后查看这个类型的 <code>typ</code> 属性来确认 <code>Type</code>。另一个细节就是 <code>toType</code> 方法，
+也需要进去函数看一看具体的实现。</p>
+<p><code>interface</code> 被大家分成两类来区分，空接口和非空接口，下面看到的就是空接口 <code>emptyInterface</code> 的类型声明。<code>typ</code> 指向具体的类型，而 <code>word</code> 指向具体值的地址。
+我们也可以看出，默认将某一个具体类型转换成 <code>interface</code> 类型，系统还是做了很多转换工作的。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">193
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">194
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">195
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">196
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">197
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#888;font-style:italic">// emptyInterface is the header for an interface{} value.
+</span><span style="color:#888;font-style:italic"></span><span style="color:#00f">type</span> <span style="color:#000">emptyInterface</span> <span style="color:#00f">struct</span> {
+	<span style="color:#000">typ</span>  *<span style="color:#000">rtype</span>
+	<span style="color:#000">word</span> <span style="color:#000">unsafe</span>.<span style="color:#000">Pointer</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+<p>深入 <code>toType</code> 方法看一下源码实现，注释其实挺丰富的，我却只能看懂字面意思。但从功能上讲，代码的作用很简单，当入参为 <code>nil</code> 时，直接返回 <code>nil</code>。
+因为返回值类型 <code>Type</code> 是一个接口类型，针对接口类型来说，返回 <code>*rtype</code> 类型的 <code>nil</code> 和 <code>nil</code> 可完全是两码事。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2968
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2969
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2970
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2971
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2972
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2973
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2974
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2975
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2976
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2977
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2978
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#888;font-style:italic">// toType converts from a *rtype to a Type that can be returned
+</span><span style="color:#888;font-style:italic">// to the client of package reflect. In gc, the only concern is that
+</span><span style="color:#888;font-style:italic">// a nil *rtype must be replaced by a nil Type, but in gccgo this
+</span><span style="color:#888;font-style:italic">// function takes care of ensuring that multiple *rtype for the same
+</span><span style="color:#888;font-style:italic">// type are coalesced into a single Type.
+</span><span style="color:#888;font-style:italic"></span><span style="color:#00f">func</span> <span style="color:#000">toType</span>(<span style="color:#000">t</span> *<span style="color:#000">rtype</span>) <span style="color:#000">Type</span> {
+	<span style="color:#00f">if</span> <span style="color:#000">t</span> == <span style="color:#00f">nil</span> {
+		<span style="color:#00f">return</span> <span style="color:#00f">nil</span>
+	}
+	<span style="color:#00f">return</span> <span style="color:#000">t</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="valueof">ValueOf</h4>
+<p><code>ValueOf</code> 的源码如下，更多的细节还是需要查看 <code>unpackEface</code> 方法。返回值类型 <code>Value</code> 和 <code>Type</code> 不同，<code>Value</code> 是一个结构体值类型，
+而 <code>Type</code> 是一个接口类型。当入参是一个 <code>nil</code> 时，直接返回一个初始化的 <code>Value</code> 对象。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2349
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2350
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2351
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2352
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2353
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2354
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2355
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2356
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2357
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2358
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2359
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2360
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2361
+</span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2362
+</span></span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2363
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#888;font-style:italic">// ValueOf returns a new Value initialized to the concrete value
+</span><span style="color:#888;font-style:italic">// stored in the interface i. ValueOf(nil) returns the zero Value.
+</span><span style="color:#888;font-style:italic"></span><span style="color:#00f">func</span> <span style="color:#000">ValueOf</span>(<span style="color:#000">i</span> <span style="color:#00f">interface</span>{}) <span style="color:#000">Value</span> {
+	<span style="color:#00f">if</span> <span style="color:#000">i</span> == <span style="color:#00f">nil</span> {
+		<span style="color:#00f">return</span> <span style="color:#000">Value</span>{}
+	}
+
+	<span style="color:#888;font-style:italic">// TODO: Maybe allow contents of a Value to live on the stack.
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#888;font-style:italic">// For now we make the contents always escape to the heap. It
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#888;font-style:italic">// makes life easier in a few places (see chanrecv/mapassign
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#888;font-style:italic">// comment below).
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#000">escapes</span>(<span style="color:#000">i</span>)
+
+<span style="display:block;width:100%;background-color:#e5e5e5">	<span style="color:#00f">return</span> <span style="color:#000">unpackEface</span>(<span style="color:#000">i</span>)
+</span>}</code></pre></td></tr></table>
+</div>
+</div>
+<p>下面是 <code>unpackEface</code> 的方法实现，通过第 13 行返回值，我们可以看出，<code>Value</code> 操作的也是 <code>emptyInterface</code> 结构体，只是再它的基础上，
+多了一个 <code>flag</code> 属性。</p>
+<p>对比之前 <code>TypeOf</code> 的源码，<code>TypeOf</code> 仅仅返回 <code>emptyInterface</code> 的 <code>typ</code> 属性，也就是底层的数据类型。
+而 <code>ValueOf</code> 在 <code>TypeOf</code> 的基础上还返回了 <code>emptyInterface</code> 的 <code>word</code> 属性，并且设置了一个 <code>flag</code>。</p>
+<p>正因为如此，<code>Value</code> 可以获取 <code>Type</code>，<code>Type</code> 类型却无法获取 <code>Value</code>。在使用反射遍历结构体类型的时候，如果想要获取结构体字段的值，就必须操作 <code>Value</code> 对象了。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">141
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">142
+</span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">143
+</span></span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">144
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">145
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">146
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">147
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">148
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">149
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">150
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">151
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">152
+</span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">153
+</span></span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">154
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#888;font-style:italic">// unpackEface converts the empty interface i to a Value.
+</span><span style="color:#888;font-style:italic"></span><span style="color:#00f">func</span> <span style="color:#000">unpackEface</span>(<span style="color:#000">i</span> <span style="color:#00f">interface</span>{}) <span style="color:#000">Value</span> {
+<span style="display:block;width:100%;background-color:#e5e5e5">	<span style="color:#000">e</span> := (*<span style="color:#000">emptyInterface</span>)(<span style="color:#000">unsafe</span>.<span style="color:#000">Pointer</span>(&amp;<span style="color:#000">i</span>))
+</span>	<span style="color:#888;font-style:italic">// NOTE: don&#39;t read e.word until we know whether it is really a pointer or not.
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#000">t</span> := <span style="color:#000">e</span>.<span style="color:#000">typ</span>
+	<span style="color:#00f">if</span> <span style="color:#000">t</span> == <span style="color:#00f">nil</span> {
+		<span style="color:#00f">return</span> <span style="color:#000">Value</span>{}
+	}
+	<span style="color:#000">f</span> := <span style="color:#000">flag</span>(<span style="color:#000">t</span>.<span style="color:#000">Kind</span>())
+	<span style="color:#00f">if</span> <span style="color:#000">ifaceIndir</span>(<span style="color:#000">t</span>) {
+		<span style="color:#000">f</span> |= <span style="color:#000">flagIndir</span>
+	}
+<span style="display:block;width:100%;background-color:#e5e5e5">	<span style="color:#00f">return</span> <span style="color:#000">Value</span>{<span style="color:#000">t</span>, <span style="color:#000">e</span>.<span style="color:#000">word</span>, <span style="color:#000">f</span>}
+</span>}</code></pre></td></tr></table>
+</div>
+</div>
+<p>我其实并不想把 <code>Value</code> 结构体的源码复制到这里，因为它的注释太长了。我就非常抵触代码的行数特别多（包括注释），因为不利于阅读。
+但最终还是整体复制过来了，说服自己的就一个观点，既然是复制，就要跟原来的保持一致。</p>
+<p><code>Value</code> 的结构体声明没有什么特别，除了 <code>flag</code> 属性是我们自己设置的，其他都是对象转换成 <code>emptyInterface</code> 后直接获取的。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">51
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">52
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">53
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">54
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">55
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">56
+</span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">57
+</span></span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">58
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">59
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">60
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">61
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">62
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">63
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">64
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">65
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">66
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#888;font-style:italic">// Value is the reflection interface to a Go value.
+</span><span style="color:#888;font-style:italic">//
+</span><span style="color:#888;font-style:italic">// Not all methods apply to all kinds of values. Restrictions,
+</span><span style="color:#888;font-style:italic">// if any, are noted in the documentation for each method.
+</span><span style="color:#888;font-style:italic">// Use the Kind method to find out the kind of value before
+</span><span style="color:#888;font-style:italic">// calling kind-specific methods. Calling a method
+</span><span style="color:#888;font-style:italic">// inappropriate to the kind of type causes a run time panic.
+</span><span style="color:#888;font-style:italic">//
+</span><span style="color:#888;font-style:italic">// The zero Value represents no value.
+</span><span style="color:#888;font-style:italic">// Its IsValid method returns false, its Kind method returns Invalid,
+</span><span style="color:#888;font-style:italic">// its String method returns &#34;&lt;invalid Value&gt;&#34;, and all other methods panic.
+</span><span style="color:#888;font-style:italic">// Most functions and methods never return an invalid value.
+</span><span style="color:#888;font-style:italic">// If one does, its documentation states the conditions explicitly.
+</span><span style="color:#888;font-style:italic">//
+</span><span style="color:#888;font-style:italic">// A Value can be used concurrently by multiple goroutines provided that
+</span><span style="color:#888;font-style:italic">// the underlying Go value can be used concurrently for the equivalent
+</span><span style="color:#888;font-style:italic">// direct operations.
+</span><span style="color:#888;font-style:italic">//
+</span><span style="color:#888;font-style:italic">// To compare two Values, compare the results of the Interface method.
+</span><span style="color:#888;font-style:italic">// Using == on two Values does not compare the underlying values
+</span><span style="color:#888;font-style:italic">// they represent.
+</span><span style="color:#888;font-style:italic"></span><span style="color:#00f">type</span> <span style="color:#000">Value</span> <span style="color:#00f">struct</span> {
+	<span style="color:#888;font-style:italic">// typ holds the type of the value represented by a Value.
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#000">typ</span> *<span style="color:#000">rtype</span>
+
+	<span style="color:#888;font-style:italic">// Pointer-valued data or, if flagIndir is set, pointer to data.
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#888;font-style:italic">// Valid when either flagIndir is set or typ.pointers() is true.
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#000">ptr</span> <span style="color:#000">unsafe</span>.<span style="color:#000">Pointer</span>
+
+	<span style="color:#888;font-style:italic">// flag holds metadata about the value.
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#888;font-style:italic">// The lowest bits are flag bits:
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#888;font-style:italic">//	- flagStickyRO: obtained via unexported not embedded field, so read-only
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#888;font-style:italic">//	- flagEmbedRO: obtained via unexported embedded field, so read-only
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#888;font-style:italic">//	- flagIndir: val holds a pointer to the data
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#888;font-style:italic">//	- flagAddr: v.CanAddr is true (implies flagIndir)
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#888;font-style:italic">//	- flagMethod: v is a method value.
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#888;font-style:italic">// The next five bits give the Kind of the value.
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#888;font-style:italic">// This repeats typ.Kind() except for method values.
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#888;font-style:italic">// The remaining 23+ bits give a method number for method values.
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#888;font-style:italic">// If flag.kind() != Func, code can assume that flagMethod is unset.
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#888;font-style:italic">// If ifaceIndir(typ), code can assume that flagIndir is set.
+</span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="color:#888;font-style:italic"></span>	<span style="color:#000">flag</span>
+</span>
+	<span style="color:#888;font-style:italic">// A method value represents a curried method invocation
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#888;font-style:italic">// like r.Read for some receiver r. The typ+val+flag bits describe
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#888;font-style:italic">// the receiver r, but the flag&#39;s Kind bits say Func (methods are
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#888;font-style:italic">// functions), and the top bits of the flag give the method number
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#888;font-style:italic">// in r&#39;s type&#39;s method table.
+</span><span style="color:#888;font-style:italic"></span>}
+
+<span style="color:#00f">type</span> <span style="color:#000">flag</span> <span style="color:#00f">uintptr</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>我们开始步入主题，查看 <code>Value</code> 类型的 <code>Type</code> 方法。一般的情况，方法体会在 1912 行直接返回，后续的其他逻辑并不会执行，正如注释所说，这是 <code>Easy case</code> 的情况。
+如果我们不在反射的基础是使用反射，后续的逻辑基本上是触发不到的。即使声明一个函数或者方法，然后对他们调用 <code>ValueOf</code> 的 <code>TypeOf</code> 方法也是一样的。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1904
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1905
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1906
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1907
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1908
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1909
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1910
+</span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1911
+</span></span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1912
+</span></span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1913
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1914
+</span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1915
+</span></span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1916
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1917
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1918
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1919
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1920
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1921
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1922
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1923
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1924
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1925
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1926
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1927
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1928
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1929
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1930
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1931
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1932
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1933
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1934
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1935
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#888;font-style:italic">// Type returns v&#39;s type.
+</span><span style="color:#888;font-style:italic"></span><span style="color:#00f">func</span> (<span style="color:#000">v</span> <span style="color:#000">Value</span>) <span style="color:#000">Type</span>() <span style="color:#000">Type</span> {
+	<span style="color:#000">f</span> := <span style="color:#000">v</span>.<span style="color:#000">flag</span>
+	<span style="color:#00f">if</span> <span style="color:#000">f</span> == <span style="color:#3af">0</span> {
+		<span style="color:#000">panic</span>(&amp;<span style="color:#000">ValueError</span>{<span style="color:#5a2">&#34;reflect.Value.Type&#34;</span>, <span style="color:#000">Invalid</span>})
+	}
+	<span style="color:#00f">if</span> <span style="color:#000">f</span>&amp;<span style="color:#000">flagMethod</span> == <span style="color:#3af">0</span> {
+<span style="display:block;width:100%;background-color:#e5e5e5">		<span style="color:#888;font-style:italic">// Easy case
+</span></span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="color:#888;font-style:italic"></span>		<span style="color:#00f">return</span> <span style="color:#000">v</span>.<span style="color:#000">typ</span>
+</span>	}
+
+<span style="display:block;width:100%;background-color:#e5e5e5">	<span style="color:#888;font-style:italic">// Method value.
+</span></span><span style="color:#888;font-style:italic"></span>	<span style="color:#888;font-style:italic">// v.typ describes the receiver, not the method type.
+</span><span style="color:#888;font-style:italic"></span>  <span style="color:#888;font-style:italic">// 获取方法的下标
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#000">i</span> := <span style="color:#000">int</span>(<span style="color:#000">v</span>.<span style="color:#000">flag</span>) &gt;&gt; <span style="color:#000">flagMethodShift</span>
+	<span style="color:#00f">if</span> <span style="color:#000">v</span>.<span style="color:#000">typ</span>.<span style="color:#000">Kind</span>() == <span style="color:#000">Interface</span> {
+		<span style="color:#888;font-style:italic">// Method on interface.
+</span><span style="color:#888;font-style:italic"></span>		<span style="color:#000">tt</span> := (*<span style="color:#000">interfaceType</span>)(<span style="color:#000">unsafe</span>.<span style="color:#000">Pointer</span>(<span style="color:#000">v</span>.<span style="color:#000">typ</span>))
+		<span style="color:#00f">if</span> <span style="color:#000">uint</span>(<span style="color:#000">i</span>) &gt;= <span style="color:#000">uint</span>(<span style="color:#000">len</span>(<span style="color:#000">tt</span>.<span style="color:#000">methods</span>)) {
+			<span style="color:#000">panic</span>(<span style="color:#5a2">&#34;reflect: internal error: invalid method index&#34;</span>)
+		}
+		<span style="color:#000">m</span> := &amp;<span style="color:#000">tt</span>.<span style="color:#000">methods</span>[<span style="color:#000">i</span>]
+		<span style="color:#00f">return</span> <span style="color:#000">v</span>.<span style="color:#000">typ</span>.<span style="color:#000">typeOff</span>(<span style="color:#000">m</span>.<span style="color:#000">typ</span>)
+	}
+	<span style="color:#888;font-style:italic">// Method on concrete type.
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#000">ms</span> := <span style="color:#000">v</span>.<span style="color:#000">typ</span>.<span style="color:#000">exportedMethods</span>()
+	<span style="color:#00f">if</span> <span style="color:#000">uint</span>(<span style="color:#000">i</span>) &gt;= <span style="color:#000">uint</span>(<span style="color:#000">len</span>(<span style="color:#000">ms</span>)) {
+		<span style="color:#000">panic</span>(<span style="color:#5a2">&#34;reflect: internal error: invalid method index&#34;</span>)
+	}
+	<span style="color:#000">m</span> := <span style="color:#000">ms</span>[<span style="color:#000">i</span>]
+	<span style="color:#00f">return</span> <span style="color:#000">v</span>.<span style="color:#000">typ</span>.<span style="color:#000">typeOff</span>(<span style="color:#000">m</span>.<span style="color:#000">mtyp</span>)
+}</code></pre></td></tr></table>
+</div>
+</div>
+<p>在这里就有疑问了，<code>Easy case</code> 后续的逻辑什么情况下才会被触发呢？<code>flagMethod</code> 是如何设置到 <code>v.flag</code> 上的呢（在 <code>unpackEface</code> 方法中我们可没有看到过这个标志位）？</p>
+<p><code>ValueOf</code> 方法中并不会把 <code>flag</code> 属性的 <code>flagMethod</code> 标识位设置为1。下面是标志位的具体位置。<code>flagMethod</code> 为把 1 左移 9 位，从右到左，第 10 给比特位为 1。
+但是 <code>flag</code> 的第 10 个比特位并不是 1，<code>falg</code> 所有为 1 的比特位和 <code>falgMethod</code> 与运算后都是 0 。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">68
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">69
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">70
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">71
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">72
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">73
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">74
+</span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">75
+</span></span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">76
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">77
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">78
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">const</span> (
+	<span style="color:#000">flagKindWidth</span>        = <span style="color:#3af">5</span> <span style="color:#888;font-style:italic">// there are 27 kinds
+</span><span style="color:#888;font-style:italic"></span>	<span style="color:#000">flagKindMask</span>    <span style="color:#000">flag</span> = <span style="color:#3af">1</span>&lt;&lt;<span style="color:#000">flagKindWidth</span> - <span style="color:#3af">1</span>
+	<span style="color:#000">flagStickyRO</span>    <span style="color:#000">flag</span> = <span style="color:#3af">1</span> &lt;&lt; <span style="color:#3af">5</span>
+	<span style="color:#000">flagEmbedRO</span>     <span style="color:#000">flag</span> = <span style="color:#3af">1</span> &lt;&lt; <span style="color:#3af">6</span>
+	<span style="color:#000">flagIndir</span>       <span style="color:#000">flag</span> = <span style="color:#3af">1</span> &lt;&lt; <span style="color:#3af">7</span>
+	<span style="color:#000">flagAddr</span>        <span style="color:#000">flag</span> = <span style="color:#3af">1</span> &lt;&lt; <span style="color:#3af">8</span>
+<span style="display:block;width:100%;background-color:#e5e5e5">	<span style="color:#000">flagMethod</span>      <span style="color:#000">flag</span> = <span style="color:#3af">1</span> &lt;&lt; <span style="color:#3af">9</span>
+</span>	<span style="color:#000">flagMethodShift</span>      = <span style="color:#3af">10</span>
+	<span style="color:#000">flagRO</span>          <span style="color:#000">flag</span> = <span style="color:#000">flagStickyRO</span> | <span style="color:#000">flagEmbedRO</span>
+)</code></pre></td></tr></table>
+</div>
+</div>
+<p>通过全局搜索 <code>flagMethod</code> 关键字，可以隐约猜测到，触发后续逻辑的应该是一个方法的 <code>Value</code>，而且这个方法的 <code>Value</code> 还必须从结构体的 <code>Value</code>中获得。
+我们给 <code>People</code> 对象追加一个方法， 代码第 10 行获取方法的 <code>Value</code> 对象，然后通过这个对象获取 <code>Type</code>。</p>
+<p>通过断点调试，这样处理后，确实触发了<code>Easy case</code>之后的逻辑。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span></span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> (<span style="color:#000">p</span> *<span style="color:#000">People</span>) <span style="color:#000">Describe</span>() {
+    <span style="color:#000">fmt</span>.<span style="color:#000">Println</span>(<span style="color:#5a2">&#34;people age:&#34;</span>, <span style="color:#000">p</span>.<span style="color:#000">Age</span>)
+}
+
+<span style="color:#00f">func</span> <span style="color:#000">main</span>() {
+    <span style="color:#000">p</span> := &amp;<span style="color:#000">People</span>{
+        <span style="color:#000">Age</span>: <span style="color:#3af">30</span>,
+    }
+
+<span style="display:block;width:100%;background-color:#e5e5e5">    <span style="color:#000">methodType</span> := <span style="color:#000">reflect</span>.<span style="color:#000">ValueOf</span>(<span style="color:#000">p</span>).<span style="color:#000">MethodByName</span>(<span style="color:#5a2">&#34;Describe&#34;</span>).<span style="color:#000">Type</span>()
+</span>    <span style="color:#000">fmt</span>.<span style="color:#000">Println</span>(<span style="color:#000">methodType</span>)
+}</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="methodbyname">MethodByName</h4>
+<p>这是基于上述 <code>flag</code> 内容的延伸。那么，<code>MethodByName</code> 具体又做了什么操作呢？看第 10 行的代码，<code>flagMethod</code> 标志位的含义就明白了，
+它标志是否是方法的 <code>Value</code>。<code>v</code> 必须不能被设置 <code>flagMethod</code> 标志，如果设置的话，会返回空的 <code>Value</code>。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span></span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#888;font-style:italic">// MethodByName returns a function value corresponding to the method
+</span><span style="color:#888;font-style:italic">// of v with the given name.
+</span><span style="color:#888;font-style:italic">// The arguments to a Call on the returned function should not include
+</span><span style="color:#888;font-style:italic">// a receiver; the returned function will always use v as the receiver.
+</span><span style="color:#888;font-style:italic">// It returns the zero Value if no method was found.
+</span><span style="color:#888;font-style:italic"></span><span style="color:#00f">func</span> (<span style="color:#000">v</span> <span style="color:#000">Value</span>) <span style="color:#000">MethodByName</span>(<span style="color:#000">name</span> <span style="color:#00f">string</span>) <span style="color:#000">Value</span> {
+	<span style="color:#00f">if</span> <span style="color:#000">v</span>.<span style="color:#000">typ</span> == <span style="color:#00f">nil</span> {
+		<span style="color:#000">panic</span>(&amp;<span style="color:#000">ValueError</span>{<span style="color:#5a2">&#34;reflect.Value.MethodByName&#34;</span>, <span style="color:#000">Invalid</span>})
+	}
+<span style="display:block;width:100%;background-color:#e5e5e5">	<span style="color:#00f">if</span> <span style="color:#000">v</span>.<span style="color:#000">flag</span>&amp;<span style="color:#000">flagMethod</span> != <span style="color:#3af">0</span> {
+</span>		<span style="color:#00f">return</span> <span style="color:#000">Value</span>{}
+	}
+	<span style="color:#000">m</span>, <span style="color:#000">ok</span> := <span style="color:#000">v</span>.<span style="color:#000">typ</span>.<span style="color:#000">MethodByName</span>(<span style="color:#000">name</span>)
+	<span style="color:#00f">if</span> !<span style="color:#000">ok</span> {
+		<span style="color:#00f">return</span> <span style="color:#000">Value</span>{}
+	}
+	<span style="color:#00f">return</span> <span style="color:#000">v</span>.<span style="color:#000">Method</span>(<span style="color:#000">m</span>.<span style="color:#000">Index</span>)
+}</code></pre></td></tr></table>
+</div>
+</div>
+<p>跳过 <code>MethodByName</code> 的方法实现，见第 10 行代码，我们找到了设置 <code>flagMethod</code> 的地方。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1316
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1317
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1318
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1319
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1320
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1321
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1322
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1323
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1324
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1325
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1326
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1327
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1328
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1329
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1330
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1331
+</span><span style="display:block;width:100%;background-color:#e5e5e5"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1332
+</span></span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1333
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1334
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#888;font-style:italic">// Method returns a function value corresponding to v&#39;s i&#39;th method.
+</span><span style="color:#888;font-style:italic">// The arguments to a Call on the returned function should not include
+</span><span style="color:#888;font-style:italic">// a receiver; the returned function will always use v as the receiver.
+</span><span style="color:#888;font-style:italic">// Method panics if i is out of range or if v is a nil interface value.
+</span><span style="color:#888;font-style:italic"></span><span style="color:#00f">func</span> (<span style="color:#000">v</span> <span style="color:#000">Value</span>) <span style="color:#000">Method</span>(<span style="color:#000">i</span> <span style="color:#00f">int</span>) <span style="color:#000">Value</span> {
+	<span style="color:#00f">if</span> <span style="color:#000">v</span>.<span style="color:#000">typ</span> == <span style="color:#00f">nil</span> {
+		<span style="color:#000">panic</span>(&amp;<span style="color:#000">ValueError</span>{<span style="color:#5a2">&#34;reflect.Value.Method&#34;</span>, <span style="color:#000">Invalid</span>})
+	}
+	<span style="color:#00f">if</span> <span style="color:#000">v</span>.<span style="color:#000">flag</span>&amp;<span style="color:#000">flagMethod</span> != <span style="color:#3af">0</span> || <span style="color:#000">uint</span>(<span style="color:#000">i</span>) &gt;= <span style="color:#000">uint</span>(<span style="color:#000">v</span>.<span style="color:#000">typ</span>.<span style="color:#000">NumMethod</span>()) {
+		<span style="color:#000">panic</span>(<span style="color:#5a2">&#34;reflect: Method index out of range&#34;</span>)
+	}
+	<span style="color:#00f">if</span> <span style="color:#000">v</span>.<span style="color:#000">typ</span>.<span style="color:#000">Kind</span>() == <span style="color:#000">Interface</span> &amp;&amp; <span style="color:#000">v</span>.<span style="color:#000">IsNil</span>() {
+		<span style="color:#000">panic</span>(<span style="color:#5a2">&#34;reflect: Method on nil interface value&#34;</span>)
+	}
+	<span style="color:#000">fl</span> := <span style="color:#000">v</span>.<span style="color:#000">flag</span>.<span style="color:#000">ro</span>() | (<span style="color:#000">v</span>.<span style="color:#000">flag</span> &amp; <span style="color:#000">flagIndir</span>)
+	<span style="color:#000">fl</span> |= <span style="color:#000">flag</span>(<span style="color:#000">Func</span>)
+<span style="display:block;width:100%;background-color:#e5e5e5">	<span style="color:#000">fl</span> |= <span style="color:#000">flag</span>(<span style="color:#000">i</span>)&lt;&lt;<span style="color:#000">flagMethodShift</span> | <span style="color:#000">flagMethod</span>
+</span>	<span style="color:#00f">return</span> <span style="color:#000">Value</span>{<span style="color:#000">v</span>.<span style="color:#000">typ</span>, <span style="color:#000">v</span>.<span style="color:#000">ptr</span>, <span style="color:#000">fl</span>}
+}</code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="方法">方法</h3>
+<p>方法的反射使用的比较少，但很多情况非常有用。我们可以通过指定一个方法名称来查找某个类型中是否存在该方法，如果存在的话，我们还可以通过反射来实现调用。
+通俗的说，我们可以通过 <code>HTTP</code> 协议传递一个方法名，最终让服务端执行这个方法。这也是最基本的用法了</p>
+<p>下面例子中的第10行代码阐述了，通过名字来查找函数并传递参数进行调用。在 Go 的函数调用都是通过反射的数组形式，入参列表和出参列表都是一个 Value 类型的数组。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">	<span style="color:#00f">type</span> <span style="color:#000">PreFunc</span> <span style="color:#00f">struct</span> {
+	}
+	
+	<span style="color:#00f">func</span> (<span style="color:#000">f</span> <span style="color:#000">PreFunc</span>) <span style="color:#000">DoName</span>(<span style="color:#000">ctx</span> <span style="color:#000">context</span>.<span style="color:#000">Context</span>) {
+		<span style="color:#000">fmt</span>.<span style="color:#000">Println</span>(<span style="color:#5a2">&#34;Output: DoName&#34;</span>)
+	}
+	
+	<span style="color:#00f">func</span> <span style="color:#000">main</span>() {
+		<span style="color:#000">p</span> := <span style="color:#000">PreFunc</span>{}
+		<span style="color:#000">reflect</span>.<span style="color:#000">ValueOf</span>(<span style="color:#000">p</span>).<span style="color:#000">MethodByName</span>(<span style="color:#5a2">&#34;DoName&#34;</span>).<span style="color:#000">Call</span>([]<span style="color:#000">reflect</span>.<span style="color:#000">Value</span>{
+		<span style="color:#000">reflect</span>.<span style="color:#000">ValueOf</span>(<span style="color:#000">context</span>.<span style="color:#000">TODO</span>())})
+	}</code></pre></td></tr></table>
+</div>
+</div>
+<p>通过 <code>reflect</code> 包我们可以获取到方法的入参个数、出参个数，执行方法、获取方法返回值、在运行时实现方法等操作。观察一些 RPC 的客户端也是这样实现的。
+我们只需要在结构体中声明方法类型的字段，在函数调用的时候将它实现。</p>
+<p>我们声明了结构体中字段 PrintName 为方法类型，然后在 main 方法中将它实例化了，最后，直接调用这个方法。这是对原理的简化版例子，如果我们把声明函数的入参都当做 HTTP 的请求参数，
+然后统一编码发送给服务端，就是一套统一的 RPC 实现。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">	<span style="color:#00f">type</span> <span style="color:#000">Live</span> <span style="color:#00f">struct</span> {
+		<span style="color:#000">PrintName</span> <span style="color:#00f">func</span>(<span style="color:#000">ctx</span> <span style="color:#000">context</span>.<span style="color:#000">Context</span>)
+	}
+	
+	<span style="color:#00f">func</span> <span style="color:#000">main</span>() {
+		<span style="color:#000">p</span> := &amp;<span style="color:#000">Live</span>{}
+		<span style="color:#000">vp</span> := <span style="color:#000">reflect</span>.<span style="color:#000">ValueOf</span>(<span style="color:#000">p</span>).<span style="color:#000">Elem</span>()
+	
+		<span style="color:#000">f</span> := <span style="color:#000">vp</span>.<span style="color:#000">FieldByName</span>(<span style="color:#5a2">&#34;PrintName&#34;</span>)
+		<span style="color:#000">f</span>.<span style="color:#000">Set</span>(<span style="color:#000">reflect</span>.<span style="color:#000">MakeFunc</span>(<span style="color:#000">f</span>.<span style="color:#000">Type</span>(), <span style="color:#00f">func</span>(<span style="color:#000">args</span> []<span style="color:#000">reflect</span>.<span style="color:#000">Value</span>) (<span style="color:#000">results</span> []<span style="color:#000">reflect</span>.<span style="color:#000">Value</span>) {
+			<span style="color:#000">ctx</span> := <span style="color:#000">args</span>[<span style="color:#3af">0</span>].<span style="color:#000">Interface</span>().(<span style="color:#000">context</span>.<span style="color:#000">Context</span>)
+			<span style="color:#000">fmt</span>.<span style="color:#000">Println</span>(<span style="color:#5a2">&#34;观看直播&#34;</span>, <span style="color:#000">ctx</span>.<span style="color:#000">Value</span>(<span style="color:#5a2">&#34;uid&#34;</span>))
+			<span style="color:#00f">return</span> <span style="color:#00f">nil</span>
+		}))
+	
+		<span style="color:#000">ctx</span> := <span style="color:#000">context</span>.<span style="color:#000">TODO</span>()
+		<span style="color:#000">ctx</span> = <span style="color:#000">context</span>.<span style="color:#000">WithValue</span>(<span style="color:#000">ctx</span>, <span style="color:#5a2">&#34;uid&#34;</span>, <span style="color:#5a2">&#34;1031101&#34;</span>)
+		<span style="color:#000">p</span>.<span style="color:#000">PrintName</span>(<span style="color:#000">ctx</span>)
+	}</code></pre></td></tr></table>
+</div>
+</div>
+
+  
+
+    
+    
+  </div>
+</article>
+
+
+      <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2022  渐行渐远 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/blog">技术</a></li>
+         
+        <li><a href="/greatperson">生活</a></li>
+         
+        <li><a href="/">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+  </div>
+  <div class="column-right"></div>
+</body>
+
+<link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
+<script src=/lib/jquery/jquery.min.js></script>
+<script src=/js/main.js></script>
+</html>

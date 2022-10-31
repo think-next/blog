@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> sentinel 计数器限流 | 渐行渐远</title>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="sentinel 计数器限流" />
+<meta property="og:description" content="首先了解一下固定窗口限流，根据 QPS 将时间划分为若干块，比如说，100的 QPS，将每秒划分为 2 个时间块，第 1 个时间块进来 20 个请求，第 2 个时间块进来 80 个请求，刚刚好符合 100 QPS 的限制。紧接着第 3 个时间块进来 80 个请求，第 4 个时间块进来 20 的请求，按绝对的秒来看待这个问题，确实符合预期，但相对的来看，第 2 个时间块和第 3 个时间块也是 1 秒，但处理了 160 个请求。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://neojos.com/blog/2022/0829-sentinel-%E8%AE%A1%E6%95%B0%E5%99%A8%E9%99%90%E6%B5%81/" />
+<meta property="article:published_time" content="2022-08-29T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-08-29T00:00:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="sentinel 计数器限流"/>
+<meta name="twitter:description" content="首先了解一下固定窗口限流，根据 QPS 将时间划分为若干块，比如说，100的 QPS，将每秒划分为 2 个时间块，第 1 个时间块进来 20 个请求，第 2 个时间块进来 80 个请求，刚刚好符合 100 QPS 的限制。紧接着第 3 个时间块进来 80 个请求，第 4 个时间块进来 20 的请求，按绝对的秒来看待这个问题，确实符合预期，但相对的来看，第 2 个时间块和第 3 个时间块也是 1 秒，但处理了 160 个请求。"/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+
+  
+  
+
+  <style>
+    :root {
+      font-size: 1em;
+      --main-font: orange;
+    }
+
+    .featured {
+      width: 20em;
+      height: calc(6em - 16px);
+      font-size: 1rem;
+      border-radius: .15em;
+      background-color: var(--main-font);
+      box-shadow: .45em .25em #6f9090;
+    }
+  </style>
+</head>
+
+<body class="column mx-auto px3 ltr">
+  <div class="column-left">
+      <nav id="TableOfContents"></nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
+      <header id="header">
+  <a href="https://neojos.com/">
+  
+    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+  
+  <div id="title">
+    <h1>渐行渐远</h1>
+  </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      
+        <li><a href="/blog">技术</a></li>
+      
+        <li><a href="/greatperson">生活</a></li>
+      
+        <li><a href="/">About</a></li>
+      
+    </ul>
+  </div>
+</header>
+
+
+
+      
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <h1 id="title">sentinel 计数器限流</h1>文章 270 字
+  <aside>
+
+  </aside>
+  <div class="content" itemprop="articleBody">
+  
+    <p>首先了解一下固定窗口限流，根据 QPS 将时间划分为若干块，比如说，100的 QPS，将每秒划分为 2 个时间块，第 1 个时间块进来 20 个请求，第 2 个时间块进来 80 个请求，刚刚好符合 100 QPS 的限制。紧接着第 3 个时间块进来 80 个请求，第 4 个时间块进来 20 的请求，按绝对的秒来看待这个问题，确实符合预期，但相对的来看，第 2 个时间块和第 3 个时间块也是 1 秒，但处理了 160 个请求。</p>
+<p>滑动窗口限流就是通过相对的时间块来统计请求，还拿上面的例子，如果请求进到了第 3 个时间块，它计算当前 QPS 的机制是向前找对应的时间块，因为两个时间块表示 1 秒，而第 2 个时间块已经有 80 个请求了，所以，第 3 个时间块最多只能加到 20 ，再多的请求进来就会被限制。</p>
+<p>从绝对的时间分块和相对的时间分块上来解释固定窗口限流和滑动窗口限流，本质上，跟我上一篇说的漏桶限流也没有什么区别，思路都是一样的，不同的方式有不同的优势和劣势。</p>
+<p>滑动限流的分块如何设计呢？</p>
+<p>按照滑动的表面特征来看，我们在内存中声明一个全局数组，数组的每个元素代表一个时间分片，数组中元素的值为当前时间分片内的请求数量。当新的请求进来时，我们确定当前请求所对应的数组元素下标，并且向前累加限制的元素数量，判断是否达到限流阈值。确定当前的这个请求属于哪一个时间分片，对应的是数组的哪一个下标，这个对应关系非常重要。</p>
+<p>依据结合上面的例子，我们使用 2 个滑动分片，所以，声明数组的长度是 2。要确认当前的请求属于哪个分片，我理解主要考虑边界划分。继续上面的例子，第 1 个时间块的区间是 [1,500] 毫秒，第二个时间块的区间是 [501,1000] 毫秒，bucketLengthInMs 表示的便是每个时间块的长度 500 ms，而截止到现在时间可以拆分成 timeId 个时间块。如果第一个时间块的下标是0，那么当前请求所在的下标就是 timeId 了。又因为我们数组只维持两个时间分片，所以，用 timeId 对数组长度取余，就可以确定当前时间所属的数组下标。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">231
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">232
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">233
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">234
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> (<span style="color:#000">la</span> *<span style="color:#000">LeapArray</span>) <span style="color:#000">calculateTimeIdx</span>(<span style="color:#000">now</span> <span style="color:#00f">uint64</span>) <span style="color:#00f">int</span> {
+    <span style="color:#000">timeId</span> := <span style="color:#000">now</span> / <span style="color:#000">uint64</span>(<span style="color:#000">la</span>.<span style="color:#000">bucketLengthInMs</span>)
+    <span style="color:#00f">return</span> <span style="color:#000">int</span>(<span style="color:#000">timeId</span>) % <span style="color:#000">la</span>.<span style="color:#000">array</span>.<span style="color:#000">length</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+<p>因为数组被设计成固定长度，所以，新的时间片生成时需要重写旧的时间片，侧面来说，它属于 LazyMode 的模式，通过请求被动触发生成新的分片。比如方，在[1, 1000]毫秒时间段内都是请求了，数组中保持了这两个分片的数据，但之后过了5000ms才有新的请求进来，那么新的分片就需要重新旧的分片。如何区分分片的新旧呢？通过分片的开始时间来做区分。当有新的请求的时候，我们计算当前分片的开始时间：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">51
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">52
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> <span style="color:#000">calculateStartTime</span>(<span style="color:#000">now</span> <span style="color:#00f">uint64</span>, <span style="color:#000">bucketLengthInMs</span> <span style="color:#00f">uint32</span>) <span style="color:#00f">uint64</span> {
+    <span style="color:#00f">return</span> <span style="color:#000">now</span> - (<span style="color:#000">now</span> % <span style="color:#000">uint64</span>(<span style="color:#000">bucketLengthInMs</span>))
+}</code></pre></td></tr></table>
+</div>
+</div>
+<p>既然将1秒的时间拆分成了2个分片，是如何统计这2个分片的和呢？因为分片的时间可能不是连续的，所以首先就需要确保分片的时间是连续的。我们只需要通过当前分片，向前找连续的分片，然后对请求数累加就可以。判断数组中的分片是否有效，使用的就是分片的开始时间：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">257
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">258
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">259
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">260
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">261
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">262
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">263
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">264
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">265
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">266
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">267
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">268
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">269
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">270
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">271
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">272
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#888;font-style:italic">// ValuesConditional returns all buckets of which the startTimestamp satisfies the given timestamp condition (predicate).
+</span><span style="color:#888;font-style:italic">// The function uses the parameter &#34;now&#34; as the target timestamp.
+</span><span style="color:#888;font-style:italic"></span><span style="color:#00f">func</span> (<span style="color:#000">la</span> *<span style="color:#000">LeapArray</span>) <span style="color:#000">ValuesConditional</span>(<span style="color:#000">now</span> <span style="color:#00f">uint64</span>, <span style="color:#000">predicate</span> <span style="color:#000">base</span>.<span style="color:#000">TimePredicate</span>) []*<span style="color:#000">BucketWrap</span> {
+    <span style="color:#00f">if</span> <span style="color:#000">now</span> &lt;= <span style="color:#3af">0</span> {
+        <span style="color:#00f">return</span> <span style="color:#000">make</span>([]*<span style="color:#000">BucketWrap</span>, <span style="color:#3af">0</span>)
+    }
+    <span style="color:#000">ret</span> := <span style="color:#000">make</span>([]*<span style="color:#000">BucketWrap</span>, <span style="color:#3af">0</span>, <span style="color:#000">la</span>.<span style="color:#000">array</span>.<span style="color:#000">length</span>)
+    <span style="color:#00f">for</span> <span style="color:#000">i</span> := <span style="color:#3af">0</span>; <span style="color:#000">i</span> &lt; <span style="color:#000">la</span>.<span style="color:#000">array</span>.<span style="color:#000">length</span>; <span style="color:#000">i</span>++ {
+        <span style="color:#000">ww</span> := <span style="color:#000">la</span>.<span style="color:#000">array</span>.<span style="color:#000">get</span>(<span style="color:#000">i</span>)
+        <span style="color:#00f">if</span> <span style="color:#000">ww</span> == <span style="color:#00f">nil</span> || <span style="color:#000">la</span>.<span style="color:#000">isBucketDeprecated</span>(<span style="color:#000">now</span>, <span style="color:#000">ww</span>) || !<span style="color:#000">predicate</span>(<span style="color:#000">atomic</span>.<span style="color:#000">LoadUint64</span>(&amp;<span style="color:#000">ww</span>.<span style="color:#000">BucketStart</span>)) {
+            <span style="color:#00f">continue</span>
+        }
+        <span style="color:#000">ret</span> = <span style="color:#000">append</span>(<span style="color:#000">ret</span>, <span style="color:#000">ww</span>)
+    }
+    <span style="color:#00f">return</span> <span style="color:#000">ret</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+<p>数组中的每一个元素都是一个时间分片，依次拿出每一个元素，判断是否符合时间要求，然后返回符合时间要求的分片。 那我们例子来说，这个时间范围就是1秒，
+通过当前时间计算当前的分片，然后向前推，总共跨越1秒的间距就可以。代码的注释写的也非常清楚。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">57
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">58
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">59
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">60
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">61
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">62
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">63
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">64
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#888;font-style:italic">// getBucketStartRange returns start time range of the bucket for the provided time.
+</span><span style="color:#888;font-style:italic">// The actual time span is: [start, end + in.bucketTimeLength)
+</span><span style="color:#888;font-style:italic"></span><span style="color:#00f">func</span> (<span style="color:#000">m</span> *<span style="color:#000">SlidingWindowMetric</span>) <span style="color:#000">getBucketStartRange</span>(<span style="color:#000">timeMs</span> <span style="color:#00f">uint64</span>) (<span style="color:#000">start</span>, <span style="color:#000">end</span> <span style="color:#00f">uint64</span>) {
+    <span style="color:#000">curBucketStartTime</span> := <span style="color:#000">calculateStartTime</span>(<span style="color:#000">timeMs</span>, <span style="color:#000">m</span>.<span style="color:#000">real</span>.<span style="color:#000">BucketLengthInMs</span>())
+    <span style="color:#000">end</span> = <span style="color:#000">curBucketStartTime</span>
+    <span style="color:#000">start</span> = <span style="color:#000">end</span> - <span style="color:#000">uint64</span>(<span style="color:#000">m</span>.<span style="color:#000">intervalInMs</span>) + <span style="color:#000">uint64</span>(<span style="color:#000">m</span>.<span style="color:#000">real</span>.<span style="color:#000">BucketLengthInMs</span>())
+    <span style="color:#00f">return</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+<p>总体来说，滑动窗口限流并不复杂，比较常规的计算逻辑。</p>
+
+  
+
+    
+    
+  </div>
+</article>
+
+
+      <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2022  渐行渐远 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/blog">技术</a></li>
+         
+        <li><a href="/greatperson">生活</a></li>
+         
+        <li><a href="/">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+  </div>
+  <div class="column-right"></div>
+</body>
+
+<link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
+<script src=/lib/jquery/jquery.min.js></script>
+<script src=/js/main.js></script>
+</html>

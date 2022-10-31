@@ -1,9 +1,9 @@
 ---
 title: Go test基础用法
 
-date: 2018-05-02
+date: 2022-01-01
 
-tags: [2018,golang]
+tags: [golang]
 
 author: 付辉
 

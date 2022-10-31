@@ -21,6 +21,24 @@
     </item>
     
     <item>
+      <title>框架设计</title>
+      <link>https://neojos.com/blog/2022/0830-%E6%A1%86%E6%9E%B6%E8%AE%BE%E8%AE%A1/</link>
+      <pubDate>Tue, 30 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2022/0830-%E6%A1%86%E6%9E%B6%E8%AE%BE%E8%AE%A1/</guid>
+      <description>在做功能开发时，其实有很多实现的方式，比如，我们可以通过 context 来传递参数，也可以通过函数参数的方式来传递。我们可以把行为抽象为单个接口， 也可以是多个组合接口。思考这些问题，有时候会让人特别苦恼。</description>
+    </item>
+    
+    <item>
+      <title>sentinel 计数器限流</title>
+      <link>https://neojos.com/blog/2022/0829-sentinel-%E8%AE%A1%E6%95%B0%E5%99%A8%E9%99%90%E6%B5%81/</link>
+      <pubDate>Mon, 29 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2022/0829-sentinel-%E8%AE%A1%E6%95%B0%E5%99%A8%E9%99%90%E6%B5%81/</guid>
+      <description>首先了解一下固定窗口限流，根据 QPS 将时间划分为若干块，比如说，100的 QPS，将每秒划分为 2 个时间块，第 1 个时间块进来 20 个请求，第 2 个时间块进来 80 个请求，刚刚好符合 100 QPS 的限制。紧接着第 3 个时间块进来 80 个请求，第 4 个时间块进来 20 的请求，按绝对的秒来看待这个问题，确实符合预期，但相对的来看，第 2 个时间块和第 3 个时间块也是 1 秒，但处理了 160 个请求。</description>
+    </item>
+    
+    <item>
       <title>ratelimit 漏桶限流</title>
       <link>https://neojos.com/blog/2022/0825-ratelimit-%E6%BC%8F%E6%A1%B6%E9%99%90%E6%B5%81/</link>
       <pubDate>Thu, 25 Aug 2022 00:00:00 +0000</pubDate>
@@ -192,11 +210,20 @@
     </item>
     
     <item>
+      <title>Go 切片小问题</title>
+      <link>https://neojos.com/blog/2021/0507-go-%E5%88%87%E7%89%87%E5%B0%8F%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Fri, 07 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2021/0507-go-%E5%88%87%E7%89%87%E5%B0%8F%E9%97%AE%E9%A2%98/</guid>
+      <description>Go 切片有很多细节的点，比如切片的 append、copy 操作，我们经常使用 append 操作，如果切片预申请容量不足的话，底层会触发 growslice 的操作，会 重新生成一个新的切片。这个过程就有可能触发两个问题：</description>
+    </item>
+    
+    <item>
       <title>Go 反射入门</title>
-      <link>https://neojos.com/blog/2021/go-%E5%8F%8D%E5%B0%84%E5%85%A5%E9%97%A8/</link>
+      <link>https://neojos.com/blog/2021/0419-go-%E5%8F%8D%E5%B0%84%E5%85%A5%E9%97%A8/</link>
       <pubDate>Mon, 19 Apr 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://neojos.com/blog/2021/go-%E5%8F%8D%E5%B0%84%E5%85%A5%E9%97%A8/</guid>
+      <guid>https://neojos.com/blog/2021/0419-go-%E5%8F%8D%E5%B0%84%E5%85%A5%E9%97%A8/</guid>
       <description>鸡汤：～</description>
     </item>
     
