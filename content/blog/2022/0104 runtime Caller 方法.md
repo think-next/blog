@@ -1,40 +1,16 @@
 ---
-title: "Go 字符串处理"
-date: "2022-02-22"
+title: "runtime Caller 方法"
+date: "2022-01-04"
 lead: ""
 index: true
 ---
 
-> 当你有效花钱时，就等于有效地利用了社会资源，而利用了社会资源，就有可能获得更多的钱，这是一个良性循环，这时钱的意义才体现出来
-
-工程中会存在很多字符串处理的场景，比如 `SQL` 语句拼接，脚手架生成代码等。经常使用到的类型也就那么多，熟练使用它们能极大帮助我们编程
-
-## strings.Builder
-
-我们首先还是看源码注释的说明，`Builder` 非常方便持续向 `Writer` 中写入数据，当我们将构造目标内容拆分成好几步的时候，使用它就非常方便。在第三方库 `xorm` 构造 `SQL` 语句时也有使用到。
-
-{{< highlight go "linenos=table,hl_lines=0,linenostart=12,style=black,lineanchors=neojos" >}}
-// A Builder is used to efficiently build a string using Write methods.
-// It minimizes memory copying. The zero value is ready to use.
-// Do not copy a non-zero Builder.
-type Builder struct {
-	addr *Builder // of receiver, to detect copies by value
-	buf  []byte
-}
-{{< / highlight >}}
-
-类型了解之后，我们需要知道该如何在工程中使用它，通过看它自身的方法其实就可以了解到。因为实在没什么特别强调的，就简单写一下示例。
-
-第三方的项目中，我们也很难看到直接调用 `WriteString` 的情况。`Builder` 实现的 `io.Writer` 接口，而我们也多被要求面向接口编程
-
-```go
-func main() {
-	b := strings.Builder{}
-	b.WriteString("hello")
-	b.WriteString(" ")
-	b.WriteString("neojos")
-	fmt.Println(b.String())
-  // 输出 hello neojos
-}
-```
-
+项目本身会依赖一些第三方资源，比如数据库、缓存。单测验证的时候需要初始化配置文件信息，这样可以在单测用例中直接连接这些资源，而不需要做大量的mock。
+最直接的方式就是在test用例开始前，直接执行依赖资源的初期化。我们可以封装一个资源初始化的方法，在每个单测用例中直接使用！
+go考虑到了这一点，给我们提供了testmain的测试方法，通过这个方法，我们可以在测试开始前执行初始化操作，测试后执行资源释放操作。
+等等，我们依赖的资源一般都在配置文件中，一个项目根据环境还都拆分成本地、测试、预发、线上文件。初使话资源的时候有个棘手的问题，就是如定位配置文件的路径。
+为什么说这是一个问题呢，主要是因为我们不是一个人在开发，一个项目可能会有几个人负责，但每个人的本地路径是不相同的。如果我通过自己电脑的绝对路径引用配置文件，那别人在他的本地执行我写的测试用例时，就会因为路径不存在而失败。
+有没有什么方式是不依赖绝对路径，还能找到配置文件的呢？Go在打印日志的时候，都有输出代码所在的文件名称和行号，这个功能是如何实现的呢？
+重点来了，就是这个函数caller。通过调用这个函数，我们可以定位到文件的绝对路径，而有了这个绝对路径，我们就可以通过相对路径来确定配置文件的位置。
+我们该如何确认呢？
+Caller接受一个栈的参数，如果传递0，输出就是当前的文件所在的路径，而且是绝对路径。在一个项目内部，文件的相对路径是确定的，这么一结合，配置文件的路径自然就确认了。
