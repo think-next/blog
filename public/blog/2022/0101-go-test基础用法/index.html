@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> Go test基础用法 | 渐行渐远</title>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="Go test基础用法" />
+<meta property="og:description" content="当直接使用IDE进行单元测试时，有没有好奇它时如何实现的？比如GoLand写的测试用例。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://neojos.com/blog/2022/0101-go-test%E5%9F%BA%E7%A1%80%E7%94%A8%E6%B3%95/" />
+<meta property="article:published_time" content="2022-01-01T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-01-01T00:00:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go test基础用法"/>
+<meta name="twitter:description" content="当直接使用IDE进行单元测试时，有没有好奇它时如何实现的？比如GoLand写的测试用例。"/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+
+  
+  
+
+  <style>
+    :root {
+      font-size: 1em;
+      --main-font: orange;
+    }
+
+    .featured {
+      width: 20em;
+      height: calc(6em - 16px);
+      font-size: 1rem;
+      border-radius: .15em;
+      background-color: var(--main-font);
+      box-shadow: .45em .25em #6f9090;
+    }
+  </style>
+</head>
+
+<body class="column mx-auto px3 ltr">
+  <div class="column-left">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#test"><code>Test</code></a></li>
+    <li><a href="#option"><code>option</code></a>
+      <ul>
+        <li><a href="#使用map的测试">使用<code>map</code>的测试</a></li>
+      </ul>
+    </li>
+    <li><a href="#main"><code>Main</code></a></li>
+    <li><a href="#性能测试pprof">性能测试<code>pprof</code></a>
+      <ul>
+        <li><a href="#profile"><code>Profile</code></a></li>
+        <li><a href="#在终端查看性能">在终端查看性能</a></li>
+      </ul>
+    </li>
+    <li><a href="#benchmark测试"><code>Benchmark</code>测试</a>
+      <ul>
+        <li><a href="#regular-expression"><code>regular expression</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#run-example"><code>Run Example</code></a></li>
+    <li><a href="#覆盖率">覆盖率</a></li>
+    <li><a href="#火焰图"><code>火焰图</code></a></li>
+  </ul>
+</nav>
+  </div>
+  <div class="column-middle">
+    <div class="content max-width index py4">
+      <header id="header">
+  <a href="https://neojos.com/">
+  
+    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+  
+  <div id="title">
+    <h1>渐行渐远</h1>
+  </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      
+        <li><a href="/blog">技术</a></li>
+      
+        <li><a href="/greatperson">生活</a></li>
+      
+        <li><a href="/">About</a></li>
+      
+    </ul>
+  </div>
+</header>
+
+
+
+      
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <h1 id="title">Go test基础用法</h1>文章 539 字
+  <aside>
+
+  </aside>
+  <div class="content" itemprop="articleBody">
+  
+    <blockquote>
+<p>当直接使用<code>IDE</code>进行单元测试时，有没有好奇它时如何实现的？比如<code>GoLand</code>写的测试用例。</p>
+</blockquote>
+<p>所有的代码都需要写测试用例。这不仅仅是对自己的代码负责，也是对别人的负责。</p>
+<p>最近工作中使用<code>glog</code>这个库，因为它对外提供的方法都很简单，想封装处理一下。但却遇到了点麻烦：这个包需要在命令行传递<code>log_dir</code>参数，来指定日志文件的路径。</p>
+<p>所以，正常运行的话，首先需要编译可执行文件，然后命令行指定参数执行。如下示例：</p>
+<pre><code>go build main.go
+./main -log_dir=&quot;/data&quot;    //当前目录作为日志输出目录
+</code></pre><p>但在<code>go test</code>的时候，如何指定这个参数了？</p>
+<h2 id="test"><code>Test</code></h2>
+<p>调查发现，发现<code>go test</code>也可以生成可执行文件。需要使用<code>-c</code>来指定。示例如下：</p>
+<pre><code>go test -c param_test_dir   //最后一个参数是待测试的目录
+</code></pre><p>执行后就会发现：这样的做法，会运行所有的<code>Test</code>用例。如何仅仅执行某一个测试用例了（编译器到底是如何做到的？）。</p>
+<p>这里有另一个属性<code>-run</code>，用来指定执行的测试用例的匹配模式。举个例子：</p>
+<pre><code>func TestGetRootLogger(t *testing.T) {
+	writeLog(&quot;测试&quot;)
+}
+
+func TestGetRootLogger2(t *testing.T) {
+	writeLog(&quot;测试2&quot;)
+}
+</code></pre><p>当我在命令行明确匹配执行<code>Logger2</code>，运行的时候确实仅仅执行该测试用例</p>
+<pre><code>go test -v -run Logger2 ./util/     //-v表示verbose，输出相信信息
+</code></pre><p>但是，我发现，在指定了<code>c</code>参数之后，<code>run</code>参数无法生效！这样的话，还真是没有好的办法来处理这种情况。</p>
+<h2 id="option"><code>option</code></h2>
+<p><code>-timeout</code></p>
+<p>默认<code>go test</code>运行超过<code>10m</code>会发生<code>panic</code>。如果需要运行更长的时间，需要明确指定。将<code>timeout</code>指定为0，用于忽略时间限制。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">nohup go test -v -timeout <span style="color:#ae81ff">0</span> -run TestGetRange . &gt; log.txt
+</code></pre></div><h3 id="使用map的测试">使用<code>map</code>的测试</h3>
+<p>可以结合使用闭包，设置期望值，来写测试用例。<code>Run</code>函数内部是阻塞的，所以<code>TestSum</code>方法依次执行测试。</p>
+<p>同时<code>testSumFunc</code>返回了<code>test</code>方法使用了闭包的特性，对返回函数内部的值是无法确定的。</p>
+<pre><code>func TestSum(t *testing.T) {
+	t.Run(&quot;A&quot;, testSumFunc([]int{1, 2, 3}, 7))
+	t.Run(&quot;B&quot;, testSumFunc([]int{2, 3, 4}, 8))
+}
+
+func Sum(numbers []int) int {
+	total := 0
+	for _, v := range numbers {
+		total += v
+	}
+
+	return total
+}
+
+func testSumFunc(numbers []int, expected int) func(t *testing.T) {
+	return func(t *testing.T) {
+		actual := Sum(numbers)
+		if actual != expected {
+			t.Error(fmt.Sprintf(&quot;Expected the sum of %v to be %d but instead got %d!&quot;, numbers, expected, actual))
+		}
+	}
+}
+</code></pre><h2 id="main"><code>Main</code></h2>
+<p>非常简单，看如下示例。这样在执行任何<code>test case</code>时都首先执行准备，在测试用例执行完毕后，会运行清理工作。需要特别说明的是：<code>flag.Parse()</code>以及<code>os.Exit(m.Run())</code>是不可缺少的两步。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestMain</span>(<span style="color:#a6e22e">m</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">M</span>) {
+    <span style="color:#75715e">//准备工作
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;start prepare&#34;</span>)
+
+	<span style="color:#a6e22e">flag</span>.<span style="color:#a6e22e">Parse</span>()
+	<span style="color:#a6e22e">exitCode</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Run</span>()
+    
+    <span style="color:#75715e">//清理工作
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;prepare to clean&#34;</span>)
+	
+	<span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Exit</span>(<span style="color:#a6e22e">exitCode</span>)
+}
+</code></pre></div><h2 id="性能测试pprof">性能测试<code>pprof</code></h2>
+<p>定位服务是否存在资源泄漏或者滥用<code>API</code>的行为，光靠<code>review</code>代码是不行的，最好能借助工具。</p>
+<h3 id="profile"><code>Profile</code></h3>
+<p>引用<a href="https://golang.org/pkg/runtime/pprof/#Profile"><code>godoc for pprof</code></a>描述:</p>
+<blockquote>
+<p><code>A Profile is a collection of stack traces showing the call sequences that led to instances of a particular event, such as allocation. Packages can create and maintain their own profiles; the most common use is for tracking resources that must be explicitly closed, such as files or network connections.</code></p>
+</blockquote>
+<p>性能测试涉及如下方面：</p>
+<ol>
+<li><code>CPU Profiling</code>：<code>CPU</code>分析，按照一定的频率采集所监听的应用程序<code>CPU</code>（含寄存器）的使用情况，可确定应用程序在主动消耗<code>CPU</code> 周期时花费时间的位置</li>
+<li><code>Memory Profiling</code>：内存分析，在应用程序进行堆分配时记录堆栈跟踪，用于监视当前和历史内存使用情况，以及检查内存泄漏</li>
+<li><code>Block Profiling</code>：阻塞分析，记录 <code>goroutine</code> 阻塞等待同步（包括定时器通道）的位置</li>
+<li><code>Mutex Profiling</code>：互斥锁分析，报告互斥锁的竞争情况</li>
+</ol>
+<p>在程序中引入如下包，便可以通过web方式查看性能情况，访问的路径为：<code>/debug/pprof/</code>，该路径下会显示多个查看项。该路径下还有其他子页面。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">_</span> <span style="color:#e6db74">&#34;net/http/pprof&#34;</span>
+</code></pre></div><p>关于<code>/debug/pprof/</code>下的子页面：</p>
+<ol>
+<li><code>$HOST/debug/pprof/profile</code></li>
+<li><code>$HOST/debug/pprof/block</code></li>
+<li><code>$HOST/debug/pprof/goroutine</code></li>
+<li><code>$HOST/debug/pprof/heap</code></li>
+<li><code>$HOST/debug/pprof/mutex</code></li>
+<li><code>$HOST/debug/pprof/threadcreate</code></li>
+</ol>
+<h3 id="在终端查看性能">在终端查看性能</h3>
+<p>只要服务器在启动时，引入<code>pprof</code>包，便可在终端获取<code>profile</code>文件。如下所示：</p>
+<pre><code>pprof -seconds=10 http://192.168.77.77:3900/debug/pprof/profile
+</code></pre><p>如果获取到<code>cpu.prof </code>文件，可以通过如下命令可视化查看运行结果，这是另一种格式的火焰图，也是挺帅的：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">## 通过在浏览器中localhost:1313可以在web端查看</span>
+<span style="color:#75715e">##</span> 
+pprof -http<span style="color:#f92672">=</span>:1313 cpu.prof
+
+<span style="color:#75715e">## 或直接在终端查看</span>
+go tool pprof cpu.prof
+$ web | top
+</code></pre></div><h2 id="benchmark测试"><code>Benchmark</code>测试</h2>
+<p>基本用法：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">BenchmarkBadgeRelationMapper_GetCountByUid</span>(<span style="color:#a6e22e">b</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">B</span>) {
+
+	<span style="color:#a6e22e">count</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">N</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#a6e22e">count</span><span style="color:#f92672">++</span>
+	}
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;total:&#34;</span>, <span style="color:#a6e22e">count</span>)
+}
+</code></pre></div><p><code>bench</code>测试输出结果，函数体被重复执行了6次，并对<code>b.N</code>的值做了调整：</p>
+<pre><code>total: 1
+total: 100
+total: 10000
+total: 1000000
+total: 100000000
+total: 1000000000
+1000000000	         0.598 ns/op
+</code></pre><p>并发用法：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">BenchmarkBadgeRelationMapper_GetCountByUid</span>(<span style="color:#a6e22e">b</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">B</span>) {
+
+	<span style="color:#a6e22e">count</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>
+	<span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">RunParallel</span>(<span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">pb</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">PB</span>) {
+		<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">Next</span>() {
+			<span style="color:#a6e22e">count</span><span style="color:#f92672">++</span>
+		}
+	})
+
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;total:&#34;</span>, <span style="color:#a6e22e">count</span>)
+}
+</code></pre></div><p>输出的结果：</p>
+<pre><code>total: 1
+total: 100
+total: 6336
+total: 306207
+total: 34221963
+total: 129821900
+378966799	         2.94 ns/op
+</code></pre><p>在并行用法中，<code>b.N</code>被<code>RunParallel</code>接管。</p>
+<p>简单分析一下源码</p>
+<p>核心思路在于<code>Next</code>方法，通过<code>atomic.AddUint64</code>并发安全的操作<code>pb.globalN</code>，<code>pb.cache</code>用来存储该<code>goroutine</code>执行的次数。当某个<code>goroutine</code>计算到<code>pb.bN&lt;=n&lt;=pb.bN+pb.grain</code>时，虽然程序迭代次数已经完全超过<code>b.N</code>，但还是会让它继续执行。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Next reports whether there are more iterations to execute.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">pb</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">PB</span>) <span style="color:#a6e22e">Next</span>() <span style="color:#66d9ef">bool</span> {
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">cache</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> {
+		<span style="color:#a6e22e">n</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">atomic</span>.<span style="color:#a6e22e">AddUint64</span>(<span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">globalN</span>, <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">grain</span>)
+		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">n</span> <span style="color:#f92672">&lt;=</span> <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">bN</span> {
+			<span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">cache</span> = <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">grain</span>
+		} <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">n</span> &lt; <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">bN</span><span style="color:#f92672">+</span><span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">grain</span> {
+			<span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">cache</span> = <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">bN</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">grain</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">n</span>
+		} <span style="color:#66d9ef">else</span> {
+			<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>
+		}
+	}
+	<span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">cache</span><span style="color:#f92672">--</span>
+	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>
+}
+</code></pre></div><h3 id="regular-expression"><code>regular expression</code></h3>
+<p>先列举参考的<code>example</code>。在我们要运行特定<code>case</code>时，可以通过指定正则表达式来实现：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// -bench takes a regular expression that matches the names of the benchmarks you want to run
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">test</span> <span style="color:#f92672">-</span><span style="color:#a6e22e">bench</span>=. .<span style="color:#f92672">/</span><span style="color:#a6e22e">examples</span><span style="color:#f92672">/</span><span style="color:#a6e22e">fib</span><span style="color:#f92672">/</span>
+
+<span style="color:#75715e">// -run flag with a regex that matches nothing
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">test</span> <span style="color:#f92672">-</span><span style="color:#a6e22e">run</span>=^<span style="color:#960050;background-color:#1e0010">$</span>
+</code></pre></div><p>关于如何运行<code>Benchmark</code>测试，默认执行<code>go test</code>并不会执行<code>Benchmark</code>，需要在命令行明确加上<code>-bench=标记</code>，它接受一个表达式作为参数，匹配基准测试的函数，.表示运行所有基准测试。</p>
+<pre><code>go test -bench=.
+
+// 明确指定要运行哪个测试，传递一个正则表达式给run属性，XXX=BenchmarkReceiveGift_GetGiftReceiveList
+go test -run=XXX -bench=.
+</code></pre><p>默认情况下，<code>benchmark</code>最小运行时长为<code>1s</code>。如果<code>benchmark</code>函数执行返回，但<code>1s</code>的时间还没有结束，<code>b.N</code>会根据某种机制依次递增。可以通过参数<code>-benchtime=20s</code>来改变这种行为。</p>
+<p>还有一个参数：<code>benchmem</code>。可以提供每次操作分配内存的次数，以及每次操作分配的字节数。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">test</span> <span style="color:#f92672">-</span><span style="color:#a6e22e">bench</span>=<span style="color:#a6e22e">Fib40</span> <span style="color:#f92672">-</span><span style="color:#a6e22e">benchtime</span>=<span style="color:#ae81ff">20</span><span style="color:#a6e22e">s</span>
+</code></pre></div><h2 id="run-example"><code>Run Example</code></h2>
+<p>获取线上的<code>pprof</code>数据到本地，这里是另一个工具：</p>
+<pre><code>go-torch -u http://192.168.77.77:3900/debug/pprof/profile -t 10
+</code></pre><p>在<code>Go代码调优利器-火焰图</code>这篇文章中，对例子介绍的挺精彩的。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e">## 对函数GetGiftReceiveList进行Benchmark测试 因为只想压测GetGiftReceiveList这个函数</span>
+<span style="color:#75715e">## 所以指定了run参数</span>
+go test -bench . -run<span style="color:#f92672">=</span>GetGiftReceiveList -benchmem -cpuprofile prof.cpu
+
+<span style="color:#75715e">## 其中present.test是压测的二进制文件，prof.cpu也是生产的文件</span>
+<span style="color:#75715e">## (pprof) top10</span>
+<span style="color:#75715e">## (pprof) list Marshal 单独查看这个函数的耗时，这里应该是正则匹配的</span>
+go tool pprof present.test prof.cpu
+
+<span style="color:#75715e">## 查看内存使用情况</span>
+go test -bench . -benchmem -memprofile prof.mem
+go tool pprof --alloc_objects  present.test prof.mem
+</code></pre></div><h2 id="覆盖率">覆盖率</h2>
+<p>跟执行<code>go test</code>不同的是，需要多加一个参数<code>-coverprofile</code>,所以完整的命令：</p>
+<pre><code>go test -v -coverprofile=c.out
+</code></pre><p>生成报告有go为我们提供的工具，使用</p>
+<pre><code>go tool cover -html=c.out -o=tag.html
+</code></pre><p>即可生成一个名字为tag.html的HTML格式的测试覆盖率报告，这里有详细的信息告诉我们哪一行代码测试到了，哪一行代码没有测试到。</p>
+<h2 id="火焰图"><code>火焰图</code></h2>
+<p>学习了解火焰图，分析函数调用栈的信息。主要是相关的工具：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e">## tool1</span>
+git clone https://github.com/brendangregg/FlameGraph.git
+cp flamegraph.pl /usr/local/bin
+flamegraph.pl -h
+
+go get -v github.com/uber/go-torch
+go-torch -h
+</code></pre></div><p>参考文章：</p>
+<ol>
+<li><a href="http://www.flysnow.org/2017/05/16/go-in-action-go-unit-test.html">Go 单元测试</a></li>
+<li><a href="https://lihaoquan.me/2017/1/1/Profiling-and-Optimizing-Go-using-go-torch.html">Go代码调优利器-火焰图</a></li>
+<li><a href="https://github.com/EDDYCJY/blog/blob/master/golang/2018-09-15-Golang%20%E5%A4%A7%E6%9D%80%E5%99%A8%E4%B9%8B%E6%80%A7%E8%83%BD%E5%89%96%E6%9E%90%20PProf.md">Golang 大杀器之性能剖析 PProf</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/80578541">go benchmark实践与原理</a></li>
+</ol>
+
+  
+
+    
+    
+  </div>
+</article>
+
+
+      <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2022  渐行渐远 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/blog">技术</a></li>
+         
+        <li><a href="/greatperson">生活</a></li>
+         
+        <li><a href="/">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+  </div>
+  <div class="column-right"></div>
+</body>
+
+<link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
+<script src=/lib/jquery/jquery.min.js></script>
+<script src=/js/main.js></script>
+</html>

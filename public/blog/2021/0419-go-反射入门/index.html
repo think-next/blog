@@ -104,7 +104,7 @@
       
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">Go 反射入门</h1>文章 1909 字
+  <h1 id="title">Go 反射入门</h1>文章 1958 字
   <aside>
 
   </aside>
@@ -867,7 +867,15 @@
 	}</code></pre></td></tr></table>
 </div>
 </div>
-
+<p>Go 函数一般都返回两个参数，其中一个是 error 类型，例子中声明的 PrintName 方法没有返回值，所以简单了不少。如果我们要返回一个 nil 的 error，我们要如何构造这个 nil 的 error 的 reflect.Value 类型呢？</p>
+<p>像下面这样声明变量可以吗？看 panic 信息返回的是一个没有类型的零值。所以说，ValueOf 之后是没有类型信息的。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// panic: reflect: function created by MakeFunc using closure returned zero Value
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">nilError</span> <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Value</span> = <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">ValueOf</span>((<span style="color:#f92672">*</span><span style="color:#66d9ef">error</span>)(<span style="color:#66d9ef">nil</span>)).<span style="color:#a6e22e">Elem</span>()
+</code></pre></div><p>这样声明零值可以正常返回</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">nilError</span> <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Value</span> = <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Zero</span>(<span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">TypeOf</span>((<span style="color:#f92672">*</span><span style="color:#66d9ef">error</span>)(<span style="color:#66d9ef">nil</span>)).<span style="color:#a6e22e">Elem</span>())
+<span style="color:#75715e">// 或则更换一种写法
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">nilError</span> <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Value</span> = <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Zero</span>(<span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">ValueOf</span>((<span style="color:#f92672">*</span><span style="color:#66d9ef">error</span>)(<span style="color:#66d9ef">nil</span>)).<span style="color:#a6e22e">Type</span>().<span style="color:#a6e22e">Elem</span>())
+</code></pre></div>
   
 
     

@@ -6,10 +6,19 @@
     <description>Recent content in translate on 渐行渐远</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 08 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 02 Jan 2022 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://neojos.com/tags/translate/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go net 超时处理</title>
+      <link>https://neojos.com/blog/2022/0102-go-net-%E8%B6%85%E6%97%B6%E5%A4%84%E7%90%86/</link>
+      <pubDate>Sun, 02 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2022/0102-go-net-%E8%B6%85%E6%97%B6%E5%A4%84%E7%90%86/</guid>
+      <description>序 这篇文章详细介绍了，net/http包中对应HTTP的各个阶段，如何使用timeout来进行读/写超时控制以及服务端和客户端支持设置的timeout类型。本质上，这些timeout都是代码层面对各个函数设置的处理时间。比如，读取客户端读取请求头、读取响应体的时间，本质上都是响应函数的超时时间。</description>
+    </item>
     
     <item>
       <title>如何工作和学习</title>
@@ -117,15 +126,6 @@
       
       <guid>https://neojos.com/blog/2018/12-29-how-to-use-godog/</guid>
       <description>首先访问Git的地址：Godog，它也是用来做Go Test一样的事情，只是换了一种形式。引入了一个概念：BDD。通俗的讲，就是虚拟现实场景，完成一个业务的测试。</description>
-    </item>
-    
-    <item>
-      <title>Go net 超时处理</title>
-      <link>https://neojos.com/blog/2018/10-10-go-net-%E8%B6%85%E6%97%B6%E5%A4%84%E7%90%86/</link>
-      <pubDate>Wed, 10 Oct 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/blog/2018/10-10-go-net-%E8%B6%85%E6%97%B6%E5%A4%84%E7%90%86/</guid>
-      <description>序 这篇文章详细介绍了，net/http包中对应HTTP的各个阶段，如何使用timeout来进行读/写超时控制以及服务端和客户端支持设置的timeout类型。本质上，这些timeout都是代码层面对各个函数设置的处理时间。比如，读取客户端读取请求头、读取响应体的时间，本质上都是响应函数的超时时间。</description>
     </item>
     
   </channel>

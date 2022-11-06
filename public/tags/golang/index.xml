@@ -6,10 +6,28 @@
     <description>Recent content in golang on 渐行渐远</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 12 Nov 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 02 Jan 2022 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://neojos.com/tags/golang/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go net 超时处理</title>
+      <link>https://neojos.com/blog/2022/0102-go-net-%E8%B6%85%E6%97%B6%E5%A4%84%E7%90%86/</link>
+      <pubDate>Sun, 02 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2022/0102-go-net-%E8%B6%85%E6%97%B6%E5%A4%84%E7%90%86/</guid>
+      <description>序 这篇文章详细介绍了，net/http包中对应HTTP的各个阶段，如何使用timeout来进行读/写超时控制以及服务端和客户端支持设置的timeout类型。本质上，这些timeout都是代码层面对各个函数设置的处理时间。比如，读取客户端读取请求头、读取响应体的时间，本质上都是响应函数的超时时间。</description>
+    </item>
+    
+    <item>
+      <title>Go test基础用法</title>
+      <link>https://neojos.com/blog/2022/0101-go-test%E5%9F%BA%E7%A1%80%E7%94%A8%E6%B3%95/</link>
+      <pubDate>Sat, 01 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2022/0101-go-test%E5%9F%BA%E7%A1%80%E7%94%A8%E6%B3%95/</guid>
+      <description>当直接使用IDE进行单元测试时，有没有好奇它时如何实现的？比如GoLand写的测试用例。</description>
+    </item>
     
     <item>
       <title>go.1.13中的Modules</title>
@@ -210,15 +228,6 @@
     </item>
     
     <item>
-      <title>Go net 超时处理</title>
-      <link>https://neojos.com/blog/2018/10-10-go-net-%E8%B6%85%E6%97%B6%E5%A4%84%E7%90%86/</link>
-      <pubDate>Wed, 10 Oct 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/blog/2018/10-10-go-net-%E8%B6%85%E6%97%B6%E5%A4%84%E7%90%86/</guid>
-      <description>序 这篇文章详细介绍了，net/http包中对应HTTP的各个阶段，如何使用timeout来进行读/写超时控制以及服务端和客户端支持设置的timeout类型。本质上，这些timeout都是代码层面对各个函数设置的处理时间。比如，读取客户端读取请求头、读取响应体的时间，本质上都是响应函数的超时时间。</description>
-    </item>
-    
-    <item>
       <title>sync.Once</title>
       <link>https://neojos.com/blog/2018/09-03-sync.once/</link>
       <pubDate>Mon, 03 Sep 2018 00:00:00 +0000</pubDate>
@@ -252,15 +261,6 @@
       
       <guid>https://neojos.com/blog/2018/05-31-go%E5%8F%8D%E5%B0%84/</guid>
       <description>人生的挫折感并不取决于境遇本身，而取决于境遇和自我期待之间的落差。</description>
-    </item>
-    
-    <item>
-      <title>Go test基础用法</title>
-      <link>https://neojos.com/blog/2018/05-02-go-test%E5%9F%BA%E7%A1%80%E7%94%A8%E6%B3%95/</link>
-      <pubDate>Wed, 02 May 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/blog/2018/05-02-go-test%E5%9F%BA%E7%A1%80%E7%94%A8%E6%B3%95/</guid>
-      <description>当直接使用IDE进行单元测试时，有没有好奇它时如何实现的？比如GoLand写的测试用例。</description>
     </item>
     
     <item>
