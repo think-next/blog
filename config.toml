@@ -14,15 +14,15 @@ summaryLength = 1
 
 [[menu.main]]
     identifier = "Blog"
-    name = "技术"
+    name = "思考"
     url = "/blog"
     weight = 2
 
-[[menu.main]]
-    identifier = "emotion"
-    name = "生活"
-    url = "/greatperson"
-    weight = 3
+#[[menu.main]]
+#    identifier = "emotion"
+#    name = "生活"
+#    url = "/greatperson"
+#    weight = 3
 
 [[menu.main]]
     identifier = "about"

@@ -6,10 +6,19 @@
     <description>Recent content on 渐行渐远</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 01 Oct 2022 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 29 Jan 2023 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://neojos.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>天道</title>
+      <link>https://neojos.com/blog/2023/01.29_%E5%A4%A9%E9%81%93/</link>
+      <pubDate>Sun, 29 Jan 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://neojos.com/blog/2023/01.29_%E5%A4%A9%E9%81%93/</guid>
+      <description>臣也以臣之事观之，斫轮，徐则甘而不固，疾则苦而不入。不徐不疾，得之于手而应于心，口不能言，有数存焉于其间。臣不能以喻臣之子，臣之子亦不能受之于臣，是以行年七十而老斫轮。古之人与其不可传也死矣，然则君之所读者，古人之糟魄已夫</description>
+    </item>
     
     <item>
       <title>Redis 集群选举</title>

@@ -3,21 +3,21 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title> siege压测 | 渐行渐远</title>
+  <title> 天道 | 渐行渐远</title>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="siege压测" />
-<meta property="og:description" content="关于压测，首先要了解TPS和并发用户数之间的关系：" />
+  <meta property="og:title" content="天道" />
+<meta property="og:description" content="臣也以臣之事观之，斫轮，徐则甘而不固，疾则苦而不入。不徐不疾，得之于手而应于心，口不能言，有数存焉于其间。臣不能以喻臣之子，臣之子亦不能受之于臣，是以行年七十而老斫轮。古之人与其不可传也死矣，然则君之所读者，古人之糟魄已夫" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2018/07-19-siege%E5%8E%8B%E6%B5%8B/" />
-<meta property="article:published_time" content="2018-07-19T00:00:00+00:00" />
-<meta property="article:modified_time" content="2018-07-19T00:00:00+00:00" />
+<meta property="og:url" content="https://neojos.com/blog/2023/01.29_%E5%A4%A9%E9%81%93/" />
+<meta property="article:published_time" content="2023-01-29T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-01-29T00:00:00+00:00" />
 
   <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="siege压测"/>
-<meta name="twitter:description" content="关于压测，首先要了解TPS和并发用户数之间的关系："/>
+<meta name="twitter:title" content="天道"/>
+<meta name="twitter:description" content="臣也以臣之事观之，斫轮，徐则甘而不固，疾则苦而不入。不徐不疾，得之于手而应于心，口不能言，有数存焉于其间。臣不能以喻臣之子，臣之子亦不能受之于臣，是以行年七十而老斫轮。古之人与其不可传也死矣，然则君之所读者，古人之糟魄已夫"/>
 
   
   
@@ -59,11 +59,7 @@
 
 <body class="column mx-auto px3 ltr">
   <div class="column-left">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#example"><code>example</code></a></li>
-  </ul>
-</nav>
+      <nav id="TableOfContents"></nav>
   </div>
   <div class="column-middle">
     <div class="content max-width index py4">
@@ -95,30 +91,14 @@
       
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">siege压测</h1>文章 64 字
+  <h1 id="title">天道</h1>文章 1 字
   <aside>
 
   </aside>
   <div class="content" itemprop="articleBody">
   
-    <p>关于压测，首先要了解<code>TPS</code>和并发用户数之间的关系：</p>
-<blockquote>
-<p><code>TPS</code>就是每秒事务数，但是事务是基于虚拟用户数的。假如1个虚拟用户在1秒内完成1笔事务，那么<code>TPS</code>明显就是1；如果某笔业务响应时间是1ms，那么1个用户在1秒内能完成1000笔事务，<code>TPS</code>就是1000了；如果某笔业务响应时间是1s,那么1个用户在1秒内只能完 成1笔事务，要想达到1000<code>TPS</code>，至少需要1000个用户；因此可以说1个用户可以产生1000TPS，1000个用户也可以产生1000<code>TPS</code>，无非是看响应时间快慢。</p>
-</blockquote>
-<p>针对上面的描述，引申出了命令的三个属性：</p>
-<pre><code>-c : This option allows you to set the concurrent number of users
--r : This option tells each siege user how times it should run.
--t : This option specify the number of times each user should run
-</code></pre><p>对于<code>linux</code>的命令，其实<code>man</code>查看就足够了。</p>
-<h2 id="example"><code>example</code></h2>
-<p>提交<code>json</code>格式的数据请求到服务器。<code>POST</code>后跟数据内容，不需要使用引号处理。</p>
-<pre><code># linux下执行命令
-siege -f ./url.txt  -H &quot;Content-Type: application/json&quot;
+    <p>臣也以臣之事观之，斫轮，徐则甘而不固，疾则苦而不入。不徐不疾，得之于手而应于心，口不能言，有数存焉于其间。臣不能以喻臣之子，臣之子亦不能受之于臣，是以行年七十而老斫轮。古之人与其不可传也死矣，然则君之所读者，古人之糟魄已夫</p>
 
-# url.txt中的内容
-HOST=neojos.com
-$(HOST)/v1/buy POST {&quot;bid&quot;: 0, &quot;type&quot;: 13 }
-</code></pre>
   
 
     
