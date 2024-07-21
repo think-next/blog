@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> singleton pattern | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2018/11-03-singleton-pattern/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="singleton pattern" />
-<meta property="og:description" content="版本 0." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2018/11-03-singleton-pattern/" />
-<meta property="article:published_time" content="2018-11-03T00:00:00+00:00" />
-<meta property="article:modified_time" content="2018-11-03T00:00:00+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2018/11-03-singleton-pattern/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="singleton pattern">
+  <meta property="og:description" content="版本 0.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2018-11-03T00:00:00+00:00">
+    <meta property="article:modified_time" content="2018-11-03T00:00:00+00:00">
+    <meta property="article:tag" content="Golang">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="singleton pattern"/>
-<meta name="twitter:description" content="版本 0."/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="singleton pattern">
+  <meta name="twitter:description" content="版本 0.">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,48 +50,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#synconce简介"><code>sync.Once</code>简介</a></li>
-    <li><a href="#synconce设计思路"><code>sync.Once</code>设计思路</a>
-      <ul>
-        <li><a href="#reason"><code>reason</code></a></li>
-      </ul>
-    </li>
-    <li><a href="#lock"><code>lock</code></a></li>
-  </ul>
-</nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -85,8 +95,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -98,13 +110,9 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">singleton pattern</h1>文章 220 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <p><em><!-- raw HTML omitted -->版本 0.02<!-- raw HTML omitted --></em></p>
@@ -120,7 +128,7 @@
 </blockquote>
 <h2 id="synconce简介"><code>sync.Once</code>简介</h2>
 <p><code>Go</code>语言通过<code>sync</code>包可以方便的实现线程安全的单例模式。最叹为观止的是，<code>sync</code>包的实现如此简单。通常用来处理在服务运行期间，只需要初始化一次的变量。</p>
-<pre><code>// Once is an object that will perform exactly one action.
+<pre tabindex="0"><code>// Once is an object that will perform exactly one action.
 type Once struct {
 	m    Mutex
 	done uint32
@@ -141,7 +149,7 @@ func (o *Once) Do(f func()) {
 </code></pre><h2 id="synconce设计思路"><code>sync.Once</code>设计思路</h2>
 <p>举个例子：</p>
 <p>下面声明统一获取配置类的函数，因为配置信息在整个服务运行期间是不会发生改变的。函数通过判断<code>config</code>是否被初始化，来达到只初始化一次的目的。例子中<code>config</code>声明为<code>map</code>的数据结构，来存储配置信息（<code>map</code>不支持并发访问，这里先忽略）。</p>
-<pre><code>package encrypt_config
+<pre tabindex="0"><code>package encrypt_config
 
 //key-secret pairs
 var config map[string]string
@@ -149,8 +157,8 @@ var config map[string]string
 func loadConfig(name string) string {
 	if config == nil {
 		config = map[string]string{
-			&quot;zi-ru&quot;: &quot;Mji9##a0LY&quot;,
-			&quot;baidu&quot;: &quot;Kj8*0okhHH&quot;,
+			&#34;zi-ru&#34;: &#34;Mji9##a0LY&#34;,
+			&#34;baidu&#34;: &#34;Kj8*0okhHH&#34;,
 		}
 	}
 	return config[name]
@@ -159,13 +167,13 @@ func loadConfig(name string) string {
 <p>但还存在一种可能的情况：<code>goroutine B</code>发现<code>config ！= nil</code>，但是当通过<code>name</code>去获取对应的值时，返回的却是空字符串。也就是说<code>goroutine A</code>访问到了一个没有被完全初始化的<code>config</code></p>
 <h3 id="reason"><code>reason</code></h3>
 <p><code>Go</code>在执行上述方法的时候，编译器在不影响最终结果的情况下，本身可以调整代码执行的顺序。这也是现在计算机多核处理，共享内存必然要面临的情况。比如编译器做了如下调整：</p>
-<pre><code>func loadConfig(name string) string {
+<pre tabindex="0"><code>func loadConfig(name string) string {
 	if config == nil {
 	
 	    //goroutine B 访问的时候，config刚被初始化 
 	    config = make(map[string]string)
-	    config[&quot;zi-ru&quot;] = &quot;Mji9##a0LY&quot;
-	    config[&quot;baidu&quot;] = &quot;Kj8*0okhHH&quot;
+	    config[&#34;zi-ru&#34;] = &#34;Mji9##a0LY&#34;
+	    config[&#34;baidu&#34;] = &#34;Kj8*0okhHH&#34;
 	}
 	return config[name]
 }
@@ -176,7 +184,7 @@ func loadConfig(name string) string {
 </blockquote>
 <h2 id="lock"><code>lock</code></h2>
 <p><code>Lock</code></p>
-<pre><code>// Lock locks m.
+<pre tabindex="0"><code>// Lock locks m.
 // If the lock is already in use, the calling goroutine
 // blocks until the mutex is available.
 func (m *Mutex) Lock() {
@@ -195,20 +203,19 @@ func (m *Mutex) Lock() {
 </ol>
 
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -219,9 +226,8 @@ func (m *Mutex) Lock() {
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

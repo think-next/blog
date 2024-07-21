@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> MySQL事务 | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2018/07-01-mysql%E4%BA%8B%E5%8A%A1/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="MySQL事务" />
-<meta property="og:description" content="关于MySQL事务的诡异问题，至今没有调查出原因。但却也是一个契机，带我重新回忆之前的遇到的事务问题。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2018/07-01-mysql%E4%BA%8B%E5%8A%A1/" />
-<meta property="article:published_time" content="2018-07-01T00:00:00+00:00" />
-<meta property="article:modified_time" content="2018-07-01T00:00:00+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2018/07-01-mysql%E4%BA%8B%E5%8A%A1/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="MySQL事务">
+  <meta property="og:description" content="关于MySQL事务的诡异问题，至今没有调查出原因。但却也是一个契机，带我重新回忆之前的遇到的事务问题。">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2018-07-01T00:00:00+00:00">
+    <meta property="article:modified_time" content="2018-07-01T00:00:00+00:00">
+    <meta property="article:tag" content="MySQL">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="MySQL事务"/>
-<meta name="twitter:description" content="关于MySQL事务的诡异问题，至今没有调查出原因。但却也是一个契机，带我重新回忆之前的遇到的事务问题。"/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="MySQL事务">
+  <meta name="twitter:description" content="关于MySQL事务的诡异问题，至今没有调查出原因。但却也是一个契机，带我重新回忆之前的遇到的事务问题。">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,44 +50,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#诡异的问题">诡异的问题</a></li>
-    <li><a href="#事务隔离级别">事务隔离级别</a></li>
-    <li><a href="#查询数据库的隔离级别">查询数据库的隔离级别</a></li>
-  </ul>
-</nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -81,8 +95,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -94,13 +110,9 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">MySQL事务</h1>文章 125 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <p>关于<code>MySQL事务</code>的诡异问题，至今没有调查出原因。但却也是一个契机，带我重新回忆之前的遇到的事务问题。</p>
@@ -108,54 +120,54 @@
 <p>系统中存在A和B两个表。B表中有两个关键字段：一个是唯一索引<code>transaction_id</code>，还有一个是标识处理状态的<code>status</code>。当<code>status=0</code>表示记录未被处理，<code>status=1</code>表示记录处理过了，不需要再处理了。</p>
 <p>如果B中记录未处理，则在A表中插入一条权益记录，同时更新<code>status=1</code>，后续就不能再给用户加权益了。</p>
 <p>代码做了如下处理：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">sessPart</span>() {
-
-	<span style="color:#75715e">//开启事务
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">session</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">engine</span>.<span style="color:#a6e22e">NewSession</span>()
-	<span style="color:#a6e22e">sess</span>.<span style="color:#a6e22e">Begin</span>()
-	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">Close</span>()
-	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">sess</span>.<span style="color:#a6e22e">Rollback</span>()
-
-	<span style="color:#75715e">//插入价钱100分的权益交付记录
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">exchange</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">models</span>.<span style="color:#a6e22e">Exchange</span>{<span style="color:#a6e22e">Money</span>: <span style="color:#ae81ff">100</span>, <span style="color:#a6e22e">Uid</span>: <span style="color:#ae81ff">1</span>}
-	<span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sess</span>.<span style="color:#a6e22e">Insert</span>(<span style="color:#a6e22e">exchange</span>)
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#a6e22e">sess</span>.<span style="color:#a6e22e">Rollback</span>()
-		<span style="color:#66d9ef">return</span>
-	}
-
-	<span style="color:#75715e">//更新status为1
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//并且使用乐观锁，防止因没有匹配到数据，直接返回成功
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">testModel</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">Test</span>{
-		<span style="color:#a6e22e">Status</span>: <span style="color:#ae81ff">1</span>,
-	}
-	<span style="color:#a6e22e">affectRows</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sess</span>.<span style="color:#a6e22e">Where</span>(<span style="color:#e6db74">&#34;transaction_id = ? AND status = 0&#34;</span>, <span style="color:#ae81ff">1</span>).
-		<span style="color:#a6e22e">Cols</span>(<span style="color:#e6db74">&#34;status&#34;</span>).<span style="color:#a6e22e">Update</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">testModel</span>)
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> <span style="color:#f92672">||</span> <span style="color:#a6e22e">affectRows</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> {
-		<span style="color:#a6e22e">sess</span>.<span style="color:#a6e22e">Rollback</span>()
-		<span style="color:#66d9ef">return</span>
-	}
-
-	<span style="color:#a6e22e">sess</span>.<span style="color:#a6e22e">Commit</span>()
-}
-
-<span style="color:#75715e">//测试事务的并发情况
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">BenchmarkLock</span>(<span style="color:#a6e22e">b</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">B</span>) {
-
-	<span style="color:#75715e">//控制并发，保证并发完成
-</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">wg</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>
-	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">500</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
-
-		<span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">1</span>)
-		<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">i</span> <span style="color:#66d9ef">int</span>) {
-			<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Done</span>()
-			<span style="color:#a6e22e">sessPart</span>()
-		}(<span style="color:#a6e22e">i</span>)
-	}
-
-	<span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Wait</span>()
-}
-</code></pre></div><p><strong>结论</strong>：无论我怎么模拟并发，事务都很好的保证了：整个过程，只成功插入了一条记录。这倒是跟我预期一样。<strong>但为什么我们线上环境，这样的代码能插入两条权益记录？</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">sessPart</span>() {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">//开启事务
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">session</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">engine</span>.<span style="color:#a6e22e">NewSession</span>()
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">sess</span>.<span style="color:#a6e22e">Begin</span>()
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">Close</span>()
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">sess</span>.<span style="color:#a6e22e">Rollback</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">//插入价钱100分的权益交付记录
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">exchange</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">models</span>.<span style="color:#a6e22e">Exchange</span>{<span style="color:#a6e22e">Money</span>: <span style="color:#ae81ff">100</span>, <span style="color:#a6e22e">Uid</span>: <span style="color:#ae81ff">1</span>}
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sess</span>.<span style="color:#a6e22e">Insert</span>(<span style="color:#a6e22e">exchange</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">sess</span>.<span style="color:#a6e22e">Rollback</span>()
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">//更新status为1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//并且使用乐观锁，防止因没有匹配到数据，直接返回成功
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">testModel</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">Test</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Status</span>: <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">affectRows</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sess</span>.<span style="color:#a6e22e">Where</span>(<span style="color:#e6db74">&#34;transaction_id = ? AND status = 0&#34;</span>, <span style="color:#ae81ff">1</span>).
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Cols</span>(<span style="color:#e6db74">&#34;status&#34;</span>).<span style="color:#a6e22e">Update</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">testModel</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> <span style="color:#f92672">||</span> <span style="color:#a6e22e">affectRows</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">sess</span>.<span style="color:#a6e22e">Rollback</span>()
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">sess</span>.<span style="color:#a6e22e">Commit</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//测试事务的并发情况
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">BenchmarkLock</span>(<span style="color:#a6e22e">b</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">B</span>) {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">//控制并发，保证并发完成
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">wg</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">500</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">i</span> <span style="color:#66d9ef">int</span>) {
+</span></span><span style="display:flex;"><span>			<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Done</span>()
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">sessPart</span>()
+</span></span><span style="display:flex;"><span>		}(<span style="color:#a6e22e">i</span>)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Wait</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>结论</strong>：无论我怎么模拟并发，事务都很好的保证了：整个过程，只成功插入了一条记录。这倒是跟我预期一样。<strong>但为什么我们线上环境，这样的代码能插入两条权益记录？</strong></p>
 <h2 id="事务隔离级别">事务隔离级别</h2>
 <p><code>SQL</code>标准中定义了4种数据库事务的隔离级别。</p>
 <ol>
@@ -173,25 +185,24 @@
 </li>
 </ol>
 <h2 id="查询数据库的隔离级别">查询数据库的隔离级别</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#75715e">-- 返回：READ-COMMITTED
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">@@</span>tx_isolation;
-</code></pre></div><p>正如查询所示，我们设置的是<code>READ-COMMITTED</code>。所以针对B表来说，如果并发两个事务，那第二个事务需要等待第一个事务释放锁之后才能执行<code>update</code>语句。此时第二个事务在回写时会发现<code>status != 0</code>，则回写失败，理应触发回滚。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#75715e">-- 返回：READ-COMMITTED
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">@@</span>tx_isolation;
+</span></span></code></pre></div><p>正如查询所示，我们设置的是<code>READ-COMMITTED</code>。所以针对B表来说，如果并发两个事务，那第二个事务需要等待第一个事务释放锁之后才能执行<code>update</code>语句。此时第二个事务在回写时会发现<code>status != 0</code>，则回写失败，理应触发回滚。</p>
 
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -202,9 +213,8 @@
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

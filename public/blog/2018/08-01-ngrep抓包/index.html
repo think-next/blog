@@ -1,30 +1,47 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> ngrep抓包 | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2018/08-01-ngrep%E6%8A%93%E5%8C%85/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="ngrep抓包" />
-<meta property="og:description" content="简单的工具其实挺有用的。警告：不许瞧不起工具，尤其是你还不会用的工具。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2018/08-01-ngrep%E6%8A%93%E5%8C%85/" />
-<meta property="article:published_time" content="2018-08-01T00:00:00+00:00" />
-<meta property="article:modified_time" content="2018-08-01T00:00:00+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2018/08-01-ngrep%E6%8A%93%E5%8C%85/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="ngrep抓包">
+  <meta property="og:description" content="简单的工具其实挺有用的。警告：不许瞧不起工具，尤其是你还不会用的工具。">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2018-08-01T00:00:00+00:00">
+    <meta property="article:modified_time" content="2018-08-01T00:00:00+00:00">
+    <meta property="article:tag" content="Linux">
+    <meta property="article:tag" content="Tools">
+    <meta property="article:tag" content="Net">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="ngrep抓包"/>
-<meta name="twitter:description" content="简单的工具其实挺有用的。警告：不许瞧不起工具，尤其是你还不会用的工具。"/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="ngrep抓包">
+  <meta name="twitter:description" content="简单的工具其实挺有用的。警告：不许瞧不起工具，尤其是你还不会用的工具。">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,44 +52,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#example"><code>Example</code></a></li>
-    <li><a href="#options"><code>Options</code></a></li>
-    <li><a href="#结果示例"><code>结果示例</code></a></li>
-  </ul>
-</nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -81,8 +97,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -94,13 +112,9 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">ngrep抓包</h1>文章 106 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <p>简单的工具其实挺有用的。警告：不许瞧不起工具，尤其是你还不会用的工具。</p>
@@ -108,14 +122,14 @@
 <p>以前专门请教过一个同事如何使用<code>Wireshark</code>分析网络请求，自己也专门看了相关的<code>Wireshark</code>操作。但最终却发现，如果是抓客户端的请求(非分析<code>TCP</code>)，<code>Wireshark</code>使用起来并不方便。而如果分析的是服务端之间的请求，还需要借助<code>tcpdump</code>先来把请求记录下来，然后再到<code>Wireshark</code>中打开分析。</p>
 <h2 id="example"><code>Example</code></h2>
 <p>经常使用的模式</p>
-<pre><code># 匹配特定host
+<pre tabindex="0"><code># 匹配特定host
 ngrep -q host api.open.huajiao.com -d any -W byline
 
 # 匹配特定host和端口
 ngrep –q host api.open.huajiao.com and port 80  –W byline 
 
-# 报文中包含&quot;search&quot;关键字
-ngrep –q –W byline &quot;search&quot; host www.google.com and port 80 
+# 报文中包含&#34;search&#34;关键字
+ngrep –q –W byline &#34;search&#34; host www.google.com and port 80 
 </code></pre><h2 id="options"><code>Options</code></h2>
 <p>详细还是通过<code>man</code>直接查看工具说明吧！这里列举一个：</p>
 <pre><code>-d  By default  ngrep will select a default interface to listen on.
@@ -123,7 +137,7 @@ ngrep –q –W byline &quot;search&quot; host www.google.com and port 80
 </code></pre>
 <h2 id="结果示例"><code>结果示例</code></h2>
 <p>以下是命令输出的结果，跟<code>curl</code>是不是很像：</p>
-<pre><code>interface: any
+<pre tabindex="0"><code>interface: any
 filter: ( host api.open.huajiao.com ) and (ip or ip6)
 
 T **.***.***.***:80 -&gt; **.***.***.***:56181 [AP]
@@ -136,25 +150,24 @@ Connection: close.
 Cache-Control: no-store.
 .
 48.
-{&quot;errno&quot;:35,&quot;errmsg&quot;:&quot;\u670d\u52a1\u5668\u88ab\u62d2\u7edd&quot;,&quot;consume&quot;:6}.
+{&#34;errno&#34;:35,&#34;errmsg&#34;:&#34;\u670d\u52a1\u5668\u88ab\u62d2\u7edd&#34;,&#34;consume&#34;:6}.
 0.
 .
 </code></pre>
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -165,9 +178,8 @@ Cache-Control: no-store.
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

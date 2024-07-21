@@ -1,30 +1,46 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> Tcp Server Design | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2018/07-28-tcp-server-design/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="Tcp Server Design" />
-<meta property="og:description" content="绝大多数的TCP服务都是支持并发的。当一个连接请求到达时，服务端接收这个连接，然后创建一个新的线程(或进程)来处理这个连接。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2018/07-28-tcp-server-design/" />
-<meta property="article:published_time" content="2018-07-28T00:00:00+00:00" />
-<meta property="article:modified_time" content="2018-07-28T00:00:00+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2018/07-28-tcp-server-design/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="Tcp Server Design">
+  <meta property="og:description" content="绝大多数的TCP服务都是支持并发的。当一个连接请求到达时，服务端接收这个连接，然后创建一个新的线程(或进程)来处理这个连接。">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2018-07-28T00:00:00+00:00">
+    <meta property="article:modified_time" content="2018-07-28T00:00:00+00:00">
+    <meta property="article:tag" content="Tcp/Ip">
+    <meta property="article:tag" content="Net">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Tcp Server Design"/>
-<meta name="twitter:description" content="绝大多数的TCP服务都是支持并发的。当一个连接请求到达时，服务端接收这个连接，然后创建一个新的线程(或进程)来处理这个连接。"/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Tcp Server Design">
+  <meta name="twitter:description" content="绝大多数的TCP服务都是支持并发的。当一个连接请求到达时，服务端接收这个连接，然后创建一个新的线程(或进程)来处理这个连接。">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,43 +51,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#listen状态"><code>listen</code>状态</a></li>
-    <li><a href="#request-queue"><code>request queue</code></a></li>
-  </ul>
-</nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -80,8 +96,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -93,25 +111,21 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">Tcp Server Design</h1>文章 56 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <p>绝大多数的<code>TCP</code>服务都是支持并发的。当一个连接请求到达时，服务端接收这个连接，然后创建一个新的线程(或进程)来处理这个连接。</p>
 <h2 id="listen状态"><code>listen</code>状态</h2>
 <p>在本地启动<code>Go</code>的服务，使用<code>netstat</code>查看：</p>
-<pre><code>netstat -an -f inet
+<pre tabindex="0"><code>netstat -an -f inet
 </code></pre><p>可以看到<code>listen</code>状态的请求连接。其中<code>Local Address</code>的<code>*</code>表示请求会被本地的任意地址处理(如果有多重地址的话)。<code>Foreign Address</code>中<code>*.*</code>表示客户端的<code>ip</code>和<code>port</code>都是未知的。</p>
-<pre><code>Active Internet connections (including servers)
+<pre tabindex="0"><code>Active Internet connections (including servers)
 Proto Recv-Q Send-Q  Local Address          Foreign Address        (state)
 tcp46      0      0  *.3900                 *.*                    LISTEN
 </code></pre><p>当新的请求到达，并被接收时，服务器内核中会创建一个<code>ESTABLISHED</code>状态的连接。而<code>listen</code>继续去接收新的连接。</p>
-<pre><code>Proto Recv-Q Send-Q  Local Address          Foreign Address        (state)
+<pre tabindex="0"><code>Proto Recv-Q Send-Q  Local Address          Foreign Address        (state)
 tcp4       0      0  127.0.0.1.3900         127.0.0.1.51133        ESTABLISHED
 tcp46      0      0  *.3900                 *.*                    LISTEN
 </code></pre><h2 id="request-queue"><code>request queue</code></h2>
@@ -123,20 +137,19 @@ tcp46      0      0  *.3900                 *.*                    LISTEN
 </ol>
 
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -147,9 +160,8 @@ tcp46      0      0  *.3900                 *.*                    LISTEN
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

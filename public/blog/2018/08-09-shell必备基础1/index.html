@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> Shell必备基础（1） | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2018/08-09-shell%E5%BF%85%E5%A4%87%E5%9F%BA%E7%A1%801/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="Shell必备基础（1）" />
-<meta property="og:description" content="Shell是对Linux命令的深加工，用得好，事半功倍。 本来只想加深Array的用法，但一不小心，又变成了一篇基础大全。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2018/08-09-shell%E5%BF%85%E5%A4%87%E5%9F%BA%E7%A1%801/" />
-<meta property="article:published_time" content="2018-08-09T00:00:00+00:00" />
-<meta property="article:modified_time" content="2018-08-09T00:00:00+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2018/08-09-shell%E5%BF%85%E5%A4%87%E5%9F%BA%E7%A1%801/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="Shell必备基础（1）">
+  <meta property="og:description" content="Shell是对Linux命令的深加工，用得好，事半功倍。 本来只想加深Array的用法，但一不小心，又变成了一篇基础大全。">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2018-08-09T00:00:00+00:00">
+    <meta property="article:modified_time" content="2018-08-09T00:00:00+00:00">
+    <meta property="article:tag" content="Linux">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Shell必备基础（1）"/>
-<meta name="twitter:description" content="Shell是对Linux命令的深加工，用得好，事半功倍。 本来只想加深Array的用法，但一不小心，又变成了一篇基础大全。"/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Shell必备基础（1）">
+  <meta name="twitter:description" content="Shell是对Linux命令的深加工，用得好，事半功倍。 本来只想加深Array的用法，但一不小心，又变成了一篇基础大全。">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,59 +50,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#比较运算">比较运算</a>
-      <ul>
-        <li><a href="#算数比较">算数比较</a></li>
-        <li><a href="#文件系统">文件系统</a></li>
-        <li><a href="#字符串比较">字符串比较</a></li>
-        <li><a href="#逻辑运算">逻辑运算</a></li>
-      </ul>
-    </li>
-    <li><a href="#基本语句example">基本语句<code>Example</code></a>
-      <ul>
-        <li><a href="#if语句"><code>if</code>语句</a></li>
-        <li><a href="#while语句"><code>while</code>语句</a></li>
-        <li><a href="#for语句"><code>for</code>语句</a></li>
-        <li><a href="#case语句"><code>case</code>语句</a></li>
-      </ul>
-    </li>
-    <li><a href="#数组">数组</a></li>
-    <li><a href="#函数">函数</a></li>
-  </ul>
-</nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -96,8 +95,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -109,13 +110,9 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">Shell必备基础（1）</h1>文章 223 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <p><code>Shell</code>是对<code>Linux</code>命令的深加工，用得好，事半功倍。 本来只想加深<code>Array</code>的用法，但一不小心，又变成了一篇基础大全。</p>
@@ -125,30 +122,30 @@
 <p>常用的操作符有<code>-eq</code>、<code>-ne</code>、<code>-gt</code>、<code>-lt</code>、<code>-le</code>等。</p>
 <h3 id="文件系统">文件系统</h3>
 <p>当编译文件、或者查看<code>pid</code>文件、日志时会经常用到。</p>
-<pre><code>[ -e $var ] 如果指定的变量包含的文件存在，则返回真
+<pre tabindex="0"><code>[ -e $var ] 如果指定的变量包含的文件存在，则返回真
 [ -f $var ] 如果指定的变量包含正常的文件路径或文件名，则返回真
 </code></pre><h3 id="字符串比较">字符串比较</h3>
 <p>判空还是相当常见的操作。比如，查看当前系统是否启用了<code>notify</code>的进程，如果有的话，<code>kill</code>掉。</p>
-<pre><code>pid=`ps -ef | grep notify | grep -v 'grep' | awk '{print $2}'`
+<pre tabindex="0"><code>pid=`ps -ef | grep notify | grep -v &#39;grep&#39; | awk &#39;{print $2}&#39;`
 if [[ -n $pid ]]
 then
-    echo -e &quot;\033[31m Kill掉当前正在运行的进程... \033[0m\n&quot;
+    echo -e &#34;\033[31m Kill掉当前正在运行的进程... \033[0m\n&#34;
     kill $pid
 fi
 </code></pre><p>常见的操作符如下：</p>
-<pre><code>[[ -z $str ]]   如果str包含的是空字符串，则返回真
+<pre tabindex="0"><code>[[ -z $str ]]   如果str包含的是空字符串，则返回真
 [[ -n $str ]]   如果str包含的是非空字符串，则返回真
 </code></pre><p>其他的操作符包括：<code>==</code>、<code>!=</code>、<code>&gt;</code>、<code>&lt;</code></p>
 <h3 id="逻辑运算">逻辑运算</h3>
 <p>使用逻辑<code>&amp;&amp;</code>和<code>||</code>来表示与和或的逻辑关系。</p>
 <p>比如</p>
-<pre><code>if [[ -n $str ]] &amp;&amp; [[ -z $str ]]
+<pre tabindex="0"><code>if [[ -n $str ]] &amp;&amp; [[ -z $str ]]
 then
     echo $str
 fi
 </code></pre><h2 id="基本语句example">基本语句<code>Example</code></h2>
 <h3 id="if语句"><code>if</code>语句</h3>
-<pre><code>if command1
+<pre tabindex="0"><code>if command1
 then
     # ...
 elif command2
@@ -158,27 +155,27 @@ else
     # ...
 fi
 </code></pre><h3 id="while语句"><code>while</code>语句</h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#66d9ef">while</span> <span style="color:#f92672">[</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">]</span> 
-<span style="color:#66d9ef">do</span>
-    echo $RANDOM
-<span style="color:#66d9ef">done</span>
-</code></pre></div><h3 id="for语句"><code>for</code>语句</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#66d9ef">while</span> <span style="color:#f92672">[</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">]</span> 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    echo $RANDOM
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span></code></pre></div><h3 id="for语句"><code>for</code>语句</h3>
 <p><code>for</code>循环总是以空格、<code>\t</code>、<code>\n</code>作为分隔符。如果要明确指定分隔符的话，使用<code>IFS</code>明确声明。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">SERVER<span style="color:#f92672">=(</span>
-    <span style="color:#75715e"># server list</span>
-    <span style="color:#e6db74">&#34;node025.add.neojos.net&#34;</span>
-    <span style="color:#e6db74">&#34;node026.add.neojos.net&#34;</span>
-    <span style="color:#e6db74">&#34;node062.add.neojos.net&#34;</span>
-    <span style="color:#e6db74">&#34;node063.add.neojos.net&#34;</span>
-<span style="color:#f92672">)</span>
-
-<span style="color:#75715e">#${SERVER[@]}其实就是一个用空格implode起来各个元素的组合字符串</span>
-<span style="color:#66d9ef">for</span> var in <span style="color:#e6db74">${</span>SERVER[@]<span style="color:#e6db74">}</span>
-<span style="color:#66d9ef">do</span>
-    echo $var;
-<span style="color:#66d9ef">done</span>
-</code></pre></div><h3 id="case语句"><code>case</code>语句</h3>
-<pre><code>case $OPT in
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>SERVER<span style="color:#f92672">=(</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># server list</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;node025.add.neojos.net&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;node026.add.neojos.net&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;node062.add.neojos.net&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;node063.add.neojos.net&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#${SERVER[@]}其实就是一个用空格implode起来各个元素的组合字符串</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> var in <span style="color:#e6db74">${</span>SERVER[@]<span style="color:#e6db74">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    echo $var;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span></code></pre></div><h3 id="case语句"><code>case</code>语句</h3>
+<pre tabindex="0"><code>case $OPT in
         i)
             NEED_BUILD=false
             ;;
@@ -188,15 +185,15 @@ fi
     esac
 </code></pre><h2 id="数组">数组</h2>
 <p>定义一个数组，元素间使用空格或者<code>\n</code>进行分隔。</p>
-<pre><code>task=(&quot;delivery&quot; &quot;notify&quot; &quot;event&quot;)
+<pre tabindex="0"><code>task=(&#34;delivery&#34; &#34;notify&#34; &#34;event&#34;)
 </code></pre><p>要访问其中的元素，需要知道它的下标：</p>
-<pre><code>echo ${task[0]} ${task[1]} 
+<pre tabindex="0"><code>echo ${task[0]} ${task[1]} 
 </code></pre><p>经常会用到的获取数组的方式（<code>*</code>可以用来替换<code>@</code>）：</p>
-<pre><code>${task[@]}      #数组所有元素的value
+<pre tabindex="0"><code>${task[@]}      #数组所有元素的value
 ${!task[@]}     #数组所有元素的key
 ${#task[@]}     #数组元素的个数
 </code></pre><p>下面列举几个简单的例子：</p>
-<pre><code>#!/bin/bash
+<pre tabindex="0"><code>#!/bin/bash
 
 arr=(
 	one
@@ -205,30 +202,29 @@ arr=(
 	[6]=six
 )
 
-echo &quot;Array size :&quot; ${#arr[@]}
+echo &#34;Array size :&#34; ${#arr[@]}
 # Array size : 4
 </code></pre><h2 id="函数">函数</h2>
 <p>函数的声明：</p>
-<pre><code>function deploy()
+<pre tabindex="0"><code>function deploy()
 {
     # 在函数体内部，通过 $n 的形式来获取参数的值
     server=$1;
-    echo -e &quot;start deploy \033[0;34m$server\033[0m; put y to continue, put n to quit:&quot;
+    echo -e &#34;start deploy \033[0;34m$server\033[0m; put y to continue, put n to quit:&#34;
     read line
 
-    if [ &quot;$line&quot; != &quot;y&quot; ]; then
+    if [ &#34;$line&#34; != &#34;y&#34; ]; then
         return
     fi
 }
-
 </code></pre><p>函数的调用。函数名会在<code>$0</code>变量中定义，函数命令行上的任何参数都需要通过<code>$1</code>,<code>$2</code>&hellip;来定义。还可以通过<code>$#</code>来判断参数的个数。</p>
-<pre><code>for server in &quot;${SERVER[@]}&quot;
+<pre tabindex="0"><code>for server in &#34;${SERVER[@]}&#34;
 do
     deploy $server
 done
 </code></pre><p>获取参数的具体形式：</p>
-<pre><code>$#  传递到脚本的参数个数
-$*  以一个单字符串形式向脚本传递参数。如果是&quot;$*&quot;，会输出&quot;$1 $2 … $n&quot;的形式。
+<pre tabindex="0"><code>$#  传递到脚本的参数个数
+$*  以一个单字符串形式向脚本传递参数。如果是&#34;$*&#34;，会输出&#34;$1 $2 … $n&#34;的形式。
 $@  与$*相同，但是使用时加引号，并在引号中返回每个参数。
 </code></pre><p>参考文章：</p>
 <ol>
@@ -236,20 +232,19 @@ $@  与$*相同，但是使用时加引号，并在引号中返回每个参数�
 </ol>
 
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -260,9 +255,8 @@ $@  与$*相同，但是使用时加引号，并在引号中返回每个参数�
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

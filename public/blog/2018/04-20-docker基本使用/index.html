@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> docker基本使用 | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2018/04-20-docker%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="docker基本使用" />
-<meta property="og:description" content="知道一点比完全不知道要好，对问题有深入了解比仅知道皮毛要好。作为docker的一个初学者，现在对docker做简单记录。希望随着工作、生活，更深入的了解学习docker。这也是一件很有意义的事。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2018/04-20-docker%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" />
-<meta property="article:published_time" content="2018-04-20T00:00:00+00:00" />
-<meta property="article:modified_time" content="2018-04-20T00:00:00+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2018/04-20-docker%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="docker基本使用">
+  <meta property="og:description" content="知道一点比完全不知道要好，对问题有深入了解比仅知道皮毛要好。作为docker的一个初学者，现在对docker做简单记录。希望随着工作、生活，更深入的了解学习docker。这也是一件很有意义的事。">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2018-04-20T00:00:00+00:00">
+    <meta property="article:modified_time" content="2018-04-20T00:00:00+00:00">
+    <meta property="article:tag" content="Docker">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="docker基本使用"/>
-<meta name="twitter:description" content="知道一点比完全不知道要好，对问题有深入了解比仅知道皮毛要好。作为docker的一个初学者，现在对docker做简单记录。希望随着工作、生活，更深入的了解学习docker。这也是一件很有意义的事。"/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="docker基本使用">
+  <meta name="twitter:description" content="知道一点比完全不知道要好，对问题有深入了解比仅知道皮毛要好。作为docker的一个初学者，现在对docker做简单记录。希望随着工作、生活，更深入的了解学习docker。这也是一件很有意义的事。">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,64 +50,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#安装redis">安装redis</a>
-      <ul>
-        <li><a href="#bitmap-使用">bitmap 使用</a></li>
-      </ul>
-    </li>
-    <li><a href="#example"><code>Example</code></a></li>
-    <li><a href="#dockerfile指令"><code>Dockerfile</code>指令</a>
-      <ul>
-        <li><a href="#from"><code>FROM</code></a></li>
-        <li><a href="#run"><code>RUN</code></a></li>
-        <li><a href="#env"><code>ENV</code></a></li>
-        <li><a href="#copy"><code>COPY</code></a></li>
-        <li><a href="#cmd"><code>CMD</code></a></li>
-        <li><a href="#entrypoint"><code>ENTRYPOINT</code></a></li>
-        <li><a href="#expose"><code>EXPOSE</code></a></li>
-        <li><a href="#workdir"><code>WORKDIR</code></a></li>
-      </ul>
-    </li>
-    <li><a href="#多阶段构建">多阶段构建</a>
-      <ul>
-        <li><a href="#example-1"><code>Example</code></a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -101,8 +95,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -114,44 +110,40 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">docker基本使用</h1>文章 407 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <p>知道一点比完全不知道要好，对问题有深入了解比仅知道皮毛要好。作为<code>docker</code>的一个初学者，现在对<code>docker</code>做简单记录。希望随着工作、生活，更深入的了解学习<code>docker</code>。这也是一件很有意义的事。</p>
 <h2 id="安装redis">安装redis</h2>
 <p>在容器中启动redis服务的基本步骤。</p>
-<pre><code>➜  one-case docker pull redis:latest
+<pre tabindex="0"><code>➜  one-case docker pull redis:latest
 ➜  one-case docker images
 ➜  one-case docker run -itd --name redis-test -p 6379:6379 redis
 </code></pre><p>docker run中的属性<code>-i</code>表示启动交互模式；<code>-d</code>表示后台运行容器；<code>-t</code>经常和<code>-i</code>一起使用，表示为容器分配一个伪输入终端；</p>
 <h3 id="bitmap-使用">bitmap 使用</h3>
 <p>查看bitmap占用空间的大小，设置一个最大的offset。然后，通过统计大key来查看所占用空间。</p>
-<pre><code>setbit biguid 4294967296 1
+<pre tabindex="0"><code>setbit biguid 4294967296 1
 -ERR bit offset is not an integer or out of range
 setbit biguid 4294967295 1
 :0
 </code></pre><p>通过输出结果，biguid 占用512M的存储空间。也验证了一个结论：bitmap占用的空间，完全取决于最大的offset值。</p>
-<pre><code>➜  one-case docker exec -it redis-test /bin/bash
+<pre tabindex="0"><code>➜  one-case docker exec -it redis-test /bin/bash
 root@2661fdf6847f:/data# redis-cli -p 6379 --bigkeys
 
 # Scanning the entire keyspace to find biggest keys as well as
 # average sizes per key type.  You can use -i 0.1 to sleep 0.1 sec
 # per 100 SCAN commands (not usually needed).
 
-[00.00%] Biggest string found so far 'biguid' with 536870912 bytes
+[00.00%] Biggest string found so far &#39;biguid&#39; with 536870912 bytes
 
 -------- summary -------
 
 Sampled 1 keys in the keyspace!
 Total key length in bytes is 6 (avg len 6.00)
 
-Biggest string found 'biguid' has 536870912 bytes
+Biggest string found &#39;biguid&#39; has 536870912 bytes
 
 1 strings with 536870912 bytes (100.00% of keys, avg size 536870912.00)
 0 lists with 0 items (00.00% of keys, avg size 0.00)
@@ -167,7 +159,7 @@ Biggest string found 'biguid' has 536870912 bytes
 </ol>
 <p>我觉得之所以说<code>docker</code>好用，是因为<a href="https://hub.docker.com/explore/"><code>Docker Hub</code></a>提供了很多镜像，比如<code>MySQL</code>、<code>Redis</code>等。对它们安装、卸载异常方便。</p>
 <p>我们想搭建测试服务，安装<code>MySQL</code>，<code>Redis</code>等依赖。我们将他们当作一个项目的依赖，声明一个配置文件·<code>db.yml</code>，然后将这些依赖，类似于<code>composer</code>编辑：</p>
-<pre><code>version: &quot;3&quot;
+<pre tabindex="0"><code>version: &#34;3&#34;
 
 services:
 
@@ -182,7 +174,7 @@ services:
       MYSQL_USER: neojos
       MYSQL_PASSWORD: neojos-pwd
     ports:
-      - &quot;3306:3306&quot;
+      - &#34;3306:3306&#34;
 
   myredis:
     image: redis
@@ -190,18 +182,18 @@ services:
     volumes:
       - /Users/neojos/dockerData/redis
     ports:
-      - &quot;6379:6379&quot;
+      - &#34;6379:6379&#34;
     command: redis-server --appendonly yes
 </code></pre><p>执行如下命令，<code>MySQL</code>和<code>Redis</code>的服务就启动了</p>
-<pre><code>docker-composer -f db.yml up
+<pre tabindex="0"><code>docker-composer -f db.yml up
 </code></pre><p>可以通过执行如下命令查看，确认是否有两个容器在运行。</p>
-<pre><code>docker container ls
+<pre tabindex="0"><code>docker container ls
 </code></pre><p>这样很好，但当我想进去<code>MySQL</code>的容器内执行一些命令时，该怎么办呢？比如，我想确认下面的<code>MySQL</code>连接语句是否正确,而且我还一定要进去容器内执行<code>MySQL</code>命令行语句：</p>
-<pre><code>mysql -h 127.0.0.1 -P 3306 -u neojos -p'neojos-pwd' paytest
+<pre tabindex="0"><code>mysql -h 127.0.0.1 -P 3306 -u neojos -p&#39;neojos-pwd&#39; paytest
 </code></pre><p>很简单,只需要执行如下指令。可以发现，已经进到<code>MySQL</code>命令行了。</p>
-<pre><code>docker container exec -it 9008f76b728d mysql -h 127.0.0.1 -P 3306 -u neojos -pneojos-pwd paytest
+<pre tabindex="0"><code>docker container exec -it 9008f76b728d mysql -h 127.0.0.1 -P 3306 -u neojos -pneojos-pwd paytest
 </code></pre><p>上面的命令可能看不太明白，所以我复制一下命令的说明：</p>
-<pre><code>See 'docker container exec --help'.
+<pre tabindex="0"><code>See &#39;docker container exec --help&#39;.
 
 Usage:  docker container exec [OPTIONS] CONTAINER COMMAND [ARG...] [flags]
 </code></pre><h2 id="dockerfile指令"><code>Dockerfile</code>指令</h2>
@@ -216,7 +208,7 @@ Usage:  docker container exec [OPTIONS] CONTAINER COMMAND [ARG...] [flags]
 <p>将从构建<strong>上下文目录</strong>中源路径的文件/目录复制到新的一层的镜像内的目标路径的位置。</p>
 <h3 id="cmd"><code>CMD</code></h3>
 <p>指定默认的容器<strong>主进程</strong>的启动命令。容器就是进程，那么在启动容器的时候，需要指定所运行的程序及参数。</p>
-<pre><code>docker run image command
+<pre tabindex="0"><code>docker run image command
 </code></pre><p>跟在镜像名后的是<code>command</code>，运行时会替换<code>CMD</code>的默认值。</p>
 <h3 id="entrypoint"><code>ENTRYPOINT</code></h3>
 <p>和<code>CMD</code>一样，都是指定容器启动程序和参数。当指定了<code>ENTRYPOINT</code>之后，<code>CMD</code>的含义就发生了改变，不再是直接运行其命令，而是将<code>CMD</code>作为参数传递给<code>ENTRYPOINT</code>指令。</p>
@@ -227,14 +219,14 @@ Usage:  docker container exec [OPTIONS] CONTAINER COMMAND [ARG...] [flags]
 <h2 id="多阶段构建">多阶段构建</h2>
 <p>原理：事先在一个<code>Dockerfile</code>将项目及其依赖编译测试打包好后，再将其拷贝到运行环境中。</p>
 <p>主要使用的指令：</p>
-<pre><code># 方便后续构建阶段引用
+<pre tabindex="0"><code># 方便后续构建阶段引用
 FROM image[:tag | @digest] AS stage
 
 # 指明引用前面哪一个构建阶段的成果
 COPY --from=stage ...
 </code></pre><h3 id="example-1"><code>Example</code></h3>
 <p>下面是精简版示例：</p>
-<pre><code>FROM registry.cn-beijing.aliyuncs.com/golang:1.10 AS build-env
+<pre tabindex="0"><code>FROM registry.cn-beijing.aliyuncs.com/golang:1.10 AS build-env
 ADD . /go/src/baby
 WORKDIR /go/src/baby
 
@@ -256,24 +248,23 @@ COPY docker/entrypoint.sh /data/src/
 
 EXPOSE 3600
 
-ENTRYPOINT [&quot;/data/src/entrypoint.sh&quot;]
-CMD [&quot;bash&quot;, &quot;-c&quot;, &quot;/data/src/${RUN_PROG:=baby} --log_dir=/data/logs/$RUN_PROG -c /data/src/conf.toml&quot;]
+ENTRYPOINT [&#34;/data/src/entrypoint.sh&#34;]
+CMD [&#34;bash&#34;, &#34;-c&#34;, &#34;/data/src/${RUN_PROG:=baby} --log_dir=/data/logs/$RUN_PROG -c /data/src/conf.toml&#34;]
 </code></pre>
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -284,9 +275,8 @@ CMD [&quot;bash&quot;, &quot;-c&quot;, &quot;/data/src/${RUN_PROG:=baby} --log_d
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

@@ -1,30 +1,44 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> Go Module（一） | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2019/19-04-21-go-module%E4%B8%80/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="Go Module（一）" />
-<meta property="og:description" content="这世上太多的人，宁愿吃生活苦，也不愿吃自律的苦。大概是因为生活的苦，躺着就来了，而自律的苦，得自己去找。但只有吃得下自律的苦，才有成功的自由，没有一种成功是走得了捷径的，通向真正成功的唯一道路只有自律。越成功，越自律。越自律，越成功。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2019/19-04-21-go-module%E4%B8%80/" />
-<meta property="article:published_time" content="2019-04-21T00:00:00+00:00" />
-<meta property="article:modified_time" content="2019-04-21T00:00:00+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2019/19-04-21-go-module%E4%B8%80/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="Go Module（一）">
+  <meta property="og:description" content="这世上太多的人，宁愿吃生活苦，也不愿吃自律的苦。大概是因为生活的苦，躺着就来了，而自律的苦，得自己去找。但只有吃得下自律的苦，才有成功的自由，没有一种成功是走得了捷径的，通向真正成功的唯一道路只有自律。越成功，越自律。越自律，越成功。">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2019-04-21T00:00:00+00:00">
+    <meta property="article:modified_time" content="2019-04-21T00:00:00+00:00">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Go Module（一）"/>
-<meta name="twitter:description" content="这世上太多的人，宁愿吃生活苦，也不愿吃自律的苦。大概是因为生活的苦，躺着就来了，而自律的苦，得自己去找。但只有吃得下自律的苦，才有成功的自由，没有一种成功是走得了捷径的，通向真正成功的唯一道路只有自律。越成功，越自律。越自律，越成功。"/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Go Module（一）">
+  <meta name="twitter:description" content="这世上太多的人，宁愿吃生活苦，也不愿吃自律的苦。大概是因为生活的苦，躺着就来了，而自律的苦，得自己去找。但只有吃得下自律的苦，才有成功的自由，没有一种成功是走得了捷径的，通向真正成功的唯一道路只有自律。越成功，越自律。越自律，越成功。">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,46 +49,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#go111module"><code>GO111MODULE</code></a></li>
-    <li><a href="#defining-a-module"><code>Defining a module</code></a></li>
-    <li><a href="#the-gomod-file"><code>The go.mod File</code></a></li>
-    <li><a href="#modules-and-vendoringhttpsgolangorgcmdgohdr-modules_and_vendoring"><a href="https://golang.org/cmd/go/#hdr-Modules_and_vendoring"><code>Modules and vendoring</code></a></a></li>
-    <li><a href="#go-gethttpsgolangorgcmdgohdr-module_aware_go_get"><a href="https://golang.org/cmd/go/#hdr-Module_aware_go_get"><code>Go Get</code></a></a></li>
-  </ul>
-</nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -83,8 +94,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -96,13 +109,9 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">Go Module（一）</h1>文章 113 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <blockquote>
@@ -119,60 +128,59 @@
 <h2 id="defining-a-module"><code>Defining a module</code></h2>
 <p><code>module</code>通过源码根目录下的<code>go.mod</code>文件来<a href="https://golang.org/cmd/go/#hdr-Defining_a_module">定义</a>。根路径下的<code>module</code>是项目依赖包的集合，但会排除子目录的<code>go.mod</code>文件。</p>
 <p>下面是<code>go mod</code>文件模版：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">module</span> <span style="color:#a6e22e">example</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">m</span>
-
-<span style="color:#a6e22e">require</span> (
-	<span style="color:#a6e22e">golang</span>.<span style="color:#a6e22e">org</span><span style="color:#f92672">/</span><span style="color:#a6e22e">x</span><span style="color:#f92672">/</span><span style="color:#a6e22e">text</span> <span style="color:#a6e22e">v0</span><span style="color:#ae81ff">.3.0</span>
-	<span style="color:#a6e22e">gopkg</span>.<span style="color:#a6e22e">in</span><span style="color:#f92672">/</span><span style="color:#a6e22e">yaml</span>.<span style="color:#a6e22e">v2</span> <span style="color:#a6e22e">v2</span><span style="color:#ae81ff">.1.0</span>
-)
-</code></pre></div><p>要开始使用<code>go mod</code>，仅需要在项目下执行<code>go mod init</code>命令创建<code>go.mod</code>文件即可。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">go mod init example.com/m
-</code></pre></div><h2 id="the-gomod-file"><code>The go.mod File</code></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">module</span> <span style="color:#a6e22e">example</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">m</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">require</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">golang</span>.<span style="color:#a6e22e">org</span><span style="color:#f92672">/</span><span style="color:#a6e22e">x</span><span style="color:#f92672">/</span><span style="color:#a6e22e">text</span> <span style="color:#a6e22e">v0</span><span style="color:#ae81ff">.3.0</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">gopkg</span>.<span style="color:#a6e22e">in</span><span style="color:#f92672">/</span><span style="color:#a6e22e">yaml</span>.<span style="color:#a6e22e">v2</span> <span style="color:#a6e22e">v2</span><span style="color:#ae81ff">.1.0</span>
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><p>要开始使用<code>go mod</code>，仅需要在项目下执行<code>go mod init</code>命令创建<code>go.mod</code>文件即可。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>go mod init example.com/m
+</span></span></code></pre></div><h2 id="the-gomod-file"><code>The go.mod File</code></h2>
 <p><code>go.mod</code>文件的每一行都包还一个简单的指令(<code>module</code>、<code>require</code>、<code>exclude</code>、<code>replace</code>)，然后紧跟参数部分。指令除了单行表示之外，还可以是一个块的形式。其中，文件也是以<code>//</code>作为注释符。</p>
 <p>下面是截取我项目下的<code>go.mod</code>文件的部分内容：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">module</span> <span style="color:#a6e22e">gitlab</span>.<span style="color:#a6e22e">luojilab</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">igetserver</span><span style="color:#f92672">/</span><span style="color:#a6e22e">order_delivery</span>
-
-<span style="color:#66d9ef">go</span> <span style="color:#ae81ff">1.12</span>
-
-<span style="color:#a6e22e">require</span> (
-	<span style="color:#a6e22e">github</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">Shopify</span><span style="color:#f92672">/</span><span style="color:#a6e22e">sarama</span> <span style="color:#a6e22e">v1</span><span style="color:#ae81ff">.22.1</span>
-	<span style="color:#a6e22e">github</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">bsm</span><span style="color:#f92672">/</span><span style="color:#a6e22e">sarama</span><span style="color:#f92672">-</span><span style="color:#a6e22e">cluster</span> <span style="color:#a6e22e">v2</span><span style="color:#ae81ff">.1.15</span><span style="color:#f92672">+</span><span style="color:#a6e22e">incompatible</span>
-	<span style="color:#a6e22e">github</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">golang</span><span style="color:#f92672">/</span><span style="color:#a6e22e">glog</span> <span style="color:#a6e22e">v0</span><span style="color:#ae81ff">.0.0</span><span style="color:#f92672">-</span><span style="color:#ae81ff">20160126235308</span><span style="color:#f92672">-</span><span style="color:#ae81ff">23</span><span style="color:#a6e22e">def4e6c14b</span>
-	<span style="color:#a6e22e">github</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">gopherjs</span><span style="color:#f92672">/</span><span style="color:#a6e22e">gopherjs</span> <span style="color:#a6e22e">v0</span><span style="color:#ae81ff">.0.0</span><span style="color:#f92672">-</span><span style="color:#ae81ff">20181103185306</span><span style="color:#f92672">-</span><span style="color:#a6e22e">d547d1d9531e</span> <span style="color:#75715e">// indirect
-</span><span style="color:#75715e"></span>)
-
-<span style="color:#a6e22e">replace</span> (
-	<span style="color:#a6e22e">cloud</span>.<span style="color:#a6e22e">google</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#66d9ef">go</span> =&gt; <span style="color:#a6e22e">github</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">GoogleCloudPlatform</span><span style="color:#f92672">/</span><span style="color:#a6e22e">google</span><span style="color:#f92672">-</span><span style="color:#a6e22e">cloud</span><span style="color:#f92672">-</span><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">v0</span><span style="color:#ae81ff">.36.0</span>
-	<span style="color:#a6e22e">github</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">ugorji</span><span style="color:#f92672">/</span><span style="color:#66d9ef">go</span> =&gt; <span style="color:#a6e22e">github</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">ugorji</span><span style="color:#f92672">/</span><span style="color:#66d9ef">go</span><span style="color:#f92672">/</span><span style="color:#a6e22e">codec</span> <span style="color:#a6e22e">v0</span><span style="color:#ae81ff">.0.0</span><span style="color:#f92672">-</span><span style="color:#ae81ff">20190204201341</span><span style="color:#f92672">-</span><span style="color:#a6e22e">e444a5086c43</span>
-	<span style="color:#a6e22e">golang</span>.<span style="color:#a6e22e">org</span><span style="color:#f92672">/</span><span style="color:#a6e22e">x</span><span style="color:#f92672">/</span><span style="color:#a6e22e">text</span> =&gt; <span style="color:#a6e22e">github</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">golang</span><span style="color:#f92672">/</span><span style="color:#a6e22e">text</span> <span style="color:#a6e22e">v0</span><span style="color:#ae81ff">.3.0</span>
-)
-</code></pre></div><p><code>go.mod</code>中依赖库的版本标签都类似<code>v.0.1.0</code>，其中打头的<code>v</code>是必须的，三个表示版本的数字也是被要求的。当然，并不是严格要求。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">module</span> <span style="color:#a6e22e">gitlab</span>.<span style="color:#a6e22e">luojilab</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">igetserver</span><span style="color:#f92672">/</span><span style="color:#a6e22e">order_delivery</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">go</span> <span style="color:#ae81ff">1.12</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">require</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">github</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">Shopify</span><span style="color:#f92672">/</span><span style="color:#a6e22e">sarama</span> <span style="color:#a6e22e">v1</span><span style="color:#ae81ff">.22.1</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">github</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">bsm</span><span style="color:#f92672">/</span><span style="color:#a6e22e">sarama</span><span style="color:#f92672">-</span><span style="color:#a6e22e">cluster</span> <span style="color:#a6e22e">v2</span><span style="color:#ae81ff">.1.15</span><span style="color:#f92672">+</span><span style="color:#a6e22e">incompatible</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">github</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">golang</span><span style="color:#f92672">/</span><span style="color:#a6e22e">glog</span> <span style="color:#a6e22e">v0</span><span style="color:#ae81ff">.0.0</span><span style="color:#f92672">-</span><span style="color:#ae81ff">20160126235308</span><span style="color:#f92672">-</span><span style="color:#ae81ff">23</span><span style="color:#a6e22e">def4e6c14b</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">github</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">gopherjs</span><span style="color:#f92672">/</span><span style="color:#a6e22e">gopherjs</span> <span style="color:#a6e22e">v0</span><span style="color:#ae81ff">.0.0</span><span style="color:#f92672">-</span><span style="color:#ae81ff">20181103185306</span><span style="color:#f92672">-</span><span style="color:#a6e22e">d547d1d9531e</span> <span style="color:#75715e">// indirect
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">replace</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">cloud</span>.<span style="color:#a6e22e">google</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#66d9ef">go</span> =&gt; <span style="color:#a6e22e">github</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">GoogleCloudPlatform</span><span style="color:#f92672">/</span><span style="color:#a6e22e">google</span><span style="color:#f92672">-</span><span style="color:#a6e22e">cloud</span><span style="color:#f92672">-</span><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">v0</span><span style="color:#ae81ff">.36.0</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">github</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">ugorji</span><span style="color:#f92672">/</span><span style="color:#66d9ef">go</span> =&gt; <span style="color:#a6e22e">github</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">ugorji</span><span style="color:#f92672">/</span><span style="color:#66d9ef">go</span><span style="color:#f92672">/</span><span style="color:#a6e22e">codec</span> <span style="color:#a6e22e">v0</span><span style="color:#ae81ff">.0.0</span><span style="color:#f92672">-</span><span style="color:#ae81ff">20190204201341</span><span style="color:#f92672">-</span><span style="color:#a6e22e">e444a5086c43</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">golang</span>.<span style="color:#a6e22e">org</span><span style="color:#f92672">/</span><span style="color:#a6e22e">x</span><span style="color:#f92672">/</span><span style="color:#a6e22e">text</span> =&gt; <span style="color:#a6e22e">github</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">golang</span><span style="color:#f92672">/</span><span style="color:#a6e22e">text</span> <span style="color:#a6e22e">v0</span><span style="color:#ae81ff">.3.0</span>
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><p><code>go.mod</code>中依赖库的版本标签都类似<code>v.0.1.0</code>，其中打头的<code>v</code>是必须的，三个表示版本的数字也是被要求的。当然，并不是严格要求。</p>
 <p><code>go mod</code>比较推崇这个给版本打<code>release tag</code>的方式，比如我们文件中的<code>github.com/golang/text</code>，引用的版本被项目开发者明确的标记为<code>v0.3.0</code>。而它非常反对我们通过具体的<code>commit hash code</code>来引用一个具体的开发版本，所以，他有一套默认的版本机制，格式就是：<code>v0.0.0-yyyymmddhhmmss-commit</code>，从我们的<code>go.mod</code>文件中也可以看出来。</p>
 <h2 id="modules-and-vendoringhttpsgolangorgcmdgohdr-modules_and_vendoring"><a href="https://golang.org/cmd/go/#hdr-Modules_and_vendoring"><code>Modules and vendoring</code></a></h2>
 <p>当使用<code>module</code>时，<code>Go</code>命令会完全忽略<code>vendor</code>目录。为了跟之前<code>Go</code>的依赖管理相兼容，我们可以使用<code>go mod vendor</code> 创建<code>vendor</code>目录来存储编译代码的依赖包。如果在编译的时候要使用<code>vendor</code>中的依赖包，需要使用<code>go build -mod=vendor</code>命令。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">go mod vendor 
-go build -mod<span style="color:#f92672">=</span>vendor
-</code></pre></div><h2 id="go-gethttpsgolangorgcmdgohdr-module_aware_go_get"><a href="https://golang.org/cmd/go/#hdr-Module_aware_go_get"><code>Go Get</code></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>go mod vendor 
+</span></span><span style="display:flex;"><span>go build -mod<span style="color:#f92672">=</span>vendor
+</span></span></code></pre></div><h2 id="go-gethttpsgolangorgcmdgohdr-module_aware_go_get"><a href="https://golang.org/cmd/go/#hdr-Module_aware_go_get"><code>Go Get</code></a></h2>
 <p>首先，<code>go get</code>解析需要新增哪些依赖。可以通过在包名后添加<code>@version</code>或者<code>@branch</code>等方式来取代命令的默认更新行为。如果后缀指定为<code>@none</code>，则表明该依赖应该被移除。</p>
 <p>其次，<code>go get</code>会下载、编译、安装指定的包。包的安装模式也是被允许的，比如使用<code>go get golang.org/x/perf/cmd/..</code>来更新<code>cmd</code>下的所有子包。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">go get -u &lt;repo url&gt;
-go mod vendor
-</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>go get -u &lt;repo url&gt;
+</span></span><span style="display:flex;"><span>go mod vendor
+</span></span></code></pre></div>
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -183,9 +191,8 @@ go mod vendor
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

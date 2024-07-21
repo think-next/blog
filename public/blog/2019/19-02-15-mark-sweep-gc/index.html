@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> Mark-sweep GC | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2019/19-02-15-mark-sweep-gc/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="Mark-sweep GC" />
-<meta property="og:description" content="把事做成的才是赢家，在口头上压倒对手，真的没有那么重要！" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2019/19-02-15-mark-sweep-gc/" />
-<meta property="article:published_time" content="2019-02-15T00:00:00+00:00" />
-<meta property="article:modified_time" content="2019-02-15T00:00:00+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2019/19-02-15-mark-sweep-gc/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="Mark-sweep GC">
+  <meta property="og:description" content="把事做成的才是赢家，在口头上压倒对手，真的没有那么重要！">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2019-02-15T00:00:00+00:00">
+    <meta property="article:modified_time" content="2019-02-15T00:00:00+00:00">
+    <meta property="article:tag" content="Translate">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Mark-sweep GC"/>
-<meta name="twitter:description" content="把事做成的才是赢家，在口头上压倒对手，真的没有那么重要！"/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Mark-sweep GC">
+  <meta name="twitter:description" content="把事做成的才是赢家，在口头上压倒对手，真的没有那么重要！">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,47 +50,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#whirlwind-introduce">Whirlwind introduce</a></li>
-    <li><a href="#the-algorithm">The algorithm</a></li>
-    <li><a href="#root-enumeration"><code>Root Enumeration</code></a></li>
-    <li><a href="#mark"><code>Mark</code></a></li>
-    <li><a href="#sweep"><code>sweep</code></a></li>
-    <li><a href="#总结">总结</a></li>
-  </ul>
-</nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -84,8 +95,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -97,13 +110,9 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">Mark-sweep GC</h1>文章 139 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <blockquote>
@@ -115,45 +124,45 @@
 <p>当标记结束后，<code>GC</code>进入清洗阶段，任何在内存中没有被这次垃圾回收标记的对象都会被系统回收。</p>
 <h2 id="the-algorithm">The algorithm</h2>
 <p>程序主要包含3个阶段：列举所有<code>Root</code>对象、标记起始于<code>Root</code>的对象引用、清除无效的对象。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">GC</span>()
-{
-    HaltAllProcessing();
-    ObjectCollection roots <span style="color:#f92672">=</span> GetRoots();
-    <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> roots.Count(); <span style="color:#f92672">++</span>i)
-        Mark(roots[i]);
-    Sweep();
-}
-</code></pre></div><h2 id="root-enumeration"><code>Root Enumeration</code></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">GC</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">HaltAllProcessing</span>();
+</span></span><span style="display:flex;"><span>    ObjectCollection roots <span style="color:#f92672">=</span> <span style="color:#a6e22e">GetRoots</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> roots.<span style="color:#a6e22e">Count</span>(); <span style="color:#f92672">++</span>i)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Mark</span>(roots[i]);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Sweep</span>();
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="root-enumeration"><code>Root Enumeration</code></h2>
 <p><code>Root Enumeration</code>会列举系统所有对象引用。运行系统需要为<code>GC</code>提供一种获取<code>Root</code>对象列表的机制。比如，在<code>.NET</code>中<code>JIT</code>维护了当前活跃的<code>root</code>对象，提供了获取根对象列表的<code>API</code>。</p>
 <p>一个函数接受一个指针类型的参数，当方法返回时，<code>jitter</code>会识别出该参数不会再被使用，而将其从<code>root</code>中移除。</p>
 <h2 id="mark"><code>Mark</code></h2>
 <p>每个对象在创建时创建额外的空间，用于去<code>mark</code>这个对象，这个过程也是递归的</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">Mark</span>(Object<span style="color:#f92672">*</span> pObj)
-{
-    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>Marked(pObj)) <span style="color:#75715e">// Marked returns the marked flag from object header
-</span><span style="color:#75715e"></span>    {
-        MarkBit(pObj); <span style="color:#75715e">// Marks the flag in obj header
-</span><span style="color:#75715e"></span>
-        <span style="color:#75715e">// Get list of references that the current object has
-</span><span style="color:#75715e"></span>        <span style="color:#75715e">// and recursively mark them as well
-</span><span style="color:#75715e"></span>
-
-        ObjectCollection children <span style="color:#f92672">=</span> pObj<span style="color:#f92672">-&gt;</span>GetChildren();
-        <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> children.Count(); <span style="color:#f92672">++</span>i)
-        {
-
-            Mark(children[i]); <span style="color:#75715e">// recursively call mark
-</span><span style="color:#75715e"></span>        }	
-    }
-}
-</code></pre></div><p>递归的结束条件是：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">Mark</span>(Object<span style="color:#f92672">*</span> pObj)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">Marked</span>(pObj)) <span style="color:#75715e">// Marked returns the marked flag from object header
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">MarkBit</span>(pObj); <span style="color:#75715e">// Marks the flag in obj header
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Get list of references that the current object has
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">// and recursively mark them as well
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        ObjectCollection children <span style="color:#f92672">=</span> pObj<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">GetChildren</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> children.<span style="color:#a6e22e">Count</span>(); <span style="color:#f92672">++</span>i)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">Mark</span>(children[i]); <span style="color:#75715e">// recursively call mark
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        }	
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>递归的结束条件是：</p>
 <ol>
 <li>任何一个对象都不再有孩子节点</li>
 <li>如果一个对象已经标记过了，要避免出现循环引用的情况</li>
 </ol>
 <h2 id="sweep"><code>sweep</code></h2>
 <p><code>sweep</code>会遍历整个内存空间，释放没有被标记的内存。同时，它会清除标记的<code>bit</code>位，以便下次<code>GC</code>的正常标记。</p>
-<pre><code>void Sweep()
+<pre tabindex="0"><code>void Sweep()
 {
     Object *pHeap = pHeapStart;
     while(pHeap &lt; pHeapEnd)
@@ -175,20 +184,19 @@
 </ol>
 
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -199,9 +207,8 @@
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

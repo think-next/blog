@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> MySQL事务（2） | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2019/19-02-28-mysql%E4%BA%8B%E5%8A%A12/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="MySQL事务（2）" />
-<meta property="og:description" content="花繁柳密能拨开方见手段，风狂雨骤时可立定才是脚跟。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2019/19-02-28-mysql%E4%BA%8B%E5%8A%A12/" />
-<meta property="article:published_time" content="2019-02-28T00:00:00+00:00" />
-<meta property="article:modified_time" content="2019-02-28T00:00:00+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2019/19-02-28-mysql%E4%BA%8B%E5%8A%A12/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="MySQL事务（2）">
+  <meta property="og:description" content="花繁柳密能拨开方见手段，风狂雨骤时可立定才是脚跟。">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2019-02-28T00:00:00+00:00">
+    <meta property="article:modified_time" content="2019-02-28T00:00:00+00:00">
+    <meta property="article:tag" content="Transaction">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="MySQL事务（2）"/>
-<meta name="twitter:description" content="花繁柳密能拨开方见手段，风狂雨骤时可立定才是脚跟。"/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="MySQL事务（2）">
+  <meta name="twitter:description" content="花繁柳密能拨开方见手段，风狂雨骤时可立定才是脚跟。">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,46 +50,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#引言">引言</a></li>
-    <li><a href="#问题">问题</a></li>
-    <li><a href="#processlist"><code>PROCESSLIST</code></a></li>
-    <li><a href="#show-engine-innodb-status"><code>SHOW ENGINE INNODB STATUS</code></a></li>
-    <li><a href="#innodb_lock_wait_timeouthttpsdevmysqlcomdocrefman57eninnodb-parametershtmlsysvar_innodb_lock_wait_timeout"><a href="https://dev.mysql.com/doc/refman/5.7/en/innodb-parameters.html#sysvar_innodb_lock_wait_timeout"><code>innodb_lock_wait_timeout</code></a></a></li>
-  </ul>
-</nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -83,8 +95,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -96,13 +110,9 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">MySQL事务（2）</h1>文章 279 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <blockquote>
@@ -110,43 +120,43 @@
 </blockquote>
 <h2 id="引言">引言</h2>
 <p>在<code>MySQL</code>处理事务的过程中，遇到如下报错：</p>
-<pre><code>Error 1205: Lock wait timeout exceeded; try restarting transaction
+<pre tabindex="0"><code>Error 1205: Lock wait timeout exceeded; try restarting transaction
 </code></pre><p>结合日志信息，很快的定位了问题代码并做了修复，但这个报错却一直存在。观念里，只要等待一段时间，这个错误就应该消失啊，是哪里出问题了？</p>
 <h2 id="问题">问题</h2>
 <p>代码在执行<code>Begin</code>之后，处理到某个逻辑直接<code>return</code>处理，没有关闭事务导致的。因为<code>SQL</code>操作的记录一直占着锁得不到释放，所以后续对该行记录进行写操作时，就会报这个错误。示例代码如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">notify</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Sign</span>) <span style="color:#a6e22e">HandleSign</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>) <span style="color:#66d9ef">error</span> {
-
-	<span style="color:#75715e">// 事务操作，开启事务
-</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ses</span>.<span style="color:#a6e22e">Begin</span>(); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
-	}
-
-	<span style="color:#75715e">// 这里需要特别注意，正常情况必须加上
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// defer ses.Close()
-</span><span style="color:#75715e"></span>
-	<span style="color:#75715e">// 更新Log表记录
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ses</span>.<span style="color:#a6e22e">Where</span>(<span style="color:#e6db74">&#34;id = ?&#34;</span>, <span style="color:#a6e22e">contractLog</span>.<span style="color:#a6e22e">Id</span>).<span style="color:#a6e22e">Cols</span>(<span style="color:#e6db74">&#34;status&#34;</span>).<span style="color:#a6e22e">Update</span>(<span style="color:#a6e22e">contractLog</span>)
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#a6e22e">ses</span>.<span style="color:#a6e22e">Rollback</span>()
-		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
-	}
-
-	<span style="color:#75715e">//这个地方直接return导致的，这个事务没有关闭，导致上面的锁一直没有释放
-</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
-
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ses</span>.<span style="color:#a6e22e">Commit</span>(); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
-	}
-	<span style="color:#a6e22e">ses</span>.<span style="color:#a6e22e">Close</span>()
-}
-</code></pre></div><p>问题的关键就在于<code>Begin</code>后，没有执行<code>Rollback</code>或<code>Commit</code>，导致事务没有被关闭。这里特别强调<code>defer close()</code>的作用，下面是文档对<code>Close</code>的注释。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">notify</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Sign</span>) <span style="color:#a6e22e">HandleSign</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>) <span style="color:#66d9ef">error</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// 事务操作，开启事务
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ses</span>.<span style="color:#a6e22e">Begin</span>(); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// 这里需要特别注意，正常情况必须加上
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// defer ses.Close()
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// 更新Log表记录
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ses</span>.<span style="color:#a6e22e">Where</span>(<span style="color:#e6db74">&#34;id = ?&#34;</span>, <span style="color:#a6e22e">contractLog</span>.<span style="color:#a6e22e">Id</span>).<span style="color:#a6e22e">Cols</span>(<span style="color:#e6db74">&#34;status&#34;</span>).<span style="color:#a6e22e">Update</span>(<span style="color:#a6e22e">contractLog</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">ses</span>.<span style="color:#a6e22e">Rollback</span>()
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">//这个地方直接return导致的，这个事务没有关闭，导致上面的锁一直没有释放
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ses</span>.<span style="color:#a6e22e">Commit</span>(); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">ses</span>.<span style="color:#a6e22e">Close</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>问题的关键就在于<code>Begin</code>后，没有执行<code>Rollback</code>或<code>Commit</code>，导致事务没有被关闭。这里特别强调<code>defer close()</code>的作用，下面是文档对<code>Close</code>的注释。</p>
 <blockquote>
 <p><code>Close release the connection from pool</code></p>
 <p><code>When Close be called, if session is a transaction and do not call Commit or Rollback, then call Rollback</code></p>
 </blockquote>
 <h2 id="processlist"><code>PROCESSLIST</code></h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">SHOW</span> [<span style="color:#66d9ef">FULL</span>] PROCESSLIST
-</code></pre></div><p>使用如上命令，查看是否存在一个线程执行占用了很长的时间，这体现在它<code>Sleep</code>的时间上。果不其然，确实有那么一个，但我忍住没有<code>KILL</code>它。因为我无法确定就是这个线程导致的。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SHOW</span> [<span style="color:#66d9ef">FULL</span>] PROCESSLIST
+</span></span></code></pre></div><p>使用如上命令，查看是否存在一个线程执行占用了很长的时间，这体现在它<code>Sleep</code>的时间上。果不其然，确实有那么一个，但我忍住没有<code>KILL</code>它。因为我无法确定就是这个线程导致的。</p>
 <blockquote>
 <p><a href="https://dev.mysql.com/doc/refman/8.0/en/show-processlist.html"><code>SHOW PROCESSLIST</code></a> shows which threads are running. If you have the <a href="https://dev.mysql.com/doc/refman/8.0/en/privileges-provided.html#priv_process"><code>PROCESS</code></a> privilege, you can see all threads. Otherwise, you can see only your own threads (that is, threads associated with the MySQL account that you are using). If you do not use the <code>FULL</code> keyword, only the first 100 characters of each statement are shown in the <code>Info</code> field.</p>
 </blockquote>
@@ -157,8 +167,8 @@
 <p>一上来就引用<a href="https://dev.mysql.com/doc/refman/8.0/en/show-engine.html"><code>SHOW ENGINE Syntax</code></a>也是因为没有接触过这个命令，网上说：当你更新表中的某条记录时，如果一些别的线程对这条记录上了锁，并且执行占用时间较长的话，就会导致你对该条记录的操作超时。</p>
 <p>不过非常遗憾，我查看了它输出的结果，并没有显示出这条问题<code>SQL</code>。</p>
 <h2 id="innodb_lock_wait_timeouthttpsdevmysqlcomdocrefman57eninnodb-parametershtmlsysvar_innodb_lock_wait_timeout"><a href="https://dev.mysql.com/doc/refman/5.7/en/innodb-parameters.html#sysvar_innodb_lock_wait_timeout"><code>innodb_lock_wait_timeout</code></a></h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">show</span> variables <span style="color:#66d9ef">like</span> <span style="color:#e6db74">&#39;innodb_lock_wait_timeout&#39;</span>;
-</code></pre></div><p>当事务没有被释放时，后续事务执行失败的等待时间就是由这个设置决定的。当事务访问这条记录超过这个时间还无法获得锁，就会报引言中的错误。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">show</span> variables <span style="color:#66d9ef">like</span> <span style="color:#e6db74">&#39;innodb_lock_wait_timeout&#39;</span>;
+</span></span></code></pre></div><p>当事务没有被释放时，后续事务执行失败的等待时间就是由这个设置决定的。当事务访问这条记录超过这个时间还无法获得锁，就会报引言中的错误。</p>
 <blockquote>
 <p>The length of time in seconds an <code>InnoDB</code> <a href="https://dev.mysql.com/doc/refman/5.7/en/glossary.html#glos_transaction">transaction</a> waits for a <a href="https://dev.mysql.com/doc/refman/5.7/en/glossary.html#glos_row_lock">row lock</a> before giving up. The default value is 50 seconds. A transaction that tries to access a row that is locked by another <code>InnoDB</code> transaction waits at most this many seconds for write access to the row before issuing the following error</p>
 </blockquote>
@@ -168,20 +178,19 @@
 </ol>
 
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -192,9 +201,8 @@
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

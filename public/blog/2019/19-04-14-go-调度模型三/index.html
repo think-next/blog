@@ -1,30 +1,44 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> Go 调度模型（三） | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2019/19-04-14-go-%E8%B0%83%E5%BA%A6%E6%A8%A1%E5%9E%8B%E4%B8%89/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="Go 调度模型（三）" />
-<meta property="og:description" content="别抱怨，也别自怜，所有的现状都是你自己选择的" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2019/19-04-14-go-%E8%B0%83%E5%BA%A6%E6%A8%A1%E5%9E%8B%E4%B8%89/" />
-<meta property="article:published_time" content="2019-04-14T00:00:00+00:00" />
-<meta property="article:modified_time" content="2019-04-14T00:00:00+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2019/19-04-14-go-%E8%B0%83%E5%BA%A6%E6%A8%A1%E5%9E%8B%E4%B8%89/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="Go 调度模型（三）">
+  <meta property="og:description" content="别抱怨，也别自怜，所有的现状都是你自己选择的">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2019-04-14T00:00:00+00:00">
+    <meta property="article:modified_time" content="2019-04-14T00:00:00+00:00">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Go 调度模型（三）"/>
-<meta name="twitter:description" content="别抱怨，也别自怜，所有的现状都是你自己选择的"/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Go 调度模型（三）">
+  <meta name="twitter:description" content="别抱怨，也别自怜，所有的现状都是你自己选择的">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,47 +49,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#scheduler-trace">Scheduler Trace</a></li>
-    <li><a href="#memory-allocator-trace">Memory Allocator Trace</a></li>
-    <li><a href="#spinning-thread">Spinning thread</a></li>
-    <li><a href="#执行模型">执行模型</a></li>
-    <li><a href="#阻塞模型">阻塞模型</a></li>
-    <li><a href="#偷g模型">偷G模型</a></li>
-  </ul>
-</nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -84,8 +94,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -97,13 +109,9 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">Go 调度模型（三）</h1>文章 141 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <blockquote>
@@ -119,10 +127,10 @@
 <p>scheddetail：设置 schedtrace=X 和 scheddetail=1 可以使运行时在每 X 毫秒发出一次详细的多行信息，信息内容主要包括调度程序、处理器、OS 线程 和 Goroutine 的状态。</p>
 </li>
 </ul>
-<pre><code>GODEBUG=schedtrace=1000 go run ./main.go
+<pre tabindex="0"><code>GODEBUG=schedtrace=1000 go run ./main.go
 GODEBUG=schedtrace=1000,scheddetail=1 go run ./main.go
 </code></pre><p>以下面的输出为例：gomaxprocs是当前的GOMAXPROC值，runqueue为全局可运行队列的长度。</p>
-<pre><code>➜  one-case go version
+<pre tabindex="0"><code>➜  one-case go version
 go version go1.13.4 darwin/amd64
 
 ➜  one-case GOMAXPROCS=1 GODEBUG=schedtrace=1000 go run ./main.go
@@ -136,7 +144,7 @@ SCHED 1009ms: gomaxprocs=1 idleprocs=1 threads=9 spinningthreads=0 idlethreads=2
 SCHED 1008ms: gomaxprocs=1 idleprocs=0 threads=3 spinningthreads=0 idlethreads=1 runqueue=0 [0]
 </code></pre><h2 id="memory-allocator-trace">Memory Allocator Trace</h2>
 <p>GODEBUG 中指定输出申请内存的 trace 信息:</p>
-<pre><code>GODEBUG=allocfreetrace=1,scheddetail=1 go run ./main
+<pre tabindex="0"><code>GODEBUG=allocfreetrace=1,scheddetail=1 go run ./main
 </code></pre><h2 id="spinning-thread">Spinning thread</h2>
 <p>调度器总是试图让M尽可能多的执行G，来达到充分利用CPU的目的。在抢占式调度中，OS线程之间频繁的传递G，会增加系统延迟。此外，线程还会阻塞在系统调用上，这也会增加额外的开销。为了减少线程间传递G的影响，Go调度实现了<code>Spinning threads</code>。一个线程是<code>Sponning threads</code>:</p>
 <ul>
@@ -163,20 +171,19 @@ SCHED 1008ms: gomaxprocs=1 idleprocs=0 threads=3 spinningthreads=0 idlethreads=1
 </ol>
 
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -187,9 +194,8 @@ SCHED 1008ms: gomaxprocs=1 idleprocs=0 threads=3 spinningthreads=0 idlethreads=1
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

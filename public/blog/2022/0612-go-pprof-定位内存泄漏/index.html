@@ -1,30 +1,44 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> Go Pprof 定位内存泄漏 | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2022/0612-go-pprof-%E5%AE%9A%E4%BD%8D%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="Go Pprof 定位内存泄漏" />
-<meta property="og:description" content="之前写过一篇 Go使用Pprof定位问题 , 内容主要是纠结 flat 和 cum 所表示的含义。重新去看了一遍，感觉还是挺特别的。虽然解释了名称的含义，但实际运用上却没有说出什么什么指导价值。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2022/0612-go-pprof-%E5%AE%9A%E4%BD%8D%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" />
-<meta property="article:published_time" content="2022-06-12T00:00:00+00:00" />
-<meta property="article:modified_time" content="2022-06-12T00:00:00+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2022/0612-go-pprof-%E5%AE%9A%E4%BD%8D%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="Go Pprof 定位内存泄漏">
+  <meta property="og:description" content="之前写过一篇 Go使用Pprof定位问题 , 内容主要是纠结 flat 和 cum 所表示的含义。重新去看了一遍，感觉还是挺特别的。虽然解释了名称的含义，但实际运用上却没有说出什么什么指导价值。">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2022-06-12T00:00:00+00:00">
+    <meta property="article:modified_time" content="2022-06-12T00:00:00+00:00">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Go Pprof 定位内存泄漏"/>
-<meta name="twitter:description" content="之前写过一篇 Go使用Pprof定位问题 , 内容主要是纠结 flat 和 cum 所表示的含义。重新去看了一遍，感觉还是挺特别的。虽然解释了名称的含义，但实际运用上却没有说出什么什么指导价值。"/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Go Pprof 定位内存泄漏">
+  <meta name="twitter:description" content="之前写过一篇 Go使用Pprof定位问题 , 内容主要是纠结 flat 和 cum 所表示的含义。重新去看了一遍，感觉还是挺特别的。虽然解释了名称的含义，但实际运用上却没有说出什么什么指导价值。">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,38 +49,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents"></nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -75,8 +94,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -88,13 +109,9 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">Go Pprof 定位内存泄漏</h1>文章 79 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <p>之前写过一篇 <a href="https://neojos.com/blog/2020/go%E4%BD%BF%E7%94%A8-pprof-%E5%AE%9A%E4%BD%8D%E9%97%AE%E9%A2%98/"><code>Go使用Pprof定位问题</code></a> , 内容主要是纠结 flat 和 cum 所表示的含义。重新去看了一遍，感觉还是挺特别的。虽然解释了名称的含义，但实际运用上却没有说出什么什么指导价值。</p>
@@ -107,52 +124,50 @@
 </ol>
 <p>为什么是 flat 指标呢？flat 表示的是当前仍在调用没有被释放的空间，而cum表示累计申请的空间</p>
 <p>为了加深大家的理解，我们主动去构造一个内存申请的用例（为了让代码看起来好看一些，我主动省略了error的处理逻辑，大家实验的时候，建议加上）。我们现在填充两种情况的代码，来主动观察 flat 和 cum 额变化情况。我们声明了一个全局变量 cacheBuf，来确保内存是在一直增长的。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
-
-<span style="color:#f92672">import</span> (
-	<span style="color:#e6db74">&#34;os&#34;</span>
-	<span style="color:#e6db74">&#34;runtime/pprof&#34;</span>
-	<span style="color:#e6db74">&#34;strings&#34;</span>
-)
-
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-	<span style="color:#a6e22e">ff</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Create</span>(<span style="color:#e6db74">&#34;mem.pprof&#34;</span>)
-	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">ff</span>.<span style="color:#a6e22e">Close</span>()
-
-	<span style="color:#75715e">// 填充代码 
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">ICaller</span>()
-
-	<span style="color:#a6e22e">_</span> = <span style="color:#a6e22e">pprof</span>.<span style="color:#a6e22e">WriteHeapProfile</span>(<span style="color:#a6e22e">ff</span>)
-}
-
-<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">cacheBuf</span> []<span style="color:#66d9ef">string</span>
-
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">ICaller</span>() {
-	<span style="color:#a6e22e">cacheBuf</span> = append(<span style="color:#a6e22e">cacheBuf</span>, <span style="color:#a6e22e">strings</span>.<span style="color:#a6e22e">Repeat</span>(<span style="color:#e6db74">&#34;caller&#34;</span>, <span style="color:#ae81ff">100</span>))
-	<span style="color:#a6e22e">ISubCaller</span>()
-}
-
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">ISubCaller</span>() {
-
-}
-
-</code></pre></div><p>我们要对比的第二种情况，就是将 append 那一行的代码放到 ISubCaller方法中。通过对比两次的Top inuse_space情况，就可以直观了解到 flat 和 cum 的差别。建议大家主动试试，我就不把结果展示出来了。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;os&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;runtime/pprof&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;strings&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">ff</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Create</span>(<span style="color:#e6db74">&#34;mem.pprof&#34;</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">ff</span>.<span style="color:#a6e22e">Close</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// 填充代码 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">ICaller</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">_</span> = <span style="color:#a6e22e">pprof</span>.<span style="color:#a6e22e">WriteHeapProfile</span>(<span style="color:#a6e22e">ff</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">cacheBuf</span> []<span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">ICaller</span>() {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">cacheBuf</span> = append(<span style="color:#a6e22e">cacheBuf</span>, <span style="color:#a6e22e">strings</span>.<span style="color:#a6e22e">Repeat</span>(<span style="color:#e6db74">&#34;caller&#34;</span>, <span style="color:#ae81ff">100</span>))
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">ISubCaller</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">ISubCaller</span>() {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>我们要对比的第二种情况，就是将 append 那一行的代码放到 ISubCaller方法中。通过对比两次的Top inuse_space情况，就可以直观了解到 flat 和 cum 的差别。建议大家主动试试，我就不把结果展示出来了。</p>
 
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -163,9 +178,8 @@
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

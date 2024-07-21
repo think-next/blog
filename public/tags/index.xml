@@ -2,221 +2,172 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on 渐行渐远</title>
-    <link>https://neojos.com/tags/</link>
+    <link>http://localhost:1313/tags/</link>
     <description>Recent content in Tags on 渐行渐远</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 02 Jan 2022 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://neojos.com/tags/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <atom:link href="http://localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>golang</title>
-      <link>https://neojos.com/tags/golang/</link>
+      <title>Golang</title>
+      <link>http://localhost:1313/tags/golang/</link>
       <pubDate>Sun, 02 Jan 2022 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/golang/</guid>
+      <guid>http://localhost:1313/tags/golang/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>translate</title>
-      <link>https://neojos.com/tags/translate/</link>
+      <title>Translate</title>
+      <link>http://localhost:1313/tags/translate/</link>
       <pubDate>Sun, 02 Jan 2022 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/translate/</guid>
+      <guid>http://localhost:1313/tags/translate/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>net</title>
-      <link>https://neojos.com/tags/net/</link>
+      <title>Net</title>
+      <link>http://localhost:1313/tags/net/</link>
       <pubDate>Sun, 08 Dec 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/net/</guid>
+      <guid>http://localhost:1313/tags/net/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>mongo</title>
-      <link>https://neojos.com/tags/mongo/</link>
+      <title>Mongo</title>
+      <link>http://localhost:1313/tags/mongo/</link>
       <pubDate>Wed, 13 Nov 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/mongo/</guid>
+      <guid>http://localhost:1313/tags/mongo/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>统计</title>
-      <link>https://neojos.com/tags/%E7%BB%9F%E8%AE%A1/</link>
+      <link>http://localhost:1313/tags/%E7%BB%9F%E8%AE%A1/</link>
       <pubDate>Mon, 14 Oct 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/%E7%BB%9F%E8%AE%A1/</guid>
+      <guid>http://localhost:1313/tags/%E7%BB%9F%E8%AE%A1/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>linux</title>
-      <link>https://neojos.com/tags/linux/</link>
+      <title>Linux</title>
+      <link>http://localhost:1313/tags/linux/</link>
       <pubDate>Fri, 20 Sep 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/linux/</guid>
+      <guid>http://localhost:1313/tags/linux/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>MySQL</title>
-      <link>https://neojos.com/tags/mysql/</link>
+      <link>http://localhost:1313/tags/mysql/</link>
       <pubDate>Wed, 17 Jul 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/mysql/</guid>
+      <guid>http://localhost:1313/tags/mysql/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>docker</title>
-      <link>https://neojos.com/tags/docker/</link>
+      <title>Docker</title>
+      <link>http://localhost:1313/tags/docker/</link>
       <pubDate>Sat, 11 May 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/docker/</guid>
+      <guid>http://localhost:1313/tags/docker/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>transaction</title>
-      <link>https://neojos.com/tags/transaction/</link>
+      <title>Transaction</title>
+      <link>http://localhost:1313/tags/transaction/</link>
       <pubDate>Thu, 28 Feb 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/transaction/</guid>
+      <guid>http://localhost:1313/tags/transaction/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>Think</title>
-      <link>https://neojos.com/tags/think/</link>
+      <link>http://localhost:1313/tags/think/</link>
       <pubDate>Fri, 22 Feb 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/think/</guid>
+      <guid>http://localhost:1313/tags/think/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>git</title>
-      <link>https://neojos.com/tags/git/</link>
-      <pubDate>Tue, 07 Aug 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/git/</guid>
+      <title>Tcp/Ip</title>
+      <link>http://localhost:1313/tags/tcp/ip/</link>
+      <pubDate>Tue, 20 Nov 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/tcp/ip/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>tools</title>
-      <link>https://neojos.com/tags/tools/</link>
+      <title>Git</title>
+      <link>http://localhost:1313/tags/git/</link>
       <pubDate>Tue, 07 Aug 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/tools/</guid>
+      <guid>http://localhost:1313/tags/git/</guid>
       <description></description>
     </item>
-    
+    <item>
+      <title>Tools</title>
+      <link>http://localhost:1313/tags/tools/</link>
+      <pubDate>Tue, 07 Aug 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/tools/</guid>
+      <description></description>
+    </item>
     <item>
       <title>MQ</title>
-      <link>https://neojos.com/tags/mq/</link>
+      <link>http://localhost:1313/tags/mq/</link>
       <pubDate>Sat, 14 Jul 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/mq/</guid>
+      <guid>http://localhost:1313/tags/mq/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>php</title>
-      <link>https://neojos.com/tags/php/</link>
+      <title>Php</title>
+      <link>http://localhost:1313/tags/php/</link>
       <pubDate>Thu, 05 Apr 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/php/</guid>
+      <guid>http://localhost:1313/tags/php/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>npm</title>
-      <link>https://neojos.com/tags/npm/</link>
+      <title>Npm</title>
+      <link>http://localhost:1313/tags/npm/</link>
       <pubDate>Fri, 30 Mar 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/npm/</guid>
+      <guid>http://localhost:1313/tags/npm/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>http</title>
-      <link>https://neojos.com/tags/http/</link>
+      <title>Http</title>
+      <link>http://localhost:1313/tags/http/</link>
       <pubDate>Sat, 17 Mar 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/http/</guid>
+      <guid>http://localhost:1313/tags/http/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>nginx</title>
-      <link>https://neojos.com/tags/nginx/</link>
+      <title>Nginx</title>
+      <link>http://localhost:1313/tags/nginx/</link>
       <pubDate>Sat, 10 Mar 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/nginx/</guid>
+      <guid>http://localhost:1313/tags/nginx/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>pay</title>
-      <link>https://neojos.com/tags/pay/</link>
+      <title>Pay</title>
+      <link>http://localhost:1313/tags/pay/</link>
       <pubDate>Wed, 28 Feb 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/pay/</guid>
+      <guid>http://localhost:1313/tags/pay/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>protocol</title>
-      <link>https://neojos.com/tags/protocol/</link>
+      <title>Protocol</title>
+      <link>http://localhost:1313/tags/protocol/</link>
       <pubDate>Sun, 25 Feb 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/protocol/</guid>
+      <guid>http://localhost:1313/tags/protocol/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>protobufs</title>
-      <link>https://neojos.com/tags/protobufs/</link>
+      <title>Protobufs</title>
+      <link>http://localhost:1313/tags/protobufs/</link>
       <pubDate>Tue, 30 Jan 2018 20:10:33 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/protobufs/</guid>
+      <guid>http://localhost:1313/tags/protobufs/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>js</title>
-      <link>https://neojos.com/tags/js/</link>
+      <title>Js</title>
+      <link>http://localhost:1313/tags/js/</link>
       <pubDate>Mon, 29 Jan 2018 20:10:33 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/js/</guid>
+      <guid>http://localhost:1313/tags/js/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>cache</title>
-      <link>https://neojos.com/tags/cache/</link>
+      <title>Cache</title>
+      <link>http://localhost:1313/tags/cache/</link>
       <pubDate>Sun, 21 Jan 2018 15:48:33 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/cache/</guid>
+      <guid>http://localhost:1313/tags/cache/</guid>
       <description></description>
     </item>
-    
-    <item>
-      <title>tcp/ip</title>
-      <link>https://neojos.com/tags/tcp/ip/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/tags/tcp/ip/</guid>
-      <description></description>
-    </item>
-    
   </channel>
 </rss>

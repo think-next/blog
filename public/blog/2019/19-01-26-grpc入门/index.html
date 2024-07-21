@@ -1,30 +1,46 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> gRPC入门 | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2019/19-01-26-grpc%E5%85%A5%E9%97%A8/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="gRPC入门" />
-<meta property="og:description" content="时间飞逝 如一名携带信息的邮差 但那只不过是我们的比喻 人物是杜撰的 匆忙是假装的 携带的也不是人的讯息" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2019/19-01-26-grpc%E5%85%A5%E9%97%A8/" />
-<meta property="article:published_time" content="2019-01-26T00:00:00+00:00" />
-<meta property="article:modified_time" content="2019-01-26T00:00:00+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2019/19-01-26-grpc%E5%85%A5%E9%97%A8/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="gRPC入门">
+  <meta property="og:description" content="时间飞逝 如一名携带信息的邮差 但那只不过是我们的比喻 人物是杜撰的 匆忙是假装的 携带的也不是人的讯息">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2019-01-26T00:00:00+00:00">
+    <meta property="article:modified_time" content="2019-01-26T00:00:00+00:00">
+    <meta property="article:tag" content="Translate">
+    <meta property="article:tag" content="Golang">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="gRPC入门"/>
-<meta name="twitter:description" content="时间飞逝 如一名携带信息的邮差 但那只不过是我们的比喻 人物是杜撰的 匆忙是假装的 携带的也不是人的讯息"/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="gRPC入门">
+  <meta name="twitter:description" content="时间飞逝 如一名携带信息的邮差 但那只不过是我们的比喻 人物是杜撰的 匆忙是假装的 携带的也不是人的讯息">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,50 +51,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#为什么使用grpc">为什么使用<code>grpc</code></a></li>
-    <li><a href="#http2"><code>http/2</code></a></li>
-    <li><a href="#准备工作"><code>准备工作</code></a></li>
-    <li><a href="#protocol-buffer"><code>protocol buffer</code></a></li>
-    <li><a href="#grpc接口"><code>grpc</code>接口</a></li>
-    <li><a href="#service处理流程"><code>service</code>处理流程</a></li>
-    <li><a href="#创建订单"><code>创建订单</code></a></li>
-    <li><a href="#运行系统"><code>运行系统</code></a></li>
-    <li><a href="#总结">总结</a></li>
-  </ul>
-</nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -87,8 +96,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -100,13 +111,9 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">gRPC入门</h1>文章 638 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <blockquote>
@@ -138,12 +145,12 @@
 <li>安装<code>protoc-gen-go</code>，用于自动生成源码</li>
 </ol>
 <p>生成源码的命令如下，其中，<code>--go_out</code>用于指定生成源码的保存路径；而<code>-I</code>是<code>-IPATH</code>的简写，用于指定查找<code>import</code>文件的路径，可以指定多个；最后的<code>order</code>是编译的<code>grpc</code>文件的存储路径。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">protoc -I proto/ proto/order.proto --go_out<span style="color:#f92672">=</span>plugins<span style="color:#f92672">=</span>grpc:order
-</code></pre></div><h2 id="protocol-buffer"><code>protocol buffer</code></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>protoc -I proto/ proto/order.proto --go_out<span style="color:#f92672">=</span>plugins<span style="color:#f92672">=</span>grpc:order
+</span></span></code></pre></div><h2 id="protocol-buffer"><code>protocol buffer</code></h2>
 <p><code>google</code>开发的高效、跨平台的数据传输格式。当然，本质还是数据传输结构。但<code>google</code>赋予了它丰富的功能，比如<code>import</code>、<code>package</code>、消息嵌套等等。<code>import</code>用于引入别的<code>.proto</code>文件；<code>package</code>用于定义命名空间，转换到<code>go</code>源码中就是包名；<code>repeated</code>用于定义重复的数据；<code>enum</code>用于定义枚举类型等。</p>
 <p><code>.proto</code>内字段的基本定义：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-protobuf" data-lang="protobuf">type name <span style="color:#f92672">=</span> tag;<span style="color:#960050;background-color:#1e0010">
-</span></code></pre></div><p><code>Protocol buffer</code>本身不包含类型的描述信息，因此获取了没有<code>.proto</code>描述文件的二进制信息是毫无用处的，我们很难提取出非常有用的信息。<code>Go</code>语言<code>complier</code>生成的文件后缀是<code>.pb.go</code>，它自动生成了<code>set</code>、<code>get</code>以及<code>read</code>、<code>write</code>方法，我们可以很方便的序列化数据。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-protobuf" data-lang="protobuf"><span style="display:flex;"><span>type name <span style="color:#f92672">=</span> tag;<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p><code>Protocol buffer</code>本身不包含类型的描述信息，因此获取了没有<code>.proto</code>描述文件的二进制信息是毫无用处的，我们很难提取出非常有用的信息。<code>Go</code>语言<code>complier</code>生成的文件后缀是<code>.pb.go</code>，它自动生成了<code>set</code>、<code>get</code>以及<code>read</code>、<code>write</code>方法，我们可以很方便的序列化数据。</p>
 <p>下面我们定义一个创建订单的<code>.proto</code>文件，概括的描述：<code>buyerID</code>在<code>device</code>上支付<code>amount</code>买<a href="https://baike.baidu.com/item/SKU"><code>sku</code></a>商品。</p>
 <ol>
 <li>声明版本为<code>proto3</code>，<code>package</code>是<code>order</code>。</li>
@@ -152,40 +159,40 @@
 <li><code>OrderResult</code>为响应的消息体结构，包括生成的订单号和处理的响应码。</li>
 <li><code>service</code>声明了<code>order</code>要提供的服务。当前仅仅实现一个<code>simple RPC</code>：客户端使用<code>OrderParams</code>参数请求<code>RPC</code>服务器，收到<code>OrderResult</code>作为响应。</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-protobuf" data-lang="protobuf">syntax <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;proto3&#34;</span>;<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#f92672">package</span> order;<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">service</span> Order {<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span>    <span style="color:#75715e">//a simple RPC
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">//create new order
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">rpc</span> Add (OrderParams) <span style="color:#66d9ef">returns</span> (OrderResult) {<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span>    }<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span>}<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">message</span> <span style="color:#a6e22e">OrderParams</span> {<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span>    <span style="color:#66d9ef">string</span> amount <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; <span style="color:#75715e">//订单金额
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int64</span> buyerID <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>; <span style="color:#75715e">//购买用户ID
-</span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span>    <span style="color:#66d9ef">enum</span> Device {<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span>        IOS <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span>        ANDROID <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span>    }<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span>    Device device <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>;<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span>    <span style="color:#66d9ef">repeated</span> Sku sku <span style="color:#f92672">=</span> <span style="color:#ae81ff">4</span>;<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span>}<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">message</span> <span style="color:#a6e22e">Sku</span> {<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span>    <span style="color:#66d9ef">int32</span> num <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span>    <span style="color:#66d9ef">string</span> skuId <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span>    <span style="color:#66d9ef">int32</span> unitPrice <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>;<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span>}<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">message</span> <span style="color:#a6e22e">OrderResult</span> {<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span>    <span style="color:#66d9ef">int32</span> statusCode <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span>    <span style="color:#66d9ef">string</span> orderID <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;<span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span>}<span style="color:#960050;background-color:#1e0010">
-</span></code></pre></div><h2 id="grpc接口"><code>grpc</code>接口</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-protobuf" data-lang="protobuf"><span style="display:flex;"><span>syntax <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;proto3&#34;</span>;<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#f92672">package</span> order;<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">service</span> Order {<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>    <span style="color:#75715e">//a simple RPC
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//create new order
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">rpc</span> Add (OrderParams) <span style="color:#66d9ef">returns</span> (OrderResult) {<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>    }<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>}<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">message</span> <span style="color:#a6e22e">OrderParams</span> {<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>    <span style="color:#66d9ef">string</span> amount <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; <span style="color:#75715e">//订单金额
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int64</span> buyerID <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>; <span style="color:#75715e">//购买用户ID
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>    <span style="color:#66d9ef">enum</span> Device {<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>        IOS <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>        ANDROID <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>    }<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>    Device device <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>;<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>    <span style="color:#66d9ef">repeated</span> Sku sku <span style="color:#f92672">=</span> <span style="color:#ae81ff">4</span>;<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>}<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">message</span> <span style="color:#a6e22e">Sku</span> {<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>    <span style="color:#66d9ef">int32</span> num <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>    <span style="color:#66d9ef">string</span> skuId <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>    <span style="color:#66d9ef">int32</span> unitPrice <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>;<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>}<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">message</span> <span style="color:#a6e22e">OrderResult</span> {<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>    <span style="color:#66d9ef">int32</span> statusCode <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>    <span style="color:#66d9ef">string</span> orderID <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>}<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><h2 id="grpc接口"><code>grpc</code>接口</h2>
 <p>通过定义的<code>.proto</code>文件生成<code>grpc client</code>和<code>server</code>端实现的接口类型。生成的内容主要包括：</p>
 <ol>
 <li><code>protocol buffer</code>各种消息类型的序列化操作</li>
@@ -196,146 +203,145 @@
 <p><strong>第一步</strong>. 服务端为每个接收的连接创建单独的<code>goroutine</code>进行处理。</p>
 <p><strong>第二步</strong>. 自动生成的代码中，声明了服务的具体描述，也是该服务的“路由”。包括服务名称<code>ServiceName</code>以<code>Methods</code>、<code>Streams</code>。当<code>rpc</code>接收到新的数据时，会根据路由执行对应的方法。因为我们的设定没有处理流的场景，所以<code>Streams</code>为空的结构体。</p>
 <p>代码中的服务名称被指定为:<code>order.Order</code>，对应创建订单的方法是：<code>Add</code>。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_Order_serviceDesc</span> = <span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">ServiceDesc</span>{
- <span style="color:#a6e22e">ServiceName</span>: <span style="color:#e6db74">&#34;order.Order&#34;</span>,
- <span style="color:#a6e22e">HandlerType</span>: (<span style="color:#f92672">*</span><span style="color:#a6e22e">OrderServer</span>)(<span style="color:#66d9ef">nil</span>),
- <span style="color:#a6e22e">Methods</span>: []<span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">MethodDesc</span>{
-     {
-         <span style="color:#a6e22e">MethodName</span>: <span style="color:#e6db74">&#34;Add&#34;</span>,
-         <span style="color:#a6e22e">Handler</span>:    <span style="color:#a6e22e">_Order_Add_Handler</span>,
-     },
- },
- <span style="color:#a6e22e">Streams</span>:  []<span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">StreamDesc</span>{},
- <span style="color:#a6e22e">Metadata</span>: <span style="color:#e6db74">&#34;order.proto&#34;</span>,
-}
-</code></pre></div><p><strong>第三步</strong>. 将路由注册到<code>rpc</code>服务中。如下所示，就是将上述的路由转换为<code>map</code>对应关系的过程。类比<code>restful</code>风格的接口定义，等价于<code>/order/</code>这种请求都由这个<code>service</code>来进行处理。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_Order_serviceDesc</span> = <span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">ServiceDesc</span>{
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">ServiceName</span>: <span style="color:#e6db74">&#34;order.Order&#34;</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">HandlerType</span>: (<span style="color:#f92672">*</span><span style="color:#a6e22e">OrderServer</span>)(<span style="color:#66d9ef">nil</span>),
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Methods</span>: []<span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">MethodDesc</span>{
+</span></span><span style="display:flex;"><span>		{
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">MethodName</span>: <span style="color:#e6db74">&#34;Add&#34;</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">Handler</span>:    <span style="color:#a6e22e">_Order_Add_Handler</span>,
+</span></span><span style="display:flex;"><span>		},
+</span></span><span style="display:flex;"><span>	},
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Streams</span>:  []<span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">StreamDesc</span>{},
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Metadata</span>: <span style="color:#e6db74">&#34;order.proto&#34;</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>第三步</strong>. 将路由注册到<code>rpc</code>服务中。如下所示，就是将上述的路由转换为<code>map</code>对应关系的过程。类比<code>restful</code>风格的接口定义，等价于<code>/order/</code>这种请求都由这个<code>service</code>来进行处理。</p>
 <p>最终将<code>service</code>注册到<code>gRPC server</code>上。同时，我们可以逆向猜出服务的处理过程：通过请求的路径获取<code>service</code>，然后通过<code>MethodName</code>调用相应的处理方法。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">srv</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">service</span>{
- <span style="color:#a6e22e">server</span>: <span style="color:#a6e22e">ss</span>,
- <span style="color:#a6e22e">md</span>:     make(<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#f92672">*</span><span style="color:#a6e22e">MethodDesc</span>),
- <span style="color:#a6e22e">sd</span>:     make(<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#f92672">*</span><span style="color:#a6e22e">StreamDesc</span>),
- <span style="color:#a6e22e">mdata</span>:  <span style="color:#a6e22e">sd</span>.<span style="color:#a6e22e">Metadata</span>,
-}
-<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">sd</span>.<span style="color:#a6e22e">Methods</span> {
- <span style="color:#a6e22e">d</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sd</span>.<span style="color:#a6e22e">Methods</span>[<span style="color:#a6e22e">i</span>]
- <span style="color:#a6e22e">srv</span>.<span style="color:#a6e22e">md</span>[<span style="color:#a6e22e">d</span>.<span style="color:#a6e22e">MethodName</span>] = <span style="color:#a6e22e">d</span>
-}
-<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">sd</span>.<span style="color:#a6e22e">Streams</span> {
- <span style="color:#a6e22e">d</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sd</span>.<span style="color:#a6e22e">Streams</span>[<span style="color:#a6e22e">i</span>]
- <span style="color:#a6e22e">srv</span>.<span style="color:#a6e22e">sd</span>[<span style="color:#a6e22e">d</span>.<span style="color:#a6e22e">StreamName</span>] = <span style="color:#a6e22e">d</span>
-}
-<span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">m</span>[<span style="color:#a6e22e">sd</span>.<span style="color:#a6e22e">ServiceName</span>] = <span style="color:#a6e22e">srv</span>
-</code></pre></div><p><strong>第四步</strong>. <code>gRPC</code>服务处理请求。通过请求的<code>:path</code>，获取对应的<code>service</code>和<code>MethodName</code>进行处理。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">service</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sm</span>[:<span style="color:#a6e22e">pos</span>]
-<span style="color:#a6e22e">method</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sm</span>[<span style="color:#a6e22e">pos</span><span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>:]
-
-<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">srv</span>, <span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">m</span>[<span style="color:#a6e22e">service</span>]; <span style="color:#a6e22e">ok</span> {
- <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">md</span>, <span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">srv</span>.<span style="color:#a6e22e">md</span>[<span style="color:#a6e22e">method</span>]; <span style="color:#a6e22e">ok</span> {
-     <span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">processUnaryRPC</span>(<span style="color:#a6e22e">t</span>, <span style="color:#a6e22e">stream</span>, <span style="color:#a6e22e">srv</span>, <span style="color:#a6e22e">md</span>, <span style="color:#a6e22e">trInfo</span>)
-     <span style="color:#66d9ef">return</span>
- }
- <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">sd</span>, <span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">srv</span>.<span style="color:#a6e22e">sd</span>[<span style="color:#a6e22e">method</span>]; <span style="color:#a6e22e">ok</span> {
-     <span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">processStreamingRPC</span>(<span style="color:#a6e22e">t</span>, <span style="color:#a6e22e">stream</span>, <span style="color:#a6e22e">srv</span>, <span style="color:#a6e22e">sd</span>, <span style="color:#a6e22e">trInfo</span>)
-     <span style="color:#66d9ef">return</span>
- }
-}
-</code></pre></div><p>通过结合<code>protoc</code>自动生成的<code>client</code>端代码，无需抓包，我们就可以推断出<code>path</code>的格式，以及系统是如何处理路由的。代码中定义的：<code>/order.Order/Add</code>就是依据。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">orderClient</span>) <span style="color:#a6e22e">Add</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">in</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">OrderParams</span>, <span style="color:#a6e22e">opts</span> <span style="color:#f92672">...</span><span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">CallOption</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">OrderResult</span>, <span style="color:#66d9ef">error</span>) {
- <span style="color:#a6e22e">out</span> <span style="color:#f92672">:=</span> new(<span style="color:#a6e22e">OrderResult</span>)
- <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">cc</span>.<span style="color:#a6e22e">Invoke</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#e6db74">&#34;/order.Order/Add&#34;</span>, <span style="color:#a6e22e">in</span>, <span style="color:#a6e22e">out</span>, <span style="color:#a6e22e">opts</span><span style="color:#f92672">...</span>)
- <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-     <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">err</span>
- }
- <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">out</span>, <span style="color:#66d9ef">nil</span>
-}
-
-</code></pre></div><h2 id="创建订单"><code>创建订单</code></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">srv</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">service</span>{
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">server</span>: <span style="color:#a6e22e">ss</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">md</span>:     make(<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#f92672">*</span><span style="color:#a6e22e">MethodDesc</span>),
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">sd</span>:     make(<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#f92672">*</span><span style="color:#a6e22e">StreamDesc</span>),
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">mdata</span>:  <span style="color:#a6e22e">sd</span>.<span style="color:#a6e22e">Metadata</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">sd</span>.<span style="color:#a6e22e">Methods</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">d</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sd</span>.<span style="color:#a6e22e">Methods</span>[<span style="color:#a6e22e">i</span>]
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">srv</span>.<span style="color:#a6e22e">md</span>[<span style="color:#a6e22e">d</span>.<span style="color:#a6e22e">MethodName</span>] = <span style="color:#a6e22e">d</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">sd</span>.<span style="color:#a6e22e">Streams</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">d</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sd</span>.<span style="color:#a6e22e">Streams</span>[<span style="color:#a6e22e">i</span>]
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">srv</span>.<span style="color:#a6e22e">sd</span>[<span style="color:#a6e22e">d</span>.<span style="color:#a6e22e">StreamName</span>] = <span style="color:#a6e22e">d</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">m</span>[<span style="color:#a6e22e">sd</span>.<span style="color:#a6e22e">ServiceName</span>] = <span style="color:#a6e22e">srv</span>
+</span></span></code></pre></div><p><strong>第四步</strong>. <code>gRPC</code>服务处理请求。通过请求的<code>:path</code>，获取对应的<code>service</code>和<code>MethodName</code>进行处理。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">service</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sm</span>[:<span style="color:#a6e22e">pos</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">method</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sm</span>[<span style="color:#a6e22e">pos</span><span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>:]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">srv</span>, <span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">m</span>[<span style="color:#a6e22e">service</span>]; <span style="color:#a6e22e">ok</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">md</span>, <span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">srv</span>.<span style="color:#a6e22e">md</span>[<span style="color:#a6e22e">method</span>]; <span style="color:#a6e22e">ok</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">processUnaryRPC</span>(<span style="color:#a6e22e">t</span>, <span style="color:#a6e22e">stream</span>, <span style="color:#a6e22e">srv</span>, <span style="color:#a6e22e">md</span>, <span style="color:#a6e22e">trInfo</span>)
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">sd</span>, <span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">srv</span>.<span style="color:#a6e22e">sd</span>[<span style="color:#a6e22e">method</span>]; <span style="color:#a6e22e">ok</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">processStreamingRPC</span>(<span style="color:#a6e22e">t</span>, <span style="color:#a6e22e">stream</span>, <span style="color:#a6e22e">srv</span>, <span style="color:#a6e22e">sd</span>, <span style="color:#a6e22e">trInfo</span>)
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>通过结合<code>protoc</code>自动生成的<code>client</code>端代码，无需抓包，我们就可以推断出<code>path</code>的格式，以及系统是如何处理路由的。代码中定义的：<code>/order.Order/Add</code>就是依据。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">orderClient</span>) <span style="color:#a6e22e">Add</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">in</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">OrderParams</span>, <span style="color:#a6e22e">opts</span> <span style="color:#f92672">...</span><span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">CallOption</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">OrderResult</span>, <span style="color:#66d9ef">error</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">out</span> <span style="color:#f92672">:=</span> new(<span style="color:#a6e22e">OrderResult</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">cc</span>.<span style="color:#a6e22e">Invoke</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#e6db74">&#34;/order.Order/Add&#34;</span>, <span style="color:#a6e22e">in</span>, <span style="color:#a6e22e">out</span>, <span style="color:#a6e22e">opts</span><span style="color:#f92672">...</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">out</span>, <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="创建订单"><code>创建订单</code></h2>
 <p>为了简单起见，我们只保证订单的唯一性。这里我们实现一个简易版本，而且也不做过多介绍。感兴趣的同学可以移步到另一篇文章：<a href="http://neojos.com/blog/2018/19-01-11-%E6%8E%A2%E8%AE%A8%E5%88%86%E5%B8%83%E5%BC%8Fid%E7%94%9F%E6%88%90%E7%B3%BB%E7%BB%9F/">探讨分布式ID生成系统</a>去了解，毕竟不应该是本节的重心。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">//上次创建订单使用的毫秒时间
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">lastTimestamp</span> = <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">UnixNano</span>() <span style="color:#f92672">/</span> <span style="color:#ae81ff">1000000</span>
-<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">sequence</span> <span style="color:#66d9ef">int64</span>
-
-<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">MaxSequence</span> = <span style="color:#ae81ff">4096</span>
-
-<span style="color:#75715e">// 42bit分配给毫秒时间戳
-</span><span style="color:#75715e">// 12bit分配给序列号，每4096就重新开始循环
-</span><span style="color:#75715e">// 10bit分配给机器ID
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">CreateOrder</span>(<span style="color:#a6e22e">nodeId</span> <span style="color:#66d9ef">int64</span>) <span style="color:#66d9ef">string</span> {
-	<span style="color:#a6e22e">currentTimestamp</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">getCurrentTimestamp</span>()
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">currentTimestamp</span> <span style="color:#f92672">==</span> <span style="color:#a6e22e">lastTimestamp</span> {
-		<span style="color:#a6e22e">sequence</span> = (<span style="color:#a6e22e">sequence</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">%</span> <span style="color:#a6e22e">MaxSequence</span>
-		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">sequence</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> {
-			<span style="color:#a6e22e">currentTimestamp</span> = <span style="color:#a6e22e">waitNextMillis</span>(<span style="color:#a6e22e">currentTimestamp</span>)
-		}
-	} <span style="color:#66d9ef">else</span> {
-		<span style="color:#a6e22e">sequence</span> = <span style="color:#ae81ff">0</span>
-	}
-
-	<span style="color:#a6e22e">orderId</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">currentTimestamp</span> <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">22</span>
-	<span style="color:#a6e22e">orderId</span> <span style="color:#f92672">|=</span> <span style="color:#a6e22e">nodeId</span> <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">10</span>
-	<span style="color:#a6e22e">orderId</span> <span style="color:#f92672">|=</span> <span style="color:#a6e22e">sequence</span>
-
-	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">strings</span>.<span style="color:#a6e22e">ToUpper</span>(<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%x&#34;</span>, <span style="color:#a6e22e">orderId</span>))
-}
-
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getCurrentTimestamp</span>() <span style="color:#66d9ef">int64</span> {
-	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">UnixNano</span>() <span style="color:#f92672">/</span> <span style="color:#ae81ff">1000000</span>
-}
-
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">waitNextMillis</span>(<span style="color:#a6e22e">currentTimestamp</span> <span style="color:#66d9ef">int64</span>) <span style="color:#66d9ef">int64</span> {
-	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">currentTimestamp</span> <span style="color:#f92672">==</span> <span style="color:#a6e22e">lastTimestamp</span> {
-		<span style="color:#a6e22e">currentTimestamp</span> = <span style="color:#a6e22e">getCurrentTimestamp</span>()
-	}
-	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">currentTimestamp</span>
-}
-</code></pre></div><h2 id="运行系统"><code>运行系统</code></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//上次创建订单使用的毫秒时间
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">lastTimestamp</span> = <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">UnixNano</span>() <span style="color:#f92672">/</span> <span style="color:#ae81ff">1000000</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">sequence</span> <span style="color:#66d9ef">int64</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">MaxSequence</span> = <span style="color:#ae81ff">4096</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 42bit分配给毫秒时间戳
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 12bit分配给序列号，每4096就重新开始循环
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 10bit分配给机器ID
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">CreateOrder</span>(<span style="color:#a6e22e">nodeId</span> <span style="color:#66d9ef">int64</span>) <span style="color:#66d9ef">string</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">currentTimestamp</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">getCurrentTimestamp</span>()
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">currentTimestamp</span> <span style="color:#f92672">==</span> <span style="color:#a6e22e">lastTimestamp</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">sequence</span> = (<span style="color:#a6e22e">sequence</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">%</span> <span style="color:#a6e22e">MaxSequence</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">sequence</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> {
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">currentTimestamp</span> = <span style="color:#a6e22e">waitNextMillis</span>(<span style="color:#a6e22e">currentTimestamp</span>)
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>	} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">sequence</span> = <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">orderId</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">currentTimestamp</span> <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">22</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">orderId</span> <span style="color:#f92672">|=</span> <span style="color:#a6e22e">nodeId</span> <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">orderId</span> <span style="color:#f92672">|=</span> <span style="color:#a6e22e">sequence</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">strings</span>.<span style="color:#a6e22e">ToUpper</span>(<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%x&#34;</span>, <span style="color:#a6e22e">orderId</span>))
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getCurrentTimestamp</span>() <span style="color:#66d9ef">int64</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">UnixNano</span>() <span style="color:#f92672">/</span> <span style="color:#ae81ff">1000000</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">waitNextMillis</span>(<span style="color:#a6e22e">currentTimestamp</span> <span style="color:#66d9ef">int64</span>) <span style="color:#66d9ef">int64</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">currentTimestamp</span> <span style="color:#f92672">==</span> <span style="color:#a6e22e">lastTimestamp</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">currentTimestamp</span> = <span style="color:#a6e22e">getCurrentTimestamp</span>()
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">currentTimestamp</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="运行系统"><code>运行系统</code></h2>
 <p>创建服务端代码。注意：使用<code>grpc</code>提供的默认选项，其实是很危险的行为。在生产开发中，被不熟悉的默认选项坑到的情况比比皆是。这里的代码不要作为后续生产环境开发的参考。服务端的代码相比客户端要复杂一点，需要我们去实现处理请求的接口。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Order</span> <span style="color:#66d9ef">struct</span> {
-}
-
-<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">o</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Order</span>) <span style="color:#a6e22e">Add</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">in</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">order</span>.<span style="color:#a6e22e">OrderParams</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">order</span>.<span style="color:#a6e22e">OrderResult</span>, <span style="color:#66d9ef">error</span>) {
-	<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">order</span>.<span style="color:#a6e22e">OrderResult</span>{
-		<span style="color:#a6e22e">OrderID</span>: <span style="color:#a6e22e">util</span>.<span style="color:#a6e22e">CreateOrder</span>(<span style="color:#ae81ff">1</span>),
-	}, <span style="color:#66d9ef">nil</span>
-}
-
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-	<span style="color:#a6e22e">lis</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">Listen</span>(<span style="color:#e6db74">&#34;tcp&#34;</span>, <span style="color:#e6db74">&#34;127.0.0.1:10000&#34;</span>)
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatalf</span>(<span style="color:#e6db74">&#34;Failed to listen: %v&#34;</span>, <span style="color:#a6e22e">err</span>)
-	}
-
-	<span style="color:#a6e22e">grpcServer</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">NewServer</span>()
-	<span style="color:#a6e22e">order</span>.<span style="color:#a6e22e">RegisterOrderServer</span>(<span style="color:#a6e22e">grpcServer</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">Order</span>{})
-	<span style="color:#a6e22e">grpcServer</span>.<span style="color:#a6e22e">Serve</span>(<span style="color:#a6e22e">lis</span>)
-}
-</code></pre></div><p>客户端的代码非常简单，构造参数，处理返回就<code>Ok</code>了。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">createOrder</span>(<span style="color:#a6e22e">client</span> <span style="color:#a6e22e">order</span>.<span style="color:#a6e22e">OrderClient</span>, <span style="color:#a6e22e">params</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">order</span>.<span style="color:#a6e22e">OrderParams</span>) {
-	<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">cancel</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">WithTimeout</span>(<span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>(), <span style="color:#ae81ff">10</span><span style="color:#f92672">*</span><span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>)
-	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">cancel</span>()
-
-	<span style="color:#a6e22e">orderResult</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">params</span>)
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatalf</span>(<span style="color:#e6db74">&#34;%v.GetFeatures(_) = _, %v: &#34;</span>, <span style="color:#a6e22e">client</span>, <span style="color:#a6e22e">err</span>)
-	}
-
-	<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">orderResult</span>)
-}
-
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-    <span style="color:#a6e22e">conn</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">Dial</span>(<span style="color:#e6db74">&#34;127.0.0.1:10000&#34;</span>)
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatalf</span>(<span style="color:#e6db74">&#34;fail to dial: %v&#34;</span>, <span style="color:#a6e22e">err</span>)
-	}
-	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">conn</span>.<span style="color:#a6e22e">Close</span>()
-
-	<span style="color:#a6e22e">client</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">order</span>.<span style="color:#a6e22e">NewOrderClient</span>(<span style="color:#a6e22e">conn</span>)
-	<span style="color:#a6e22e">orderParams</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">order</span>.<span style="color:#a6e22e">OrderParams</span>{
-		<span style="color:#a6e22e">BuyerID</span>: <span style="color:#ae81ff">10318003</span>,
-	}
-	<span style="color:#a6e22e">createOrder</span>(<span style="color:#a6e22e">client</span>, <span style="color:#a6e22e">orderParams</span>)
-}
-</code></pre></div><h2 id="总结">总结</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Order</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">o</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Order</span>) <span style="color:#a6e22e">Add</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">in</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">order</span>.<span style="color:#a6e22e">OrderParams</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">order</span>.<span style="color:#a6e22e">OrderResult</span>, <span style="color:#66d9ef">error</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">order</span>.<span style="color:#a6e22e">OrderResult</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">OrderID</span>: <span style="color:#a6e22e">util</span>.<span style="color:#a6e22e">CreateOrder</span>(<span style="color:#ae81ff">1</span>),
+</span></span><span style="display:flex;"><span>	}, <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">lis</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">Listen</span>(<span style="color:#e6db74">&#34;tcp&#34;</span>, <span style="color:#e6db74">&#34;127.0.0.1:10000&#34;</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatalf</span>(<span style="color:#e6db74">&#34;Failed to listen: %v&#34;</span>, <span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">grpcServer</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">NewServer</span>()
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">order</span>.<span style="color:#a6e22e">RegisterOrderServer</span>(<span style="color:#a6e22e">grpcServer</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">Order</span>{})
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">grpcServer</span>.<span style="color:#a6e22e">Serve</span>(<span style="color:#a6e22e">lis</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>客户端的代码非常简单，构造参数，处理返回就<code>Ok</code>了。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">createOrder</span>(<span style="color:#a6e22e">client</span> <span style="color:#a6e22e">order</span>.<span style="color:#a6e22e">OrderClient</span>, <span style="color:#a6e22e">params</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">order</span>.<span style="color:#a6e22e">OrderParams</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">cancel</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">WithTimeout</span>(<span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>(), <span style="color:#ae81ff">10</span><span style="color:#f92672">*</span><span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">cancel</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">orderResult</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">params</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatalf</span>(<span style="color:#e6db74">&#34;%v.GetFeatures(_) = _, %v: &#34;</span>, <span style="color:#a6e22e">client</span>, <span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">orderResult</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">conn</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">Dial</span>(<span style="color:#e6db74">&#34;127.0.0.1:10000&#34;</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatalf</span>(<span style="color:#e6db74">&#34;fail to dial: %v&#34;</span>, <span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">conn</span>.<span style="color:#a6e22e">Close</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">client</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">order</span>.<span style="color:#a6e22e">NewOrderClient</span>(<span style="color:#a6e22e">conn</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">orderParams</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">order</span>.<span style="color:#a6e22e">OrderParams</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">BuyerID</span>: <span style="color:#ae81ff">10318003</span>,
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">createOrder</span>(<span style="color:#a6e22e">client</span>, <span style="color:#a6e22e">orderParams</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="总结">总结</h2>
 <p>文章介绍了<code>gRPC</code>的入门知识，包括<code>protocol buffer</code>以及<code>http/2</code>，<code>gRPC</code>封装了很多东西，对于一般场合，我们只需要指定配置，实现接口就可以了，非常简单。</p>
 <p>在入门的介绍里，大家会觉得<code>gRPC</code>不就跟<code>RESTFUL</code>请求一样吗？确实是，我也这样觉得。但存在一个最直观的优点：通过使用<code>gRPC</code>，可以将复杂的接口调用关系封装在<code>SDK</code>中，直接提供给第三方使用，而且还能有效避免错误调用接口的情况。</p>
 <p>如果<code>gRPC</code>只能这样的话，它就太失败了，他用<code>HTTP/2</code>简直就是用来打蚊子的，让我们后续继续深入了解吧。</p>
@@ -349,20 +355,19 @@
 </ol>
 
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -373,9 +378,8 @@
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

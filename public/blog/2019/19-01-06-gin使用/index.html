@@ -1,30 +1,46 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> Gin使用 | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2019/19-01-06-gin%E4%BD%BF%E7%94%A8/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="Gin使用" />
-<meta property="og:description" content="Gin对net/http包做了封装，支持路由、中间件等特性，极大的方便对Http Server的开发。文章通过一个Test例子，来简要介绍。对于特别基础的部分，请阅读参考文章。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2019/19-01-06-gin%E4%BD%BF%E7%94%A8/" />
-<meta property="article:published_time" content="2019-01-05T00:00:00+00:00" />
-<meta property="article:modified_time" content="2019-01-05T00:00:00+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2019/19-01-06-gin%E4%BD%BF%E7%94%A8/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="Gin使用">
+  <meta property="og:description" content="Gin对net/http包做了封装，支持路由、中间件等特性，极大的方便对Http Server的开发。文章通过一个Test例子，来简要介绍。对于特别基础的部分，请阅读参考文章。">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2019-01-05T00:00:00+00:00">
+    <meta property="article:modified_time" content="2019-01-05T00:00:00+00:00">
+    <meta property="article:tag" content="Translate">
+    <meta property="article:tag" content="Golang">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Gin使用"/>
-<meta name="twitter:description" content="Gin对net/http包做了封装，支持路由、中间件等特性，极大的方便对Http Server的开发。文章通过一个Test例子，来简要介绍。对于特别基础的部分，请阅读参考文章。"/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Gin使用">
+  <meta name="twitter:description" content="Gin对net/http包做了封装，支持路由、中间件等特性，极大的方便对Http Server的开发。文章通过一个Test例子，来简要介绍。对于特别基础的部分，请阅读参考文章。">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,52 +51,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#接口测试">接口测试</a>
-      <ul>
-        <li><a href="#使用postman">使用<code>Postman</code></a></li>
-      </ul>
-    </li>
-    <li><a href="#使用test">使用<code>Test</code></a>
-      <ul>
-        <li></li>
-      </ul>
-    </li>
-    <li><a href="#middleware"><code>Middleware</code></a></li>
-  </ul>
-</nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -89,8 +96,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -102,13 +111,9 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">Gin使用</h1>文章 199 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <p><a href="https://github.com/gin-gonic/gin"><code>Gin</code></a>对<code>net/http</code>包做了封装，支持路由、中间件等特性，极大的方便对<code>Http Server</code>的开发。文章通过一个<code>Test</code>例子，来简要介绍。对于特别基础的部分，请阅读参考文章。</p>
@@ -123,53 +128,53 @@
 <p><code>TestMain</code>中，我们为所有的测试用例指定通用的配置。之后在执行其他<code>Test</code>前，都会先执行<code>TestMain</code>中的代码。有效的避免了代码冗余。</p>
 <p><code>getRouter</code>方法用于返回一个<code>gin</code>的实例。我们将服务的路由重新在<code>Test</code>中指定，并设置了中间件。</p>
 <p><code>testHttpResponse</code>是我们请求处理的核心代码，发送请求，并保存响应到<code>w</code>中</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">//common_test.go
-</span><span style="color:#75715e"></span>
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestMain</span>(<span style="color:#a6e22e">m</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">M</span>) {
-
-	<span style="color:#75715e">//声明执行Test前的操作
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">gin</span>.<span style="color:#a6e22e">SetMode</span>(<span style="color:#a6e22e">gin</span>.<span style="color:#a6e22e">TestMode</span>)
-	<span style="color:#a6e22e">testutils</span>.<span style="color:#a6e22e">NewTestApp</span>(<span style="color:#e6db74">&#34;../conf.test.toml&#34;</span>)
-
-	<span style="color:#a6e22e">flag</span>.<span style="color:#a6e22e">Parse</span>()
-	<span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Exit</span>(<span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Run</span>())
-}
-
-<span style="color:#75715e">//设置路由，获取框架Gin的实例
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getRouter</span>() <span style="color:#f92672">*</span><span style="color:#a6e22e">gin</span>.<span style="color:#a6e22e">Engine</span> {
-	<span style="color:#a6e22e">router</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">gin</span>.<span style="color:#a6e22e">Default</span>()
-
-	<span style="color:#75715e">//配置路由，这是我项目中的自定义配置
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">router</span>.<span style="color:#a6e22e">Use</span>(<span style="color:#a6e22e">middleware</span>.<span style="color:#a6e22e">HeaderProcess</span>())
-	<span style="color:#a6e22e">RouteAPI</span>(<span style="color:#a6e22e">router</span>)
-
-	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">router</span>
-}
-
-<span style="color:#75715e">//统一处理请求返回结果
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">testHttpResponse</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>, <span style="color:#a6e22e">r</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">gin</span>.<span style="color:#a6e22e">Engine</span>, <span style="color:#a6e22e">req</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Request</span>, <span style="color:#a6e22e">f</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">w</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">httptest</span>.<span style="color:#a6e22e">ResponseRecorder</span>) <span style="color:#66d9ef">error</span>) {
-	<span style="color:#a6e22e">w</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">httptest</span>.<span style="color:#a6e22e">NewRecorder</span>()
-	<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">ServeHTTP</span>(<span style="color:#a6e22e">w</span>, <span style="color:#a6e22e">req</span>)
-
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">f</span>(<span style="color:#a6e22e">w</span>); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#a6e22e">err</span>)
-	}
-}
-</code></pre></div><h4 id="测试用例">测试用例</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//common_test.go
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestMain</span>(<span style="color:#a6e22e">m</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">M</span>) {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">//声明执行Test前的操作
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">gin</span>.<span style="color:#a6e22e">SetMode</span>(<span style="color:#a6e22e">gin</span>.<span style="color:#a6e22e">TestMode</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">testutils</span>.<span style="color:#a6e22e">NewTestApp</span>(<span style="color:#e6db74">&#34;../conf.test.toml&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">flag</span>.<span style="color:#a6e22e">Parse</span>()
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Exit</span>(<span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Run</span>())
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//设置路由，获取框架Gin的实例
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getRouter</span>() <span style="color:#f92672">*</span><span style="color:#a6e22e">gin</span>.<span style="color:#a6e22e">Engine</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">router</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">gin</span>.<span style="color:#a6e22e">Default</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">//配置路由，这是我项目中的自定义配置
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">router</span>.<span style="color:#a6e22e">Use</span>(<span style="color:#a6e22e">middleware</span>.<span style="color:#a6e22e">HeaderProcess</span>())
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">RouteAPI</span>(<span style="color:#a6e22e">router</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">router</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//统一处理请求返回结果
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">testHttpResponse</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>, <span style="color:#a6e22e">r</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">gin</span>.<span style="color:#a6e22e">Engine</span>, <span style="color:#a6e22e">req</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Request</span>, <span style="color:#a6e22e">f</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">w</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">httptest</span>.<span style="color:#a6e22e">ResponseRecorder</span>) <span style="color:#66d9ef">error</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">w</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">httptest</span>.<span style="color:#a6e22e">NewRecorder</span>()
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">ServeHTTP</span>(<span style="color:#a6e22e">w</span>, <span style="color:#a6e22e">req</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">f</span>(<span style="color:#a6e22e">w</span>); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="测试用例">测试用例</h4>
 <p>下面是具体的测试用例。我们构造了一个<code>Json</code>数据格式的<code>POST</code>请求，然后通过调用<code>testHttpResponse</code>方法来读取接口的响应数据。</p>
 <p>关于<code>NewRequest</code>方法，它参数<code>body</code>传递一个<code>io.Reader</code>接口类型。从源代码可以看出，实现了该接口的分别是：<code>bytes.Buffer</code>   、<code>bytes.Reader</code>、<code>strings.Reader</code>。</p>
-<pre><code>func TestWeChatRecharge(t *testing.T) {
+<pre tabindex="0"><code>func TestWeChatRecharge(t *testing.T) {
 	router := getRouter()
 
 	//构造json的请求体
 	params := map[string]interface{}{
-		&quot;open_id&quot;:     &quot;olFg1s3gPcISnooRX9WSkX_E-cww&quot;,
-		&quot;device_type&quot;: &quot;ANDROID&quot;,
+		&#34;open_id&#34;:     &#34;olFg1s3gPcISnooRX9WSkX_E-cww&#34;,
+		&#34;device_type&#34;: &#34;ANDROID&#34;,
 	}
 	jsonParams, _ := json.Marshal(params)
 	readParams := bytes.NewReader(jsonParams)
-	req, _ := http.NewRequest(&quot;POST&quot;, &quot;/pay/wx/recharge&quot;, readParams)
-	req.Header.Set(&quot;Content-type&quot;, &quot;application/json&quot;)
+	req, _ := http.NewRequest(&#34;POST&#34;, &#34;/pay/wx/recharge&#34;, readParams)
+	req.Header.Set(&#34;Content-type&#34;, &#34;application/json&#34;)
 
 	//发送请求
 	testHttpResponse(t, router, req, func(w *httptest.ResponseRecorder) error {
@@ -178,7 +183,7 @@
 			return err
 		}
 
-		t.Logf(&quot;%+v&quot;, string(p))
+		t.Logf(&#34;%+v&#34;, string(p))
 		return nil
 	})
 }
@@ -186,19 +191,19 @@
 <p>通过上述的步骤，我们实现了直接在<code>Test</code>中做接口测试。</p>
 <h2 id="middleware"><code>Middleware</code></h2>
 <p>声明一个<code>middleware</code>函数，返回类型为<code>type HandlerFunc func(*Context)</code>。</p>
-<pre><code>func setUserStatus() gin.HandlerFunc {
+<pre tabindex="0"><code>func setUserStatus() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		fmt.Println(&quot;set status&quot;)
+		fmt.Println(&#34;set status&#34;)
 	}
 }
 </code></pre><p>如果需要将函数应用于所有的请求，使用<code>Use</code>方法。比如统一的请求头转换、错误输出、日志打印等</p>
-<pre><code>//Use adds middleware to the group
+<pre tabindex="0"><code>//Use adds middleware to the group
 router.Use(setUserStatus())
 </code></pre><p>下面是给具体的请求设置中间件。从这里可以看出，中间件处理函数和正常的业务处理函数类型是相同的。</p>
-<pre><code>//Use a particular middleware
-articleRoutes.GET(&quot;/create&quot;, setUserStatus(), showArticleCreationPage)
+<pre tabindex="0"><code>//Use a particular middleware
+articleRoutes.GET(&#34;/create&#34;, setUserStatus(), showArticleCreationPage)
 </code></pre><p>最后系统依次调用注册的<code>handler</code>完成请求处理：</p>
-<pre><code>func (c *Context) Next() {
+<pre tabindex="0"><code>func (c *Context) Next() {
 	c.index++
 	for s := int8(len(c.handlers)); c.index &lt; s; c.index++ {
 		c.handlers[c.index](c)
@@ -212,20 +217,19 @@ articleRoutes.GET(&quot;/create&quot;, setUserStatus(), showArticleCreationPage)
 </ol>
 
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -236,9 +240,8 @@ articleRoutes.GET(&quot;/create&quot;, setUserStatus(), showArticleCreationPage)
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

@@ -1,24 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>npm on 渐行渐远</title>
-    <link>https://neojos.com/tags/npm/</link>
-    <description>Recent content in npm on 渐行渐远</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <title>Npm on 渐行渐远</title>
+    <link>http://localhost:1313/tags/npm/</link>
+    <description>Recent content in Npm on 渐行渐远</description>
+    <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 30 Mar 2018 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://neojos.com/tags/npm/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <atom:link href="http://localhost:1313/tags/npm/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>包管理工具</title>
-      <link>https://neojos.com/blog/2018/03-31-%E5%8C%85%E7%AE%A1%E7%90%86/</link>
+      <link>http://localhost:1313/blog/2018/03-31-%E5%8C%85%E7%AE%A1%E7%90%86/</link>
       <pubDate>Fri, 30 Mar 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/blog/2018/03-31-%E5%8C%85%E7%AE%A1%E7%90%86/</guid>
+      <guid>http://localhost:1313/blog/2018/03-31-%E5%8C%85%E7%AE%A1%E7%90%86/</guid>
       <description>反思之前的过程，一直没有试图跟上技术的发展。恍然觉得，其实技术比买股票更能让我找到快乐。新的技术越来越多，能做的便是，持续保持蜗牛锲而不舍的精神，慢慢爬！</description>
     </item>
-    
   </channel>
 </rss>

@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> 变异性的数值特征-方差 | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2019/blog.013-%E5%8F%98%E5%BC%82%E6%80%A7%E7%9A%84%E6%95%B0%E5%80%BC%E7%89%B9%E5%BE%81-%E6%96%B9%E5%B7%AE.2019.10.14/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="变异性的数值特征-方差" />
-<meta property="og:description" content="文章主要介绍通过样本方差来了解数据集变化的原理。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2019/blog.013-%E5%8F%98%E5%BC%82%E6%80%A7%E7%9A%84%E6%95%B0%E5%80%BC%E7%89%B9%E5%BE%81-%E6%96%B9%E5%B7%AE.2019.10.14/" />
-<meta property="article:published_time" content="2019-10-14T00:00:00+00:00" />
-<meta property="article:modified_time" content="2019-10-14T00:00:00+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2019/blog.013-%E5%8F%98%E5%BC%82%E6%80%A7%E7%9A%84%E6%95%B0%E5%80%BC%E7%89%B9%E5%BE%81-%E6%96%B9%E5%B7%AE.2019.10.14/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="变异性的数值特征-方差">
+  <meta property="og:description" content="文章主要介绍通过样本方差来了解数据集变化的原理。">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2019-10-14T00:00:00+00:00">
+    <meta property="article:modified_time" content="2019-10-14T00:00:00+00:00">
+    <meta property="article:tag" content="统计">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="变异性的数值特征-方差"/>
-<meta name="twitter:description" content="文章主要介绍通过样本方差来了解数据集变化的原理。"/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="变异性的数值特征-方差">
+  <meta name="twitter:description" content="文章主要介绍通过样本方差来了解数据集变化的原理。">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,38 +50,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents"></nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -75,8 +95,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -88,24 +110,20 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">变异性的数值特征-方差</h1>文章 24 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <p>文章主要介绍通过<code>样本方差</code>来了解数据集变化的原理。</p>
 <p>我们对两个数据集做观察，数据集A和数据集B：</p>
-<pre><code>A: 1,2,3,4,5
+<pre tabindex="0"><code>A: 1,2,3,4,5
 B: 2,3,3,3,4
 </code></pre><p>对于定量数据集，最常用、也最容易理解的集中趋势测度是数据集的算数平均数。类比我们学生年代，经常谈论的班级平均分。那么，我们对数据集A、B做平均数计算：</p>
-<pre><code>A: 3
+<pre tabindex="0"><code>A: 3
 B: 3
 </code></pre><p>两个样本集的均值都是3。接着，我们计算每个值与均值之间的差值，观察这些偏差数据：</p>
-<pre><code>A: (1-3),(2-3),(3-3),(4-3),(5-3)
+<pre tabindex="0"><code>A: (1-3),(2-3),(3-3),(4-3),(5-3)
 B: (2-3),(3-3),(3-3),(3-3),(4-3)
 </code></pre><p>从距离的角度，我们在坐标图上做体现。数据集中的每个点跟均值的距离：</p>
 <p><img src="https://i.loli.net/2019/10/14/7jfzAxvJT1eol3O.png" alt="distance.png"></p>
@@ -120,20 +138,19 @@ B: (2-3),(3-3),(3-3),(3-3),(4-3)
 </ol>
 
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -144,9 +161,8 @@ B: (2-3),(3-3),(3-3),(3-3),(4-3)
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

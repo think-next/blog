@@ -1,33 +1,26 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>git on 渐行渐远</title>
-    <link>https://neojos.com/tags/git/</link>
-    <description>Recent content in git on 渐行渐远</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <title>Git on 渐行渐远</title>
+    <link>http://localhost:1313/tags/git/</link>
+    <description>Recent content in Git on 渐行渐远</description>
+    <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 07 Aug 2018 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://neojos.com/tags/git/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <atom:link href="http://localhost:1313/tags/git/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Git撤销本地修改</title>
-      <link>https://neojos.com/blog/2018/08-07-git%E6%92%A4%E9%94%80%E6%9C%AC%E5%9C%B0%E4%BF%AE%E6%94%B9/</link>
+      <link>http://localhost:1313/blog/2018/08-07-git%E6%92%A4%E9%94%80%E6%9C%AC%E5%9C%B0%E4%BF%AE%E6%94%B9/</link>
       <pubDate>Tue, 07 Aug 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/blog/2018/08-07-git%E6%92%A4%E9%94%80%E6%9C%AC%E5%9C%B0%E4%BF%AE%E6%94%B9/</guid>
+      <guid>http://localhost:1313/blog/2018/08-07-git%E6%92%A4%E9%94%80%E6%9C%AC%E5%9C%B0%E4%BF%AE%E6%94%B9/</guid>
       <description>懂得了好多大道理，但还是过不好这一生！</description>
     </item>
-    
     <item>
       <title>Git分支模型</title>
-      <link>https://neojos.com/blog/2018/01-14-git%E5%88%86%E6%94%AF%E6%A8%A1%E5%9E%8B/</link>
+      <link>http://localhost:1313/blog/2018/01-14-git%E5%88%86%E6%94%AF%E6%A8%A1%E5%9E%8B/</link>
       <pubDate>Sun, 14 Jan 2018 20:10:33 +0000</pubDate>
-      
-      <guid>https://neojos.com/blog/2018/01-14-git%E5%88%86%E6%94%AF%E6%A8%A1%E5%9E%8B/</guid>
+      <guid>http://localhost:1313/blog/2018/01-14-git%E5%88%86%E6%94%AF%E6%A8%A1%E5%9E%8B/</guid>
       <description>Git分支模型 文章将围绕下图来描述我们所使用的分支模型。主要包括master和develop两个主线分支以及feature、release、hotfixes分支。</description>
     </item>
-    
   </channel>
 </rss>

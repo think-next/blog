@@ -1,30 +1,46 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> Git撤销本地修改 | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2018/08-07-git%E6%92%A4%E9%94%80%E6%9C%AC%E5%9C%B0%E4%BF%AE%E6%94%B9/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="Git撤销本地修改" />
-<meta property="og:description" content="懂得了好多大道理，但还是过不好这一生！" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2018/08-07-git%E6%92%A4%E9%94%80%E6%9C%AC%E5%9C%B0%E4%BF%AE%E6%94%B9/" />
-<meta property="article:published_time" content="2018-08-07T00:00:00+00:00" />
-<meta property="article:modified_time" content="2018-08-07T00:00:00+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2018/08-07-git%E6%92%A4%E9%94%80%E6%9C%AC%E5%9C%B0%E4%BF%AE%E6%94%B9/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="Git撤销本地修改">
+  <meta property="og:description" content="懂得了好多大道理，但还是过不好这一生！">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2018-08-07T00:00:00+00:00">
+    <meta property="article:modified_time" content="2018-08-07T00:00:00+00:00">
+    <meta property="article:tag" content="Tools">
+    <meta property="article:tag" content="Git">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Git撤销本地修改"/>
-<meta name="twitter:description" content="懂得了好多大道理，但还是过不好这一生！"/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Git撤销本地修改">
+  <meta name="twitter:description" content="懂得了好多大道理，但还是过不好这一生！">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,56 +51,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#使用reset回退">使用<code>reset</code>回退</a>
-      <ul>
-        <li><a href="#example"><code>Example</code></a></li>
-      </ul>
-    </li>
-    <li><a href="#checkout"><code>checkout</code></a></li>
-    <li><a href="#stash储藏"><code>stash</code>储藏</a></li>
-    <li><a href="#使用clean清空">使用<code>clean</code>清空</a></li>
-    <li><a href="#使用revert">使用<code>revert</code></a>
-      <ul>
-        <li><a href="#revert-a-merge"><code>Revert a merge</code></a></li>
-        <li><a href="#revert-vs-reset"><code>Revert vs Reset</code></a></li>
-        <li><a href="#revert-the-revert"><code>Revert the revert</code></a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -93,8 +96,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -106,13 +111,9 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">Git撤销本地修改</h1>文章 155 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <blockquote>
@@ -137,7 +138,7 @@
 </ol>
 <h3 id="example"><code>Example</code></h3>
 <p>当执行pull命令发生冲突时时，本地代码需要做merge操作。但本地代码只是临时调试修改，并不需要保存提交。执行如下命令，便会清空本地的修改，hard相当于一个版本的指针，origin/master可以替换为具体的版本号</p>
-<pre><code class="language-git" data-lang="git">git reset --hard origin/master
+<pre tabindex="0"><code class="language-git" data-lang="git">git reset --hard origin/master
 git reset --hard version-number
 git reset --hard HEAD
 </code></pre><p>获取版本号可以通过<code>git log</code>直接查看。</p>
@@ -160,12 +161,12 @@ git reset --hard HEAD
 </ol>
 <h2 id="使用revert">使用<code>revert</code></h2>
 <p>我们工作区看到的内容，是所有版本修改合并的结果。如果觉得某个版本的提交有问题，使用<code>revert</code>便可以直接撤销这个版本的修改。本质上通过提交新的版本来撤销修改。</p>
-<pre><code>--&gt; (modify version 1) --&gt; (modify version 2) --&gt; (modify version3)
+<pre tabindex="0"><code>--&gt; (modify version 1) --&gt; (modify version 2) --&gt; (modify version3)
 </code></pre><p>执行<code>git revert 版本号</code>仅仅是撤销这个版本的修改。如果你想将版本回滚到<code>version 1</code>，你需要执行2次<code>revert</code>操作。且每次执行<code>revert</code>都会有一个新的版本生成。</p>
 <h3 id="revert-a-merge"><code>Revert a merge</code></h3>
 <p>回滚<code>merge</code>提交跟普通的提交是有区别的。我们一般都是在分支上开发，然后将修改合并到主分支上。所以<code>merge</code>的那个提交版本，存在两个<code>parent</code>分支。</p>
 <p>所以，执行<code>git revert MERGE_HASH</code>是不能正常工作的。原因在于这个提交存在多个<code>parent</code>，它需要有额外的信息来决定哪一个分支作为回滚的主线。参数<code>-m</code>就是用来干这个的。</p>
-<pre><code>git revert 0cce3a0837da60fb8ef458d98f81feaa97397363
+<pre tabindex="0"><code>git revert 0cce3a0837da60fb8ef458d98f81feaa97397363
 error: Commit 603c1333339bc9b5ad4d8b864e948d4bd950bf05 is a merge but no -m option was given.
 fatal: 还原失败
 </code></pre><h3 id="revert-vs-reset"><code>Revert vs Reset</code></h3>
@@ -182,20 +183,19 @@ fatal: 还原失败
 </ol>
 
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -206,9 +206,8 @@ fatal: 还原失败
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

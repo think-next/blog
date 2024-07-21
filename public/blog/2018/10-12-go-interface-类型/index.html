@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> Go Interface 类型 | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2018/10-12-go-interface-%E7%B1%BB%E5%9E%8B/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="Go Interface 类型" />
-<meta property="og:description" content="introduction duck typing 很形象的解释了interface的本意。它是一种特别的数据类型，内部声明了一组要实现的方法集合，任何实现了这些方法的数据类型都可以认为实现了这个interface。这跟其他语言中的抽象类有异曲同工之处，但却不需要去明确声明实现这个interface。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2018/10-12-go-interface-%E7%B1%BB%E5%9E%8B/" />
-<meta property="article:published_time" content="2018-10-12T00:00:00+00:00" />
-<meta property="article:modified_time" content="2018-10-12T00:00:00+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2018/10-12-go-interface-%E7%B1%BB%E5%9E%8B/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="Go Interface 类型">
+  <meta property="og:description" content="introduction duck typing 很形象的解释了interface的本意。它是一种特别的数据类型，内部声明了一组要实现的方法集合，任何实现了这些方法的数据类型都可以认为实现了这个interface。这跟其他语言中的抽象类有异曲同工之处，但却不需要去明确声明实现这个interface。">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2018-10-12T00:00:00+00:00">
+    <meta property="article:modified_time" content="2018-10-12T00:00:00+00:00">
+    <meta property="article:tag" content="Golang">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Go Interface 类型"/>
-<meta name="twitter:description" content="introduction duck typing 很形象的解释了interface的本意。它是一种特别的数据类型，内部声明了一组要实现的方法集合，任何实现了这些方法的数据类型都可以认为实现了这个interface。这跟其他语言中的抽象类有异曲同工之处，但却不需要去明确声明实现这个interface。"/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Go Interface 类型">
+  <meta name="twitter:description" content="introduction duck typing 很形象的解释了interface的本意。它是一种特别的数据类型，内部声明了一组要实现的方法集合，任何实现了这些方法的数据类型都可以认为实现了这个interface。这跟其他语言中的抽象类有异曲同工之处，但却不需要去明确声明实现这个interface。">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,51 +50,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#introduction"><code>introduction</code></a></li>
-    <li><a href="#protocol"><code>protocol</code></a></li>
-    <li><a href="#interface"><code>interface</code></a>
-      <ul>
-        <li><a href="#generic-algorithm"><code>generic algorithm</code></a></li>
-        <li><a href="#hiding-implement-detail"><code>hiding implement detail</code></a></li>
-        <li><a href="#providing-interception-points"><code>providing interception points</code></a></li>
-      </ul>
-    </li>
-    <li><a href="#stream-io-interface">Stream IO interface</a></li>
-  </ul>
-</nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -88,8 +95,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -101,13 +110,9 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">Go Interface 类型</h1>文章 450 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <h2 id="introduction"><code>introduction</code></h2>
@@ -116,22 +121,22 @@
 <h2 id="protocol"><code>protocol</code></h2>
 <p><code>interface</code>可以做为一组不相关的对象进行交流的一种规范或约束，类比<a href="https://developers.google.com/protocol-buffers/"><code>protobuf</code></a>，数据字段必须严格按照声明进行传递。只不过<code>interface</code>约束的是待实现的方法。</p>
 <p>比如<code>error</code>接口，所有实现了<code>Error()</code>方法的类型都可以赋值给<code>error</code>类型变量，无需明确声明继承关系，就实现了<code>多态</code>。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#75715e">// The error built-in interface type is the conventional interface for
-</span><span style="color:#75715e">// representing an error condition, with the nil value representing no error.
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#66d9ef">error</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#a6e22e">Error</span>() <span style="color:#66d9ef">string</span>
-}
-</code></pre></div><h2 id="interface"><code>interface</code></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-golang" data-lang="golang"><span style="display:flex;"><span><span style="color:#75715e">// The error built-in interface type is the conventional interface for
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// representing an error condition, with the nil value representing no error.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#66d9ef">error</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Error</span>() <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="interface"><code>interface</code></h2>
 <h3 id="generic-algorithm"><code>generic algorithm</code></h3>
 <p><code>interface</code>类型接受任意类型的参数，结合<code>reflect</code>或者<code>断言</code>可以确定参数的实际类型。比如<code>fmt</code>包就有这样用（具体需要深入方法内部）：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#75715e">// Println formats using the default formats for its operands and writes to standard output.
-</span><span style="color:#75715e">// Spaces are always added between operands and a newline is appended.
-</span><span style="color:#75715e">// It returns the number of bytes written and any write error encountered.
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">a</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{}) (<span style="color:#a6e22e">n</span> <span style="color:#66d9ef">int</span>, <span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>) {
-	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">Fprintln</span>(<span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Stdout</span>, <span style="color:#a6e22e">a</span><span style="color:#f92672">...</span>)
-}
-</code></pre></div><p>通过<code>interface</code>约束一套行为，也可以实现泛型编程。比如<code>sort</code>包，只要实现了接口对应的方法，就可以使用<code>sort</code>包来进行排序。具体如何排序，操作什么数据类型，都由你自己来实现。要实现的方式依次是：获取集合的长度，两个元素比较大小以及如何交换两个元素。</p>
-<pre><code>// A type, typically a collection, that satisfies sort.Interface can be
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-golang" data-lang="golang"><span style="display:flex;"><span><span style="color:#75715e">// Println formats using the default formats for its operands and writes to standard output.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Spaces are always added between operands and a newline is appended.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// It returns the number of bytes written and any write error encountered.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">a</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{}) (<span style="color:#a6e22e">n</span> <span style="color:#66d9ef">int</span>, <span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">Fprintln</span>(<span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Stdout</span>, <span style="color:#a6e22e">a</span><span style="color:#f92672">...</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>通过<code>interface</code>约束一套行为，也可以实现泛型编程。比如<code>sort</code>包，只要实现了接口对应的方法，就可以使用<code>sort</code>包来进行排序。具体如何排序，操作什么数据类型，都由你自己来实现。要实现的方式依次是：获取集合的长度，两个元素比较大小以及如何交换两个元素。</p>
+<pre tabindex="0"><code>// A type, typically a collection, that satisfies sort.Interface can be
 // sorted by the routines in this package. The methods require that the
 // elements of the collection be enumerated by an integer index.
 type Interface interface {
@@ -151,24 +156,24 @@ type Interface interface {
 <blockquote>
 <p><code>To unmarshal JSON into a value implementing the Unmarshaler interface, Unmarshal calls that value's UnmarshalJSON method, including when the input is a JSON null.</code></p>
 </blockquote>
-<pre><code>// Unmarshaler is the interface implemented by types
+<pre tabindex="0"><code>// Unmarshaler is the interface implemented by types
 // that can unmarshal a JSON description of themselves.
 // The input can be assumed to be a valid encoding of
 // a JSON value. UnmarshalJSON must copy the JSON data
 // if it wishes to retain the data after returning.
 //
 // By convention, to approximate the behavior of Unmarshal itself,
-// Unmarshalers implement UnmarshalJSON([]byte(&quot;null&quot;)) as a no-op.
+// Unmarshalers implement UnmarshalJSON([]byte(&#34;null&#34;)) as a no-op.
 type Unmarshaler interface {
 	UnmarshalJSON([]byte) error
 }
 </code></pre><p>当然还有<code>Marshaler</code>接口，按照自己的想法去解析<code>json</code></p>
-<pre><code> type Marshaler interface {
+<pre tabindex="0"><code> type Marshaler interface {
     MarshalJSON() ([]byte, error)
 }
 </code></pre><h4 id="handler"><code>Handler</code></h4>
 <p>通过实现<code>Handler</code>接口，来处理不同的请求。</p>
-<pre><code>// A Handler responds to an HTTP request.
+<pre tabindex="0"><code>// A Handler responds to an HTTP request.
 //
 // ServeHTTP should write reply headers and data to the ResponseWriter
 // and then return. Returning signals that the request is finished; it
@@ -180,12 +185,12 @@ type Handler interface {
 	ServeHTTP(ResponseWriter, *Request)
 }
 </code></pre><p><code>ServeMux</code>也实现了<code>handler</code>接口，但它基于<code>request</code>实现了一个路由表。</p>
-<pre><code>// ServeHTTP dispatches the request to the handler whose
+<pre tabindex="0"><code>// ServeHTTP dispatches the request to the handler whose
 // pattern most closely matches the request URL.
 func (mux *ServeMux) ServeHTTP(w ResponseWriter, r *Request) {
-	if r.RequestURI == &quot;*&quot; {
+	if r.RequestURI == &#34;*&#34; {
 		if r.ProtoAtLeast(1, 1) {
-			w.Header().Set(&quot;Connection&quot;, &quot;close&quot;)
+			w.Header().Set(&#34;Connection&#34;, &#34;close&#34;)
 		}
 		w.WriteHeader(StatusBadRequest)
 		return
@@ -193,14 +198,13 @@ func (mux *ServeMux) ServeHTTP(w ResponseWriter, r *Request) {
 	h, _ := mux.Handler(r)
 	h.ServeHTTP(w, r)
 }
-
 </code></pre><h2 id="stream-io-interface">Stream IO interface</h2>
 <p>工作中最常见的两个接口，io.Reader和io.Writer。</p>
-<pre><code>type Reader interface {
+<pre tabindex="0"><code>type Reader interface {
     Read(p []byte) (n int, err error)
 }
 </code></pre><p>Read方法通过for循，结合io.EOF的方式，将读取到的数据写入到参数p中。Write方法将p中的数据写入到实现的对象里。</p>
-<pre><code>type Writer interface {
+<pre tabindex="0"><code>type Writer interface {
     Write(p []byte) (n int, err error)
 }
 </code></pre><p>实现了Reader和Writer接口类型包括但不限于：</p>
@@ -218,20 +222,19 @@ func (mux *ServeMux) ServeHTTP(w ResponseWriter, r *Request) {
 </ol>
 
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -242,9 +245,8 @@ func (mux *ServeMux) ServeHTTP(w ResponseWriter, r *Request) {
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> NSS初窥 | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2018/11-20-nss%E5%88%9D%E7%AA%A5/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="NSS初窥" />
-<meta property="og:description" content="版本 0." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2018/11-20-nss%E5%88%9D%E7%AA%A5/" />
-<meta property="article:published_time" content="2018-11-20T00:00:00+00:00" />
-<meta property="article:modified_time" content="2018-11-20T00:00:00+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2018/11-20-nss%E5%88%9D%E7%AA%A5/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="NSS初窥">
+  <meta property="og:description" content="版本 0.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2018-11-20T00:00:00+00:00">
+    <meta property="article:modified_time" content="2018-11-20T00:00:00+00:00">
+    <meta property="article:tag" content="Tcp/Ip">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="NSS初窥"/>
-<meta name="twitter:description" content="版本 0."/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="NSS初窥">
+  <meta name="twitter:description" content="版本 0.">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,48 +50,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#wireshark配置"><code>wireshark</code>配置</a></li>
-    <li><a href="#key-log文件格式"><code>key log</code>文件格式</a></li>
-    <li><a href="#tls加解密"><code>TLS</code>加解密</a>
-      <ul>
-        <li><a href="#case-1"><code>case 1.</code></a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -85,8 +95,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -98,29 +110,25 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">NSS初窥</h1>文章 136 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <p><em><!-- raw HTML omitted -->版本 0.01<!-- raw HTML omitted --></em></p>
 <p>在使用<code>wireshark</code>分析<code>https</code>时，加密传输的内容会解析失败。而<code>NSS</code>可以存储<code>TLS</code>握手过程中的<code>Key</code>，用于解密。很好奇，它是如何实现的？</p>
 <h2 id="wireshark配置"><code>wireshark</code>配置</h2>
-<pre><code> Edit→Preferences→Protocols→SSL→(Pre)-Master-Secret log filename.
+<pre tabindex="0"><code> Edit→Preferences→Protocols→SSL→(Pre)-Master-Secret log filename.
 </code></pre><h2 id="key-log文件格式"><code>key log</code>文件格式</h2>
 <p>文件的格式：<code>&lt;Label&gt; &lt;space&gt; &lt;ClientRandom&gt; &lt;space&gt; &lt;Secret&gt;</code></p>
 <p>比较常见的<code>Label</code>和对应日志的内容:</p>
-<pre><code>CLIENT_HANDSHAKE_TRAFFIC_SECRET
+<pre tabindex="0"><code>CLIENT_HANDSHAKE_TRAFFIC_SECRET
 CLIENT_RANDOM
 CLIENT_TRAFFIC_SECRET_0
 EXPORTER_SECRET
 SERVER_HANDSHAKE_TRAFFIC_SECRET
 SERVER_TRAFFIC_SECRET_0
-</code></pre><pre><code>CLIENT_RANDOM 8e40057e8e1c32f42faf87ddc17a81da9e02aa6c4ef4fcec2dcb504982e50691 0df84b6a904cb47940666a9e198dceab94b58dd0f0e61775db52716a37759d25b600b44601b541f5b21669ef0814770e
+</code></pre><pre tabindex="0"><code>CLIENT_RANDOM 8e40057e8e1c32f42faf87ddc17a81da9e02aa6c4ef4fcec2dcb504982e50691 0df84b6a904cb47940666a9e198dceab94b58dd0f0e61775db52716a37759d25b600b44601b541f5b21669ef0814770e
 CLIENT_HANDSHAKE_TRAFFIC_SECRET 9aef967472d9d65bf269989ac68c68c6374fd8c2cf9edf98c91593c8df7ffa3f 23b0b29e3edfe6e53114c6d9cb85159902462801c5540fc806c09f5d1711d992
 CLIENT_TRAFFIC_SECRET_0 cd12af49c901682f29777821369c167854b047ac27a6a85c3db9dce565debbcf f826d8181c8b751cafd8c60bdbe2e4a4974113eea2a46c2a615e2115d70c9544
 EXPORTER_SECRET 51c27befc24dceb18ade59b4a10c1398725848f7130b2ebeeb2e01483ed95e4d 58cc23d6d1db1e674200f7457dc9833ec826a5faf71830a6c5d3f4e63fa2144f
@@ -145,25 +153,24 @@ EXPORTER_SECRET 51c27befc24dceb18ade59b4a10c1398725848f7130b2ebeeb2e01483ed95e4d
 <hr>
 <p>参考文章：</p>
 <ol>
-<li><a href="https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/Key_Log_Format"><code>NSS Key Log Format</code></a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/Key_Log_Format"><code>NSS Key Log Format </code></a></li>
 <li><a href="http://iluoxuan.iteye.com/blog/1736275"><code>SSL身份认证原理</code></a></li>
 </ol>
 
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -174,9 +181,8 @@ EXPORTER_SECRET 51c27befc24dceb18ade59b4a10c1398725848f7130b2ebeeb2e01483ed95e4d
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

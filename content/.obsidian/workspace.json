@@ -1,0 +1,159 @@
+{
+  "main": {
+    "id": "8b8be3c4c8cde38e",
+    "type": "split",
+    "children": [
+      {
+        "id": "b72602b3b7dd3821",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "43b2ed82e150cb76",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "_index.md",
+                "mode": "source",
+                "source": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "642b333c0daf4ea7",
+    "type": "split",
+    "children": [
+      {
+        "id": "a68e63e1b66543dd",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "4dc1ddf66f8bb832",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "d2f877315c116b6a",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "55a0ed63e0bb5bf6",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "8d000694e1bb185b",
+    "type": "split",
+    "children": [
+      {
+        "id": "4f994f0b841a6577",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1045e3f569bf5afc",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "_index.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "3a24237967310cbd",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "_index.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "ad7ec95ebdb7e510",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "78385f96f77f2e42",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "_index.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "obsidian-excalidraw-plugin:Create new drawing": false,
+      "table-editor-obsidian:Advanced Tables Toolbar": false
+    }
+  },
+  "active": "43b2ed82e150cb76",
+  "lastOpenFiles": [
+    "about.md",
+    "greatperson/秘密项目.md",
+    "greatperson/2022.03.12.知识焦虑.md",
+    "greatperson/2022.03.12.结构话思维.md",
+    "greatperson/2022.03.12.坚持习惯.md",
+    "greatperson/2022.03.12.股票投资.md",
+    "_index.md"
+  ]
+}

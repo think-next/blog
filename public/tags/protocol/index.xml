@@ -1,24 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>protocol on 渐行渐远</title>
-    <link>https://neojos.com/tags/protocol/</link>
-    <description>Recent content in protocol on 渐行渐远</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <title>Protocol on 渐行渐远</title>
+    <link>http://localhost:1313/tags/protocol/</link>
+    <description>Recent content in Protocol on 渐行渐远</description>
+    <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 25 Feb 2018 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://neojos.com/tags/protocol/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <atom:link href="http://localhost:1313/tags/protocol/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>WebSocket基础开发</title>
-      <link>https://neojos.com/blog/2018/02-25-websocket%E5%9F%BA%E7%A1%80%E5%BC%80%E5%8F%91/</link>
+      <link>http://localhost:1313/blog/2018/02-25-websocket%E5%9F%BA%E7%A1%80%E5%BC%80%E5%8F%91/</link>
       <pubDate>Sun, 25 Feb 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://neojos.com/blog/2018/02-25-websocket%E5%9F%BA%E7%A1%80%E5%BC%80%E5%8F%91/</guid>
+      <guid>http://localhost:1313/blog/2018/02-25-websocket%E5%9F%BA%E7%A1%80%E5%BC%80%E5%8F%91/</guid>
       <description>WebSocket是一种网络通讯协议。在服务器端可以将HTTP请求升级为WebSocket请求。区别于普通的HTTP请求，WebSocket中存在特殊的字段标识：</description>
     </item>
-    
   </channel>
 </rss>

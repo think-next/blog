@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> RequireJS初识 | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2018/01-29-requirejs%E5%88%9D%E8%AF%86-/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="RequireJS初识" />
-<meta property="og:description" content="开发上想找一个时间选择控件，无意中就找到了layDate 日期与时间组件。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2018/01-29-requirejs%E5%88%9D%E8%AF%86-/" />
-<meta property="article:published_time" content="2018-01-29T20:10:33+00:00" />
-<meta property="article:modified_time" content="2018-01-29T20:10:33+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2018/01-29-requirejs%E5%88%9D%E8%AF%86-/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="RequireJS初识">
+  <meta property="og:description" content="开发上想找一个时间选择控件，无意中就找到了layDate 日期与时间组件。">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2018-01-29T20:10:33+00:00">
+    <meta property="article:modified_time" content="2018-01-29T20:10:33+00:00">
+    <meta property="article:tag" content="Js">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="RequireJS初识"/>
-<meta name="twitter:description" content="开发上想找一个时间选择控件，无意中就找到了layDate 日期与时间组件。"/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="RequireJS初识">
+  <meta name="twitter:description" content="开发上想找一个时间选择控件，无意中就找到了layDate 日期与时间组件。">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,38 +50,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents"></nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -75,8 +95,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -88,13 +110,9 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">RequireJS初识</h1>文章 62 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <p>开发上想找一个时间选择控件，无意中就找到了<a href="http://www.layui.com/laydate/">layDate 日期与时间组件</a>。</p>
@@ -102,51 +120,50 @@
 <p>为什么要引入requirejs，这个东西到底该怎么用呢？从后端的角度看：它其实就是扮演PHP中的 spl_autoload_register的角色。当执行JS的时候，自动去调用执行脚本所需的js。</p>
 <p>所以对代码做如下修改,主要用来配置加载js的路径。</p>
 <p>注：如果是本地资源，千万不要写成如下代码所示的：域名+路径的形式（见注释掉的baseUrl）。当正式服和测试服域名不相同时，就比较麻烦。我就是因为我们测试服的域名是woniu-test，正式服我的域名是woniu，结果require的加载请求一直请求的是woniu的域名，找了半天才发现这个问题。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span><span style="color:#f92672">&gt;</span>
-<span style="color:#a6e22e">requirejs</span>.<span style="color:#a6e22e">config</span>({
-    <span style="color:#75715e">//baseUrl: &#39;http://woniu/resource&#39;
-</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">baseUrl</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;/resource/&#39;</span>,
-    <span style="color:#75715e">//paths: {
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">//    laydate: &#39;js/laydate&#39;
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">//},
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">//shim:{
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">//    &#39;laydate&#39;: {
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">//        deps: [&#39;js/laydate&#39;],
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">//        exports: &#39;laydate&#39;
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">//    }
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">//}
-</span><span style="color:#75715e"></span>});
-<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
-</code></pre></div><p>调用的时候直接如下调用，就ok了！！</p>
-<pre><code>&lt;script&gt;
-    require(['js/laydate'], function (_){
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">requirejs</span>.<span style="color:#a6e22e">config</span>({
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//baseUrl: &#39;http://woniu/resource&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">baseUrl</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;/resource/&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//paths: {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//    laydate: &#39;js/laydate&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//},
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//shim:{
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//    &#39;laydate&#39;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//        deps: [&#39;js/laydate&#39;],
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//        exports: &#39;laydate&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//    }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>});
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
+</span></span></code></pre></div><p>调用的时候直接如下调用，就ok了！！</p>
+<pre tabindex="0"><code>&lt;script&gt;
+    require([&#39;js/laydate&#39;], function (_){
         // called once the DOM is ready
         laydate.render({
-            elem: '#input-end-time', //指定元素
-            type: 'datetime'
+            elem: &#39;#input-end-time&#39;, //指定元素
+            type: &#39;datetime&#39;
         });
         laydate.render({
-            elem: '#input-start-time', //指定元素
-            type: 'datetime'
+            elem: &#39;#input-start-time&#39;, //指定元素
+            type: &#39;datetime&#39;
         });
     });
 &lt;/script&gt;
 </code></pre>
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -157,9 +174,8 @@
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

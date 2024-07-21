@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> Nginx总结 | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2018/03-01-nginx%E6%80%BB%E7%BB%93/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="Nginx总结" />
-<meta property="og:description" content="location 指令 工作中经常用到的一个指令，用来对某个路径的请求做特殊处理。比如同样的链接在PC和Web显示不同的页面。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2018/03-01-nginx%E6%80%BB%E7%BB%93/" />
-<meta property="article:published_time" content="2018-03-10T00:00:00+00:00" />
-<meta property="article:modified_time" content="2018-03-10T00:00:00+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2018/03-01-nginx%E6%80%BB%E7%BB%93/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="Nginx总结">
+  <meta property="og:description" content="location 指令 工作中经常用到的一个指令，用来对某个路径的请求做特殊处理。比如同样的链接在PC和Web显示不同的页面。">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2018-03-10T00:00:00+00:00">
+    <meta property="article:modified_time" content="2018-03-10T00:00:00+00:00">
+    <meta property="article:tag" content="Nginx">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Nginx总结"/>
-<meta name="twitter:description" content="location 指令 工作中经常用到的一个指令，用来对某个路径的请求做特殊处理。比如同样的链接在PC和Web显示不同的页面。"/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Nginx总结">
+  <meta name="twitter:description" content="location 指令 工作中经常用到的一个指令，用来对某个路径的请求做特殊处理。比如同样的链接在PC和Web显示不同的页面。">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,53 +50,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#location-指令">location 指令</a>
-      <ul>
-        <li><a href="#location修饰符">location修饰符</a></li>
-        <li><a href="#location匹配规则">location匹配规则</a></li>
-        <li><a href="#举个例子">举个例子</a></li>
-      </ul>
-    </li>
-    <li><a href="#error_page-返回状态码">error_page 返回状态码</a>
-      <ul>
-        <li><a href="#举个例子-1">举个例子</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -90,8 +95,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -103,13 +110,9 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">Nginx总结</h1>文章 122 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <h2 id="location-指令">location 指令</h2>
@@ -117,7 +120,7 @@
 <h3 id="location修饰符">location修饰符</h3>
 <p>location block匹配request url中domain name 或者ip/por之后的请求部分，即请求资源的路径。</p>
 <p>形式如下：</p>
-<pre><code>location optional_modifier location_match {
+<pre tabindex="0"><code>location optional_modifier location_match {
 
 }
 </code></pre><p>如下是<code>optional_modifier</code>的类型：</p>
@@ -137,9 +140,9 @@
 <p>当前想修改一下，针对某个请求<code>/fuhui/twenty/index.html</code>静态文件的根路径，即所以请求该路径的静态资源，统一到<code>/src/www/fuhui/twenty</code>目录下查找。</p>
 <p>在<code>nginx</code>中做了如下配置。所以<code>nginx</code>按照流程，前缀匹配到<code>/fuhui/twenty</code>之后，判断它其实就是前缀匹配中最长的匹配。同时，它的修饰符为<code>^~</code>，<code>location</code>匹配完成。</p>
 <p>假设②将修饰符修改为普通的前缀匹配（none），则①的<code>location</code>会匹配成功。</p>
-<pre><code># 1
+<pre tabindex="0"><code># 1
 location ~* \.html$ {
-    add_header Pragma &quot;no-cache&quot;;
+    add_header Pragma &#34;no-cache&#34;;
     try_files $uri /resource/html/$uri =404;
 }
 
@@ -149,17 +152,17 @@ location ^~ /fuhui/twenty {
 } 
 </code></pre><h2 id="error_page-返回状态码">error_page 返回状态码</h2>
 <p>语法：</p>
-<pre><code>error_page code [code...] [=|=answer-code] url | @named_location
+<pre tabindex="0"><code>error_page code [code...] [=|=answer-code] url | @named_location
 </code></pre><p>当对于某个请求返回错误码时，如果匹配上了error_page中设置的code,则重定向到新的url中，例如：</p>
-<pre><code>error_page 404 /404.html
+<pre tabindex="0"><code>error_page 404 /404.html
 error_page 502 503 /50x.html
 </code></pre><p>注意，虽然重定向了url，但是返回的http错误码还是与原来的相同，用户可以通过=号来更改返回的错误码</p>
-<pre><code>    error_page 404 =200 /empty.gif
+<pre tabindex="0"><code>    error_page 404 =200 /empty.gif
 </code></pre><p>也可以不指定确切的返回错误码，而由重定向后实际处理的真实结果来决定，这是，只要把=后面的错误码去掉即可</p>
-<pre><code>    error_page 404 = /empty.gif
+<pre tabindex="0"><code>    error_page 404 = /empty.gif
 </code></pre><h3 id="举个例子-1">举个例子</h3>
 <p>禁用外网IP访问内网服务器，返回<code>403 forbidden</code>。</p>
-<pre><code>location / {
+<pre tabindex="0"><code>location / {
     # 允许内网ip访问
     allow 10.xx.xx.xx/24;
     
@@ -178,20 +181,19 @@ location @403error {
 </code></pre><p>未完待续，敬请期待&hellip;..</p>
 
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -202,9 +204,8 @@ location @403error {
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

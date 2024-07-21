@@ -1,30 +1,46 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> database.sql.driver | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2019/19-07-17-database.sql.driver/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="database.sql.driver" />
-<meta property="og:description" content="在事务操作中，要求事务的各个阶段都使用一个Conn连接。在连接被关闭之前，还需要执行rollback操作。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2019/19-07-17-database.sql.driver/" />
-<meta property="article:published_time" content="2019-07-17T00:00:00+00:00" />
-<meta property="article:modified_time" content="2019-07-17T00:00:00+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2019/19-07-17-database.sql.driver/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="database.sql.driver">
+  <meta property="og:description" content="在事务操作中，要求事务的各个阶段都使用一个Conn连接。在连接被关闭之前，还需要执行rollback操作。">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2019-07-17T00:00:00+00:00">
+    <meta property="article:modified_time" content="2019-07-17T00:00:00+00:00">
+    <meta property="article:tag" content="MySQL">
+    <meta property="article:tag" content="Golang">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="database.sql.driver"/>
-<meta name="twitter:description" content="在事务操作中，要求事务的各个阶段都使用一个Conn连接。在连接被关闭之前，还需要执行rollback操作。"/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="database.sql.driver">
+  <meta name="twitter:description" content="在事务操作中，要求事务的各个阶段都使用一个Conn连接。在连接被关闭之前，还需要执行rollback操作。">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,38 +51,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents"></nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -75,8 +96,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -88,471 +111,466 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">database.sql.driver</h1>文章 919 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <p>在事务操作中，要求事务的各个阶段都使用一个<code>Conn</code>连接。在连接被关闭之前，还需要执行<code>rollback</code>操作。</p>
 <p>文章翻译了<code>Go</code>源码下<code>database.sql.driver</code>的接口规范，具体实现可以查看源码。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">
-<span style="color:#75715e">// 包driver定义了数据驱动要实现的接口，具体的实现会在包sql中用到。
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// 更多还是使用包sql中的代码
-</span><span style="color:#75715e"></span><span style="color:#f92672">package</span> <span style="color:#a6e22e">driver</span>
-
-<span style="color:#f92672">import</span> (
-	<span style="color:#e6db74">&#34;context&#34;</span>
-	<span style="color:#e6db74">&#34;errors&#34;</span>
-	<span style="color:#e6db74">&#34;reflect&#34;</span>
-)
-
-<span style="color:#75715e">// Value必须是一个驱动可以处理的值、NamedValueChecker接口能够处理的类型
-</span><span style="color:#75715e">// 或者下面这些类型的实例
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">//   int64
-</span><span style="color:#75715e">//   float64
-</span><span style="color:#75715e">//   bool
-</span><span style="color:#75715e">//   []byte
-</span><span style="color:#75715e">//   string
-</span><span style="color:#75715e">//   time.Time
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// 如果驱动支持游标，返回值可能也实现Rows接口。举例，当用户
-</span><span style="color:#75715e">// 执行&#34;select cursor(select * from my_table) from dual&#34;。
-</span><span style="color:#75715e">// 如果返回的Rows被Close掉了，游标指向的数据也会被Close掉。
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Value</span> <span style="color:#66d9ef">interface</span>{}
-
-<span style="color:#75715e">// NameValue 同时包括name和value
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">NamedValue</span> <span style="color:#66d9ef">struct</span> {
-    <span style="color:#75715e">// 如果Name不为空，它应该被用于参数标识符，而非序号位置。
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// Name 没有符号前缀
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Name</span> <span style="color:#66d9ef">string</span>
-
-	<span style="color:#75715e">// 参数从1开始的序号位置，并且总是被设置
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Ordinal</span> <span style="color:#66d9ef">int</span>
-
-	<span style="color:#75715e">// Value是参数值
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Value</span> <span style="color:#a6e22e">Value</span>
-}
-
-<span style="color:#75715e">// Driver是一个必须被各个数据库driver实现的接口
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// 数据库驱动可以实现DriverContext来访问上下文，并且只解析一次连接池的名称，
-</span><span style="color:#75715e">// 而非每个连接都解析一次。
-</span><span style="color:#75715e">// 
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Driver</span> <span style="color:#66d9ef">interface</span> {
-    <span style="color:#75715e">// Open返回数据库的一个新连接，参数name是驱动特定格式的字符串
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// Open也可以返回一个缓存的连接（之前被close掉的），但这样
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 做其实没必要。sql包为了连接重复使用维护了一个空闲连接池
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 返回的连接一次只被一个goroutinue中使用
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Open</span>(<span style="color:#a6e22e">name</span> <span style="color:#66d9ef">string</span>) (<span style="color:#a6e22e">Conn</span>, <span style="color:#66d9ef">error</span>)
-}
-
-<span style="color:#75715e">// 如果Driver实现了DriverContext接口，那么sql.DB就会调用OpenConnector
-</span><span style="color:#75715e">// 来获取一个Connector，调用Connector的Conn方法来获取每个需要的连接，
-</span><span style="color:#75715e">// 以此代替调用Drive的Open方法。这样允许drivers仅解析一次name，同时提供
-</span><span style="color:#75715e">// 对每个连接上下文的访问
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">DriverContext</span> <span style="color:#66d9ef">interface</span> {
-    <span style="color:#75715e">// OpenConnector解析name的方式必须跟Driver.Open的方式保持一致
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">OpenConnector</span>(<span style="color:#a6e22e">name</span> <span style="color:#66d9ef">string</span>) (<span style="color:#a6e22e">Connector</span>, <span style="color:#66d9ef">error</span>)
-}
-
-<span style="color:#75715e">// 一个Connector表示一个固定配置的driver，能够创建任意数量的等效Conn，
-</span><span style="color:#75715e">// 供多个goroutinue使用
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// 一个Connector能被传递给sql.OpenDB方法，去允许驱动实现自己的sql.DB。
-</span><span style="color:#75715e">// 或者通过调用DriverContext的OpenConnector方法，来返回一个Connector，
-</span><span style="color:#75715e">// 这样允许驱动访问连接的上下文，避免频繁的解析驱动配置。
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Connector</span> <span style="color:#66d9ef">interface</span> {
-    <span style="color:#75715e">// Connect返回一个数据库的连接
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">// Connect可能返回一个之前缓存的连接（之前被close掉了），但这样去
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">// 做其实是没必要的。sql包维护了一个高效重复使用的空闲连接池。
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">//
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 被提供的context.Context参数仅仅被用于创建连接的目的
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//（看net.DialContext),不应该被存储或用于其他别的目的。
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 返回的连接一次只能被一个goroutine使用
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Connect</span>(<span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>) (<span style="color:#a6e22e">Conn</span>, <span style="color:#66d9ef">error</span>)
-
-	<span style="color:#75715e">// Driver返回Connector的底层驱动，在sql.DB中，主要用于维护
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 驱动的扩展性
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Driver</span>() <span style="color:#a6e22e">Driver</span>
-}
-
-<span style="color:#75715e">// ErrSkip 可能被一些可选接口的方法返回，用于在运行时标识该路径无效。
-</span><span style="color:#75715e">// 包sql应该继续去执行，就当类型没有实现这个接口一样。
-</span><span style="color:#75715e">// ErrSkip 只有在被明确说明后才会被支持
-</span><span style="color:#75715e">// 
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ErrSkip</span> = <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#e6db74">&#34;driver: skip fast-path; continue as if unimplemented&#34;</span>)
-
-<span style="color:#75715e">// 当驱动给sql包标识一个driver.Conn处于坏的状态时，ErrBadConn应该被返回（
-</span><span style="color:#75715e">// 比如服务端已经关闭了这个连接），sql包已经使用一个新的连接进行重试
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// 为了避免重复操作，如果服务端可能已经完成操作的话，ErrBadConn不应该被返回。
-</span><span style="color:#75715e">// 即使服务端返回了一个错误，你也不应该返回ErrBadConn
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ErrBadConn</span> = <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#e6db74">&#34;driver: bad connection&#34;</span>)
-
-<span style="color:#75715e">// Pinger是一个可选的接口，它可能会被Conn实现
-</span><span style="color:#75715e">// 
-</span><span style="color:#75715e">// 如果Conn没有实现Pinger接口，那么sql包的DB.Ping和DB.PingContext
-</span><span style="color:#75715e">// 将会执行检查，是否至少存在一个可用连接
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// 如果Conn.Ping返回了ErrBadConn，DB.Ping 和 DB.PingContext将会从连接池中
-</span><span style="color:#75715e">// 将Conn溢出
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Pinger</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#a6e22e">Ping</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>) <span style="color:#66d9ef">error</span>
-}
-
-<span style="color:#75715e">// Execer 是一个可以被Conn实现的，可选的接口
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// 如果Conn实现了ExecerContext或Excer，
-</span><span style="color:#75715e">// 包sql下的DB.Exec将首先prepare查询语句，执行然后关闭。
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// Exec可能返回ErrSkip错误
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// 弃用：Drivers应该实现ExecerContext接口来替代Execer
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Execer</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#a6e22e">Exec</span>(<span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> []<span style="color:#a6e22e">Value</span>) (<span style="color:#a6e22e">Result</span>, <span style="color:#66d9ef">error</span>)
-}
-
-<span style="color:#75715e">// ExecerContext是可以被Conn实现的、可选的接口
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// 如果Conn并没有实现ExecerContext接口，那sql包的DB.Exec将会向后调用Excer
-</span><span style="color:#75715e">// 如果Conn也没有实现Execer接口，
-</span><span style="color:#75715e">// DB.Exec将首先prepare查询，执行语句、然后关闭语句
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// ExecerContext 可能返回 ErrSkip错误.
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// ExecerContext必须认真对待context的超时，当context被取消时，需要返回。
-</span><span style="color:#75715e">// 
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ExecerContext</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#a6e22e">ExecContext</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> []<span style="color:#a6e22e">NamedValue</span>) (<span style="color:#a6e22e">Result</span>, <span style="color:#66d9ef">error</span>)
-}
-
-<span style="color:#75715e">// Queryer 是一个可选的接口，Conn可能会实现它。
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// 如果Conn既没有实现QueryerContext，也没有实现Queryer
-</span><span style="color:#75715e">// 那么sql包的DB.Query首先会prepare一个查询语句，然后执行语句，关闭语句
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// Query可能会返回 ErrSkip错误.
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// 弃用：Drivers应该实现QueryerContext接口来替代Queryer
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Queryer</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#a6e22e">Query</span>(<span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> []<span style="color:#a6e22e">Value</span>) (<span style="color:#a6e22e">Rows</span>, <span style="color:#66d9ef">error</span>)
-}
-
-<span style="color:#75715e">// QueryerContext 是一个可选的接口，Conn可能会实现它
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// 如果Conn没有实现QueryerContext，那么sql包在执行DB.Query会降级调用Queryer；
-</span><span style="color:#75715e">// 如果Conn也没有实现Queryer，DB.Query 首先会prepare一个查询语句，然后执行这个语句
-</span><span style="color:#75715e">// 然后再关闭它
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// QueryerContext可能会返回 ErrSkip.
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// QueryerContext必须认真对待context的超时，当context被cancel掉时，需要返回
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">QueryerContext</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#a6e22e">QueryContext</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> []<span style="color:#a6e22e">NamedValue</span>) (<span style="color:#a6e22e">Rows</span>, <span style="color:#66d9ef">error</span>)
-}
-
-<span style="color:#75715e">// Conn是一条数据库的连接，它不能在多个goroutine中同时使用。
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// Conn被假定为是有状态的
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Conn</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#75715e">// Prepare返回一个准备好的语句，绑定到这个连接上
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Prepare</span>(<span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>) (<span style="color:#a6e22e">Stmt</span>, <span style="color:#66d9ef">error</span>)
-
-	<span style="color:#75715e">// Close会使当前准备好的语句和事物失效，并可能停止它们执行，
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 将这个连接标记为不再使用
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 因为sql包维护了一个空闲连接池，仅当前有多余的空闲连接时，
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 才会调用Close。对于驱动来说，实现自己的连接缓存是不必要的
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Close</span>() <span style="color:#66d9ef">error</span>
-
-    <span style="color:#75715e">// Begin 启动并返回一个新的事务
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 弃用：驱动应该通过实现ConnBeginTx来替换Begin
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Begin</span>() (<span style="color:#a6e22e">Tx</span>, <span style="color:#66d9ef">error</span>)
-}
-
-<span style="color:#75715e">// ConnPrepareContext通过使用context，加强了Conn接口
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ConnPrepareContext</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#75715e">// context被用来对语句做预处理
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 在语句本身中是不可以存储context的
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">PrepareContext</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>) (<span style="color:#a6e22e">Stmt</span>, <span style="color:#66d9ef">error</span>)
-}
-
-<span style="color:#75715e">// IsolationLevel在TxOptions类型中记录事物的隔离级别
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// 这个类型应该认被为跟sql.IsolationLevel是一致的，以及定义这个类型的其他值。
-</span><span style="color:#75715e">// 
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">IsolationLevel</span> <span style="color:#66d9ef">int</span>
-
-<span style="color:#75715e">// TxOptions 设置事物的选项
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// 这个类型应该被认为跟sql.TxOptions是一致的
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">TxOptions</span> <span style="color:#66d9ef">struct</span> {
-	<span style="color:#a6e22e">Isolation</span> <span style="color:#a6e22e">IsolationLevel</span>
-	<span style="color:#a6e22e">ReadOnly</span>  <span style="color:#66d9ef">bool</span>
-}
-
-<span style="color:#75715e">// ConnBeginTx通过context和TxOptions提高了Conn接口
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ConnBeginTx</span> <span style="color:#66d9ef">interface</span> {
-    <span style="color:#75715e">// BeginTx启动并返回一个新的事务
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">// 如果context被用户取消了，sql包会在丢弃和关闭这个连接之前
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">// 执行Tx.Rollback
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 函数必须检查opts.Isolation，确定是否存在设置的额隔离级别。
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 如果驱动不支持一个非默认的隔离级别和被设置的级别，或者
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 存在一个非默认的隔离级别是不支持的，必须返回一个错误
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 函数也必须检查opts.ReadOnly，如果ReadOnly值为真，
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 如果支持设置的话，则设置只读事务属性。如果不支持的话，返回error
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">BeginTx</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">opts</span> <span style="color:#a6e22e">TxOptions</span>) (<span style="color:#a6e22e">Tx</span>, <span style="color:#66d9ef">error</span>)
-}
-
-<span style="color:#75715e">// Conn可能会实现SessionResetter接口，用于重置当前连接上的会话状态
-</span><span style="color:#75715e">// 并将当前连接标识为坏连接
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">SessionResetter</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#75715e">// 当连接在连接池中时，调用ResetSession方法。该连接不会再承载任何查询操作
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 直接方法返回
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 如果连接是坏的，方法应该返回driver.ErrBadConn错误，来阻止连接被放回到
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 连接池。其他别的错误将会被丢弃
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">ResetSession</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>) <span style="color:#66d9ef">error</span>
-}
-
-<span style="color:#75715e">// Result是查询执行的结果
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Result</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#75715e">// LastInsertId返回数据库自动生成的ID，比如，用主键插入表的操作
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">LastInsertId</span>() (<span style="color:#66d9ef">int64</span>, <span style="color:#66d9ef">error</span>)
-
-	<span style="color:#75715e">// RowsAffected返回查询影响的行数
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">RowsAffected</span>() (<span style="color:#66d9ef">int64</span>, <span style="color:#66d9ef">error</span>)
-}
-
-<span style="color:#75715e">// Stmt是一个准备好的语句，它被绑定到一个Conn，且不能被多个goroutine并发
-</span><span style="color:#75715e">// 使用
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Stmt</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#75715e">// Close关闭这个语句
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 截止到Go 1.1，如果Stmt在被一些查询使用，Stmt将不会被关闭
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Close</span>() <span style="color:#66d9ef">error</span>
-
-	<span style="color:#75715e">// NumInput返回占位符的个数
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 如果NumInput返回值大于等于0，sql包会明智的检查调用者的参数个数，
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 在Exec或Query被调用之前，返回错误给调用者。
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 如果驱动不知道占位符的个数，NumInput可能会返回-1。在这种情况下，
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// sql包将不会检查Exec和Query的参数个数
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">NumInput</span>() <span style="color:#66d9ef">int</span>
-
-	<span style="color:#75715e">// Exec执行一个不返回数据行的查询，比如INSERT或UPDATE
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 弃用：驱动应实现StmtExecContext来替代
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Exec</span>(<span style="color:#a6e22e">args</span> []<span style="color:#a6e22e">Value</span>) (<span style="color:#a6e22e">Result</span>, <span style="color:#66d9ef">error</span>)
-
-	<span style="color:#75715e">// Query执行一个返回数据行的查询，比如SELECT
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 弃用：驱动应实现StmtQueryContext来替代
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Query</span>(<span style="color:#a6e22e">args</span> []<span style="color:#a6e22e">Value</span>) (<span style="color:#a6e22e">Rows</span>, <span style="color:#66d9ef">error</span>)
-}
-
-<span style="color:#75715e">// StmtExecContext升级了Stmt接口，它提供了一个有context的Exec，
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">StmtExecContext</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#75715e">// ExecContext执行一个不返回数据行的查询，比如INSERT或UPDATE
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// ExecContext必须遵守context超时，当context被取消时，函数需要返回
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">ExecContext</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">args</span> []<span style="color:#a6e22e">NamedValue</span>) (<span style="color:#a6e22e">Result</span>, <span style="color:#66d9ef">error</span>)
-}
-
-<span style="color:#75715e">// StmtQueryContext升级了Stmt接口，它提供了一个有context的Query
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">StmtQueryContext</span> <span style="color:#66d9ef">interface</span> {
-    <span style="color:#75715e">// QueryContext执行一个返回数据行的查询，比如SELECT
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// ExecContext必须遵守context超时，当context被取消时，函数需要返回
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">QueryContext</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">args</span> []<span style="color:#a6e22e">NamedValue</span>) (<span style="color:#a6e22e">Rows</span>, <span style="color:#66d9ef">error</span>)
-}
-
-<span style="color:#75715e">// ErrRemoveArgument可能被NamedValueChecker返回，用来指示sql包不要
-</span><span style="color:#75715e">// 给驱动的query接口传递这个参数。
-</span><span style="color:#75715e">// 当接收到不是查询参数的特定属性或结构时，返回该错误
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ErrRemoveArgument</span> = <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#e6db74">&#34;driver: remove argument from query&#34;</span>)
-
-<span style="color:#75715e">// Conn或Stmt可选择是否要实现NamedValueChecker接口。接口提供给驱动
-</span><span style="color:#75715e">// 更多的控制，去处理超出Go和数据库允许的默认值类型。
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// 对于值的检查对象，sql包按如下顺序进行检查。当第一次发现匹配时停止：
-</span><span style="color:#75715e">// Stmt.NamedValueChecker, Conn.NamedValueChecker, Stmt.ColumnConverter,
-</span><span style="color:#75715e">// DefaultParameterConverter.
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// 如果CheckNamedValue返回ErrRemoveArgument错误，那么这个NamedValue将不会
-</span><span style="color:#75715e">// 被包含在最终的查询参数中。这可能会被用于给查询传递特殊的选项。
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e">// 如果ErrSkip错误被返回，则使用列转换器错误检查路径作为参数。
-</span><span style="color:#75715e">// 驱动可能希望在耗尽自己特殊case后返回ErrSkip
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">NamedValueChecker</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#75715e">// 在传递参数给驱动之前，CheckNamedValue会被调用。
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 在任何ColumnConverter的地方也会调用CheckNamedValue。
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// CheckNamedValue必须根据驱动的需要做类型校验和转换
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">CheckNamedValue</span>(<span style="color:#f92672">*</span><span style="color:#a6e22e">NamedValue</span>) <span style="color:#66d9ef">error</span>
-}
-
-<span style="color:#75715e">// 如果语句知道自己列的类型，并且能够从任何类型转换为驱动的Value，
-</span><span style="color:#75715e">// 那么Stmt 可以选择性的实现ColumnConverter
-</span><span style="color:#75715e">// 
-</span><span style="color:#75715e">// 弃用：驱动应实现NamedValueChecker
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ColumnConverter</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#75715e">// 根据提供的列序号，ColumnConverter返回一个 ValueConverter。
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 如果该列是未知的或者不需要被特殊处理，方法返回DefaultValueConverter
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">ColumnConverter</span>(<span style="color:#a6e22e">idx</span> <span style="color:#66d9ef">int</span>) <span style="color:#a6e22e">ValueConverter</span>
-}
-
-<span style="color:#75715e">// Rows是一个查询结果的迭代器
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Rows</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#75715e">// Columns返回列的名字集，它的个数是从slice的长度中推断出来的。
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 如果不知道特定的列名，应该为该条目返回一个空的字符串
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Columns</span>() []<span style="color:#66d9ef">string</span>
-
-	<span style="color:#75715e">// 关闭行迭代器
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Close</span>() <span style="color:#66d9ef">error</span>
-
-	<span style="color:#75715e">// Next用于把数据集中的下一行填入提供的slice中。该slice的
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 长度应该跟Columns()的长度一致
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 当没有数据行时，Next应该返回io.EOF
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// dest不应被声明在Next之外(应该作为Next的一个成员变量)
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 关闭Rows时应特别注意，不要修改dest中缓冲区的值
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Next</span>(<span style="color:#a6e22e">dest</span> []<span style="color:#a6e22e">Value</span>) <span style="color:#66d9ef">error</span>
-}
-
-<span style="color:#75715e">// RowsNextResultSet扩展了Rows接口，它提供了一个方式，让驱动向前移动
-</span><span style="color:#75715e">// 到下一个结果集
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RowsNextResultSet</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#a6e22e">Rows</span>
-
-	<span style="color:#75715e">// 在当前结果集的末尾调用HasNextResultSet，报告当前结果集之后是否还存在
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 别的结果集
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">HasNextResultSet</span>() <span style="color:#66d9ef">bool</span>
-
-	<span style="color:#75715e">// NextResultSet向前移动驱动到下一个结果集，即使当前结果集
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 仍然存在剩余的数据行
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// 当不再有数据集时，NextResultSet应该返回io.EOF
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">NextResultSet</span>() <span style="color:#66d9ef">error</span>
-}
-
-<span style="color:#75715e">// RowsColumnTypeScanType可以通过Rows实现，它应该返回可用于扫描的数据类型。
-</span><span style="color:#75715e">// 比如，数据库的列类型`bigint`应该返回&#34;reflect.TypeOf(int64(0))&#34;.
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RowsColumnTypeScanType</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#a6e22e">Rows</span>
-	<span style="color:#a6e22e">ColumnTypeScanType</span>(<span style="color:#a6e22e">index</span> <span style="color:#66d9ef">int</span>) <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Type</span>
-}
-
-<span style="color:#75715e">// RowsColumnTypeDatabaseTypeName可以通过Rows实现。它应该返回不包括字段长度的数据库类型，
-</span><span style="color:#75715e">// 类型名应该全大写。诸如：&#34;VARCHAR&#34;, &#34;NVARCHAR&#34;, &#34;VARCHAR2&#34;, &#34;CHAR&#34;, &#34;TEXT&#34;,
-</span><span style="color:#75715e">// &#34;DECIMAL&#34;, &#34;SMALLINT&#34;, &#34;INT&#34;, &#34;BIGINT&#34;, &#34;BOOL&#34;, &#34;[]BIGINT&#34;, &#34;JSONB&#34;, &#34;XML&#34;,
-</span><span style="color:#75715e">// &#34;TIMESTAMP&#34;.
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RowsColumnTypeDatabaseTypeName</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#a6e22e">Rows</span>
-	<span style="color:#a6e22e">ColumnTypeDatabaseTypeName</span>(<span style="color:#a6e22e">index</span> <span style="color:#66d9ef">int</span>) <span style="color:#66d9ef">string</span>
-}
-
-<span style="color:#75715e">// RowsColumnTypeLength可以通过Rows实现，如果列是可变长度的类型，它应该返回
-</span><span style="color:#75715e">// 类型的长度。如果列是不可变长度的类型，ok返回false。
-</span><span style="color:#75715e">// 如果类型长度只受系统限制，则应该返回math.MaxInt64
-</span><span style="color:#75715e">// 下面是变量类型的返回值示例
-</span><span style="color:#75715e">//   TEXT          (math.MaxInt64, true)
-</span><span style="color:#75715e">//   varchar(10)   (10, true)
-</span><span style="color:#75715e">//   nvarchar(10)  (10, true)
-</span><span style="color:#75715e">//   decimal       (0, false)
-</span><span style="color:#75715e">//   int           (0, false)
-</span><span style="color:#75715e">//   bytea(30)     (30, true)
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RowsColumnTypeLength</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#a6e22e">Rows</span>
-	<span style="color:#a6e22e">ColumnTypeLength</span>(<span style="color:#a6e22e">index</span> <span style="color:#66d9ef">int</span>) (<span style="color:#a6e22e">length</span> <span style="color:#66d9ef">int64</span>, <span style="color:#a6e22e">ok</span> <span style="color:#66d9ef">bool</span>)
-}
-
-<span style="color:#75715e">// RowsColumnTypeNullable可以通过Rows实现。如果指定的列可以为空，则nullable
-</span><span style="color:#75715e">// 返回true。相反，如果列不能为空，nullable应该返回false。
-</span><span style="color:#75715e">// 如果不知道该列是否可以为空，ok应该返回false
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RowsColumnTypeNullable</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#a6e22e">Rows</span>
-	<span style="color:#a6e22e">ColumnTypeNullable</span>(<span style="color:#a6e22e">index</span> <span style="color:#66d9ef">int</span>) (<span style="color:#a6e22e">nullable</span>, <span style="color:#a6e22e">ok</span> <span style="color:#66d9ef">bool</span>)
-}
-
-<span style="color:#75715e">// RowsColumnTypePrecisionScale可以被Rows实现，对于decimal类型，它应该返回
-</span><span style="color:#75715e">// 精度和小数点右边的范围。如果类型不适用，ok应返回false
-</span><span style="color:#75715e">// 下面是不同类型的返回值示例：
-</span><span style="color:#75715e">//   decimal(38, 4)    (38, 4, true)
-</span><span style="color:#75715e">//   int               (0, 0, false)
-</span><span style="color:#75715e">//   decimal           (math.MaxInt64, math.MaxInt64, true)
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RowsColumnTypePrecisionScale</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#a6e22e">Rows</span>
-	<span style="color:#a6e22e">ColumnTypePrecisionScale</span>(<span style="color:#a6e22e">index</span> <span style="color:#66d9ef">int</span>) (<span style="color:#a6e22e">precision</span>, <span style="color:#a6e22e">scale</span> <span style="color:#66d9ef">int64</span>, <span style="color:#a6e22e">ok</span> <span style="color:#66d9ef">bool</span>)
-}
-
-<span style="color:#75715e">// Tx是一个事务
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Tx</span> <span style="color:#66d9ef">interface</span> {
-	<span style="color:#a6e22e">Commit</span>() <span style="color:#66d9ef">error</span>
-	<span style="color:#a6e22e">Rollback</span>() <span style="color:#66d9ef">error</span>
-}
-
-<span style="color:#75715e">// RowsAffected实现了INSERT或UPDATE操作的结果
-</span><span style="color:#75715e">// 表示被影响的行数
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RowsAffected</span> <span style="color:#66d9ef">int64</span>
-
-<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_</span> <span style="color:#a6e22e">Result</span> = <span style="color:#a6e22e">RowsAffected</span>(<span style="color:#ae81ff">0</span>)
-
-<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">RowsAffected</span>) <span style="color:#a6e22e">LastInsertId</span>() (<span style="color:#66d9ef">int64</span>, <span style="color:#66d9ef">error</span>) {
-	<span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#e6db74">&#34;LastInsertId is not supported by this driver&#34;</span>)
-}
-
-<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">v</span> <span style="color:#a6e22e">RowsAffected</span>) <span style="color:#a6e22e">RowsAffected</span>() (<span style="color:#66d9ef">int64</span>, <span style="color:#66d9ef">error</span>) {
-	<span style="color:#66d9ef">return</span> int64(<span style="color:#a6e22e">v</span>), <span style="color:#66d9ef">nil</span>
-}
-
-<span style="color:#75715e">// ResultNoRows是一个预定义的结果，在一个DDL操作(比如CREATE TABLE)执行成功
-</span><span style="color:#75715e">// 时返回。调用该类型的LastInsertId和LastInsertId方法会返回错误
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ResultNoRows</span> <span style="color:#a6e22e">noRows</span>
-
-<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">noRows</span> <span style="color:#66d9ef">struct</span>{}
-
-<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_</span> <span style="color:#a6e22e">Result</span> = <span style="color:#a6e22e">noRows</span>{}
-
-<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">noRows</span>) <span style="color:#a6e22e">LastInsertId</span>() (<span style="color:#66d9ef">int64</span>, <span style="color:#66d9ef">error</span>) {
-	<span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#e6db74">&#34;no LastInsertId available after DDL statement&#34;</span>)
-}
-
-<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">noRows</span>) <span style="color:#a6e22e">RowsAffected</span>() (<span style="color:#66d9ef">int64</span>, <span style="color:#66d9ef">error</span>) {
-	<span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#e6db74">&#34;no RowsAffected available after DDL statement&#34;</span>)
-}
-</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 包driver定义了数据驱动要实现的接口，具体的实现会在包sql中用到。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 更多还是使用包sql中的代码
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">package</span> <span style="color:#a6e22e">driver</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;context&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;errors&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;reflect&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Value必须是一个驱动可以处理的值、NamedValueChecker接口能够处理的类型
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 或者下面这些类型的实例
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//   int64
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//   float64
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//   bool
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//   []byte
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//   string
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//   time.Time
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 如果驱动支持游标，返回值可能也实现Rows接口。举例，当用户
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行&#34;select cursor(select * from my_table) from dual&#34;。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 如果返回的Rows被Close掉了，游标指向的数据也会被Close掉。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Value</span> <span style="color:#66d9ef">interface</span>{}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// NameValue 同时包括name和value
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">NamedValue</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 如果Name不为空，它应该被用于参数标识符，而非序号位置。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// Name 没有符号前缀
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Name</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// 参数从1开始的序号位置，并且总是被设置
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Ordinal</span> <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Value是参数值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Value</span> <span style="color:#a6e22e">Value</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Driver是一个必须被各个数据库driver实现的接口
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 数据库驱动可以实现DriverContext来访问上下文，并且只解析一次连接池的名称，
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 而非每个连接都解析一次。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Driver</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Open返回数据库的一个新连接，参数name是驱动特定格式的字符串
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// Open也可以返回一个缓存的连接（之前被close掉的），但这样
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 做其实没必要。sql包为了连接重复使用维护了一个空闲连接池
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 返回的连接一次只被一个goroutinue中使用
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Open</span>(<span style="color:#a6e22e">name</span> <span style="color:#66d9ef">string</span>) (<span style="color:#a6e22e">Conn</span>, <span style="color:#66d9ef">error</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 如果Driver实现了DriverContext接口，那么sql.DB就会调用OpenConnector
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 来获取一个Connector，调用Connector的Conn方法来获取每个需要的连接，
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 以此代替调用Drive的Open方法。这样允许drivers仅解析一次name，同时提供
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 对每个连接上下文的访问
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">DriverContext</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// OpenConnector解析name的方式必须跟Driver.Open的方式保持一致
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">OpenConnector</span>(<span style="color:#a6e22e">name</span> <span style="color:#66d9ef">string</span>) (<span style="color:#a6e22e">Connector</span>, <span style="color:#66d9ef">error</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 一个Connector表示一个固定配置的driver，能够创建任意数量的等效Conn，
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 供多个goroutinue使用
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 一个Connector能被传递给sql.OpenDB方法，去允许驱动实现自己的sql.DB。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 或者通过调用DriverContext的OpenConnector方法，来返回一个Connector，
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 这样允许驱动访问连接的上下文，避免频繁的解析驱动配置。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Connector</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Connect返回一个数据库的连接
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// Connect可能返回一个之前缓存的连接（之前被close掉了），但这样去
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 做其实是没必要的。sql包维护了一个高效重复使用的空闲连接池。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 被提供的context.Context参数仅仅被用于创建连接的目的
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//（看net.DialContext),不应该被存储或用于其他别的目的。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 返回的连接一次只能被一个goroutine使用
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Connect</span>(<span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>) (<span style="color:#a6e22e">Conn</span>, <span style="color:#66d9ef">error</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Driver返回Connector的底层驱动，在sql.DB中，主要用于维护
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 驱动的扩展性
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Driver</span>() <span style="color:#a6e22e">Driver</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ErrSkip 可能被一些可选接口的方法返回，用于在运行时标识该路径无效。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 包sql应该继续去执行，就当类型没有实现这个接口一样。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// ErrSkip 只有在被明确说明后才会被支持
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ErrSkip</span> = <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#e6db74">&#34;driver: skip fast-path; continue as if unimplemented&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 当驱动给sql包标识一个driver.Conn处于坏的状态时，ErrBadConn应该被返回（
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 比如服务端已经关闭了这个连接），sql包已经使用一个新的连接进行重试
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 为了避免重复操作，如果服务端可能已经完成操作的话，ErrBadConn不应该被返回。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 即使服务端返回了一个错误，你也不应该返回ErrBadConn
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ErrBadConn</span> = <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#e6db74">&#34;driver: bad connection&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Pinger是一个可选的接口，它可能会被Conn实现
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 如果Conn没有实现Pinger接口，那么sql包的DB.Ping和DB.PingContext
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 将会执行检查，是否至少存在一个可用连接
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 如果Conn.Ping返回了ErrBadConn，DB.Ping 和 DB.PingContext将会从连接池中
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 将Conn溢出
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Pinger</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Ping</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>) <span style="color:#66d9ef">error</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Execer 是一个可以被Conn实现的，可选的接口
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 如果Conn实现了ExecerContext或Excer，
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 包sql下的DB.Exec将首先prepare查询语句，执行然后关闭。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Exec可能返回ErrSkip错误
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 弃用：Drivers应该实现ExecerContext接口来替代Execer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Execer</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Exec</span>(<span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> []<span style="color:#a6e22e">Value</span>) (<span style="color:#a6e22e">Result</span>, <span style="color:#66d9ef">error</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ExecerContext是可以被Conn实现的、可选的接口
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 如果Conn并没有实现ExecerContext接口，那sql包的DB.Exec将会向后调用Excer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 如果Conn也没有实现Execer接口，
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// DB.Exec将首先prepare查询，执行语句、然后关闭语句
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// ExecerContext 可能返回 ErrSkip错误.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// ExecerContext必须认真对待context的超时，当context被取消时，需要返回。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ExecerContext</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">ExecContext</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> []<span style="color:#a6e22e">NamedValue</span>) (<span style="color:#a6e22e">Result</span>, <span style="color:#66d9ef">error</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Queryer 是一个可选的接口，Conn可能会实现它。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 如果Conn既没有实现QueryerContext，也没有实现Queryer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 那么sql包的DB.Query首先会prepare一个查询语句，然后执行语句，关闭语句
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Query可能会返回 ErrSkip错误.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 弃用：Drivers应该实现QueryerContext接口来替代Queryer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Queryer</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Query</span>(<span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> []<span style="color:#a6e22e">Value</span>) (<span style="color:#a6e22e">Rows</span>, <span style="color:#66d9ef">error</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// QueryerContext 是一个可选的接口，Conn可能会实现它
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 如果Conn没有实现QueryerContext，那么sql包在执行DB.Query会降级调用Queryer；
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 如果Conn也没有实现Queryer，DB.Query 首先会prepare一个查询语句，然后执行这个语句
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 然后再关闭它
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// QueryerContext可能会返回 ErrSkip.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// QueryerContext必须认真对待context的超时，当context被cancel掉时，需要返回
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">QueryerContext</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">QueryContext</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> []<span style="color:#a6e22e">NamedValue</span>) (<span style="color:#a6e22e">Rows</span>, <span style="color:#66d9ef">error</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Conn是一条数据库的连接，它不能在多个goroutine中同时使用。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Conn被假定为是有状态的
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Conn</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Prepare返回一个准备好的语句，绑定到这个连接上
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Prepare</span>(<span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>) (<span style="color:#a6e22e">Stmt</span>, <span style="color:#66d9ef">error</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Close会使当前准备好的语句和事物失效，并可能停止它们执行，
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 将这个连接标记为不再使用
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 因为sql包维护了一个空闲连接池，仅当前有多余的空闲连接时，
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 才会调用Close。对于驱动来说，实现自己的连接缓存是不必要的
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Close</span>() <span style="color:#66d9ef">error</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Begin 启动并返回一个新的事务
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 弃用：驱动应该通过实现ConnBeginTx来替换Begin
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Begin</span>() (<span style="color:#a6e22e">Tx</span>, <span style="color:#66d9ef">error</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ConnPrepareContext通过使用context，加强了Conn接口
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ConnPrepareContext</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// context被用来对语句做预处理
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 在语句本身中是不可以存储context的
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">PrepareContext</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>) (<span style="color:#a6e22e">Stmt</span>, <span style="color:#66d9ef">error</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// IsolationLevel在TxOptions类型中记录事物的隔离级别
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 这个类型应该认被为跟sql.IsolationLevel是一致的，以及定义这个类型的其他值。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">IsolationLevel</span> <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// TxOptions 设置事物的选项
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 这个类型应该被认为跟sql.TxOptions是一致的
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">TxOptions</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Isolation</span> <span style="color:#a6e22e">IsolationLevel</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">ReadOnly</span>  <span style="color:#66d9ef">bool</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ConnBeginTx通过context和TxOptions提高了Conn接口
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ConnBeginTx</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// BeginTx启动并返回一个新的事务
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 如果context被用户取消了，sql包会在丢弃和关闭这个连接之前
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 执行Tx.Rollback
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 函数必须检查opts.Isolation，确定是否存在设置的额隔离级别。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 如果驱动不支持一个非默认的隔离级别和被设置的级别，或者
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 存在一个非默认的隔离级别是不支持的，必须返回一个错误
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 函数也必须检查opts.ReadOnly，如果ReadOnly值为真，
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 如果支持设置的话，则设置只读事务属性。如果不支持的话，返回error
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">BeginTx</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">opts</span> <span style="color:#a6e22e">TxOptions</span>) (<span style="color:#a6e22e">Tx</span>, <span style="color:#66d9ef">error</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Conn可能会实现SessionResetter接口，用于重置当前连接上的会话状态
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 并将当前连接标识为坏连接
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">SessionResetter</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// 当连接在连接池中时，调用ResetSession方法。该连接不会再承载任何查询操作
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 直接方法返回
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 如果连接是坏的，方法应该返回driver.ErrBadConn错误，来阻止连接被放回到
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 连接池。其他别的错误将会被丢弃
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">ResetSession</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>) <span style="color:#66d9ef">error</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Result是查询执行的结果
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Result</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// LastInsertId返回数据库自动生成的ID，比如，用主键插入表的操作
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">LastInsertId</span>() (<span style="color:#66d9ef">int64</span>, <span style="color:#66d9ef">error</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// RowsAffected返回查询影响的行数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">RowsAffected</span>() (<span style="color:#66d9ef">int64</span>, <span style="color:#66d9ef">error</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Stmt是一个准备好的语句，它被绑定到一个Conn，且不能被多个goroutine并发
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 使用
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Stmt</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Close关闭这个语句
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 截止到Go 1.1，如果Stmt在被一些查询使用，Stmt将不会被关闭
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Close</span>() <span style="color:#66d9ef">error</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// NumInput返回占位符的个数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 如果NumInput返回值大于等于0，sql包会明智的检查调用者的参数个数，
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 在Exec或Query被调用之前，返回错误给调用者。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 如果驱动不知道占位符的个数，NumInput可能会返回-1。在这种情况下，
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// sql包将不会检查Exec和Query的参数个数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">NumInput</span>() <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Exec执行一个不返回数据行的查询，比如INSERT或UPDATE
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 弃用：驱动应实现StmtExecContext来替代
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Exec</span>(<span style="color:#a6e22e">args</span> []<span style="color:#a6e22e">Value</span>) (<span style="color:#a6e22e">Result</span>, <span style="color:#66d9ef">error</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Query执行一个返回数据行的查询，比如SELECT
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 弃用：驱动应实现StmtQueryContext来替代
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Query</span>(<span style="color:#a6e22e">args</span> []<span style="color:#a6e22e">Value</span>) (<span style="color:#a6e22e">Rows</span>, <span style="color:#66d9ef">error</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// StmtExecContext升级了Stmt接口，它提供了一个有context的Exec，
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">StmtExecContext</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// ExecContext执行一个不返回数据行的查询，比如INSERT或UPDATE
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// ExecContext必须遵守context超时，当context被取消时，函数需要返回
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">ExecContext</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">args</span> []<span style="color:#a6e22e">NamedValue</span>) (<span style="color:#a6e22e">Result</span>, <span style="color:#66d9ef">error</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// StmtQueryContext升级了Stmt接口，它提供了一个有context的Query
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">StmtQueryContext</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// QueryContext执行一个返回数据行的查询，比如SELECT
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// ExecContext必须遵守context超时，当context被取消时，函数需要返回
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">QueryContext</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">args</span> []<span style="color:#a6e22e">NamedValue</span>) (<span style="color:#a6e22e">Rows</span>, <span style="color:#66d9ef">error</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ErrRemoveArgument可能被NamedValueChecker返回，用来指示sql包不要
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 给驱动的query接口传递这个参数。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 当接收到不是查询参数的特定属性或结构时，返回该错误
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ErrRemoveArgument</span> = <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#e6db74">&#34;driver: remove argument from query&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Conn或Stmt可选择是否要实现NamedValueChecker接口。接口提供给驱动
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 更多的控制，去处理超出Go和数据库允许的默认值类型。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 对于值的检查对象，sql包按如下顺序进行检查。当第一次发现匹配时停止：
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Stmt.NamedValueChecker, Conn.NamedValueChecker, Stmt.ColumnConverter,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// DefaultParameterConverter.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 如果CheckNamedValue返回ErrRemoveArgument错误，那么这个NamedValue将不会
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 被包含在最终的查询参数中。这可能会被用于给查询传递特殊的选项。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 如果ErrSkip错误被返回，则使用列转换器错误检查路径作为参数。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 驱动可能希望在耗尽自己特殊case后返回ErrSkip
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">NamedValueChecker</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// 在传递参数给驱动之前，CheckNamedValue会被调用。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 在任何ColumnConverter的地方也会调用CheckNamedValue。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// CheckNamedValue必须根据驱动的需要做类型校验和转换
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">CheckNamedValue</span>(<span style="color:#f92672">*</span><span style="color:#a6e22e">NamedValue</span>) <span style="color:#66d9ef">error</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 如果语句知道自己列的类型，并且能够从任何类型转换为驱动的Value，
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 那么Stmt 可以选择性的实现ColumnConverter
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 弃用：驱动应实现NamedValueChecker
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ColumnConverter</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// 根据提供的列序号，ColumnConverter返回一个 ValueConverter。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 如果该列是未知的或者不需要被特殊处理，方法返回DefaultValueConverter
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">ColumnConverter</span>(<span style="color:#a6e22e">idx</span> <span style="color:#66d9ef">int</span>) <span style="color:#a6e22e">ValueConverter</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Rows是一个查询结果的迭代器
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Rows</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Columns返回列的名字集，它的个数是从slice的长度中推断出来的。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 如果不知道特定的列名，应该为该条目返回一个空的字符串
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Columns</span>() []<span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// 关闭行迭代器
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Close</span>() <span style="color:#66d9ef">error</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Next用于把数据集中的下一行填入提供的slice中。该slice的
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 长度应该跟Columns()的长度一致
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 当没有数据行时，Next应该返回io.EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// dest不应被声明在Next之外(应该作为Next的一个成员变量)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 关闭Rows时应特别注意，不要修改dest中缓冲区的值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Next</span>(<span style="color:#a6e22e">dest</span> []<span style="color:#a6e22e">Value</span>) <span style="color:#66d9ef">error</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// RowsNextResultSet扩展了Rows接口，它提供了一个方式，让驱动向前移动
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 到下一个结果集
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RowsNextResultSet</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Rows</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// 在当前结果集的末尾调用HasNextResultSet，报告当前结果集之后是否还存在
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 别的结果集
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">HasNextResultSet</span>() <span style="color:#66d9ef">bool</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// NextResultSet向前移动驱动到下一个结果集，即使当前结果集
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 仍然存在剩余的数据行
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 当不再有数据集时，NextResultSet应该返回io.EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">NextResultSet</span>() <span style="color:#66d9ef">error</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// RowsColumnTypeScanType可以通过Rows实现，它应该返回可用于扫描的数据类型。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 比如，数据库的列类型`bigint`应该返回&#34;reflect.TypeOf(int64(0))&#34;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RowsColumnTypeScanType</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Rows</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">ColumnTypeScanType</span>(<span style="color:#a6e22e">index</span> <span style="color:#66d9ef">int</span>) <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Type</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// RowsColumnTypeDatabaseTypeName可以通过Rows实现。它应该返回不包括字段长度的数据库类型，
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 类型名应该全大写。诸如：&#34;VARCHAR&#34;, &#34;NVARCHAR&#34;, &#34;VARCHAR2&#34;, &#34;CHAR&#34;, &#34;TEXT&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// &#34;DECIMAL&#34;, &#34;SMALLINT&#34;, &#34;INT&#34;, &#34;BIGINT&#34;, &#34;BOOL&#34;, &#34;[]BIGINT&#34;, &#34;JSONB&#34;, &#34;XML&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// &#34;TIMESTAMP&#34;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RowsColumnTypeDatabaseTypeName</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Rows</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">ColumnTypeDatabaseTypeName</span>(<span style="color:#a6e22e">index</span> <span style="color:#66d9ef">int</span>) <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// RowsColumnTypeLength可以通过Rows实现，如果列是可变长度的类型，它应该返回
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 类型的长度。如果列是不可变长度的类型，ok返回false。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 如果类型长度只受系统限制，则应该返回math.MaxInt64
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 下面是变量类型的返回值示例
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//   TEXT          (math.MaxInt64, true)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//   varchar(10)   (10, true)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//   nvarchar(10)  (10, true)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//   decimal       (0, false)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//   int           (0, false)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//   bytea(30)     (30, true)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RowsColumnTypeLength</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Rows</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">ColumnTypeLength</span>(<span style="color:#a6e22e">index</span> <span style="color:#66d9ef">int</span>) (<span style="color:#a6e22e">length</span> <span style="color:#66d9ef">int64</span>, <span style="color:#a6e22e">ok</span> <span style="color:#66d9ef">bool</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// RowsColumnTypeNullable可以通过Rows实现。如果指定的列可以为空，则nullable
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 返回true。相反，如果列不能为空，nullable应该返回false。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 如果不知道该列是否可以为空，ok应该返回false
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RowsColumnTypeNullable</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Rows</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">ColumnTypeNullable</span>(<span style="color:#a6e22e">index</span> <span style="color:#66d9ef">int</span>) (<span style="color:#a6e22e">nullable</span>, <span style="color:#a6e22e">ok</span> <span style="color:#66d9ef">bool</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// RowsColumnTypePrecisionScale可以被Rows实现，对于decimal类型，它应该返回
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 精度和小数点右边的范围。如果类型不适用，ok应返回false
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 下面是不同类型的返回值示例：
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//   decimal(38, 4)    (38, 4, true)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//   int               (0, 0, false)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//   decimal           (math.MaxInt64, math.MaxInt64, true)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RowsColumnTypePrecisionScale</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Rows</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">ColumnTypePrecisionScale</span>(<span style="color:#a6e22e">index</span> <span style="color:#66d9ef">int</span>) (<span style="color:#a6e22e">precision</span>, <span style="color:#a6e22e">scale</span> <span style="color:#66d9ef">int64</span>, <span style="color:#a6e22e">ok</span> <span style="color:#66d9ef">bool</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Tx是一个事务
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Tx</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Commit</span>() <span style="color:#66d9ef">error</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Rollback</span>() <span style="color:#66d9ef">error</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// RowsAffected实现了INSERT或UPDATE操作的结果
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 表示被影响的行数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RowsAffected</span> <span style="color:#66d9ef">int64</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_</span> <span style="color:#a6e22e">Result</span> = <span style="color:#a6e22e">RowsAffected</span>(<span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">RowsAffected</span>) <span style="color:#a6e22e">LastInsertId</span>() (<span style="color:#66d9ef">int64</span>, <span style="color:#66d9ef">error</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#e6db74">&#34;LastInsertId is not supported by this driver&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">v</span> <span style="color:#a6e22e">RowsAffected</span>) <span style="color:#a6e22e">RowsAffected</span>() (<span style="color:#66d9ef">int64</span>, <span style="color:#66d9ef">error</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> int64(<span style="color:#a6e22e">v</span>), <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ResultNoRows是一个预定义的结果，在一个DDL操作(比如CREATE TABLE)执行成功
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 时返回。调用该类型的LastInsertId和LastInsertId方法会返回错误
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ResultNoRows</span> <span style="color:#a6e22e">noRows</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">noRows</span> <span style="color:#66d9ef">struct</span>{}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_</span> <span style="color:#a6e22e">Result</span> = <span style="color:#a6e22e">noRows</span>{}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">noRows</span>) <span style="color:#a6e22e">LastInsertId</span>() (<span style="color:#66d9ef">int64</span>, <span style="color:#66d9ef">error</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#e6db74">&#34;no LastInsertId available after DDL statement&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">noRows</span>) <span style="color:#a6e22e">RowsAffected</span>() (<span style="color:#66d9ef">int64</span>, <span style="color:#66d9ef">error</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#e6db74">&#34;no RowsAffected available after DDL statement&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -563,9 +581,8 @@
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

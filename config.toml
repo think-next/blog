@@ -2,21 +2,28 @@ baseurl = "https://neojos.com/"
 title = "渐行渐远"
 languageCode = "en-us"
 paginate = "128" # Number of posts per page
-theme = "cactus"
+theme = "hugo-theme-cactus"
+#theme = "ananke"
 disqusShortname = "" # Enable Disqus comments by entering your Disqus shortname
-googleAnalytics = "" # Enable Google Analytics by entering your tracking id
+GoogleAnalytics = false # Enable Google Analytics by entering your tracking id
 summaryLength = 1
 
 [Author] # Used in authorbox
-  name = "Neojos"
-  bio = "我们听到的一切都是一个观点，不是事实。我们看到的一切都是一个视角，不是真相"
-  avatar = "img/mifeng.jpeg"
+name = "Neojos"
+bio = "我们听到的一切都是一个观点，不是事实。我们看到的一切都是一个视角，不是真相"
+avatar = "img/mifeng.jpeg"
 
 [[menu.main]]
-    identifier = "Blog"
-    name = "思考"
-    url = "/blog"
-    weight = 2
+identifier = "ReadBook"
+name = "读书笔记"
+url = "/readbook"
+weight = 1
+
+[[menu.main]]
+identifier = "Blog"
+name = "思考"
+url = "/blog"
+weight = 2
 
 #[[menu.main]]
 #    identifier = "emotion"
@@ -25,71 +32,71 @@ summaryLength = 1
 #    weight = 3
 
 [[menu.main]]
-    identifier = "about"
-    name = "About"
-    url = "/"
-    weight = 4
+identifier = "about"
+name = "About"
+url = "/"
+weight = 4
 
 [Params]
-  description = "" # Site description. Used in meta description
-  copyright = "Neojos" # Footer copyright holder, otherwise will use site title
-  # opengraph = true # Enable OpenGraph if true
-  schema = true # Enable Schema
-  # twitter_cards = true # Enable Twitter Cards if true
-  readmore = true # Show "Read more" button in list if true
-  authorbox = true # Show authorbox at bottom of pages if true
-  toc = true # Enable Table of Contents
-  pager = true # Show pager navigation (prev/next links) at the bottom of pages if true
-  post_meta = ["author", "date", "categories", "translations"] # Order of post meta information
-  mainSections = ["blog"] # Specify section pages to show on home page and the "Recent articles" widget
-  dateformat = "2006-01-02" # Change the format of dates
-  mathjax = true # Enable MathJax
-  mathjaxPath = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js" # Specify MathJax path
-  mathjaxConfig = "TeX-AMS-MML_HTMLorMML" # Specify MathJax config
-  highlightColor = "#e22d30" # Override highlight color
-  customCSS = ["css/custom.css"] # Include custom CSS files
-  customJS = ["js/custom.js"] # Include custom JS files
-  colortheme = "white" # dark, light, white, or classic
-  mainSection = "blog"
-  postsOnHomePage = 0
-  tagsOverview = false
-  #showProjectsList = true
-  projectsUrl = ""
-  logo = "img/mifeng.jpeg"
-  showallpostsonhomepage = false
+description = "" # Site description. Used in meta description
+copyright = "Neojos" # Footer copyright holder, otherwise will use site title
+# opengraph = true # Enable OpenGraph if true
+schema = true # Enable Schema
+# twitter_cards = true # Enable Twitter Cards if true
+readmore = true # Show "Read more" button in list if true
+authorbox = true # Show authorbox at bottom of pages if true
+toc = true # Enable Table of Contents
+pager = true # Show pager navigation (prev/next links) at the bottom of pages if true
+post_meta = ["author", "date", "categories", "translations"] # Order of post meta information
+mainSections = ["blog"] # Specify section pages to show on home page and the "Recent articles" widget
+dateformat = "2006-01-02" # Change the format of dates
+mathjax = true # Enable MathJax
+mathjaxPath = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js" # Specify MathJax path
+mathjaxConfig = "TeX-AMS-MML_HTMLorMML" # Specify MathJax config
+highlightColor = "#e22d30" # Override highlight color
+customCSS = ["css/custom.css"] # Include custom CSS files
+customJS = ["js/custom.js"] # Include custom JS files
+colortheme = "white" # dark, light, white, or classic
+mainSection = "blog"
+postsOnHomePage = 0
+tagsOverview = false
+#showProjectsList = true
+projectsUrl = ""
+logo = "img/mifeng.jpeg"
+showallpostsonhomepage = false
 
 # [Params.logo]
-  # image = "img/mifeng.jpeg" # Logo image. Path relative to "static"
-  # title = "Neojos" # Logo title, otherwise will use site title
-  # subtitle = "往者不可谏，来者犹可追" # Logo subtitle
+# image = "img/mifeng.jpeg" # Logo image. Path relative to "static"
+# title = "Neojos" # Logo title, otherwise will use site title
+# subtitle = "往者不可谏，来者犹可追" # Logo subtitle
 
 [Params.sidebar]
-  home = "right" # Configure layout for home page
-  list = "right"  # Configure layout for list pages
-  single = true # Configure layout for single pages
-  # Enable widgets in given order
-  widgets = ["search", "recent", "categories", "taglist", "social", "languages"]
-  # alternatively "ddg-search" can be used, to search via DuckDuckGo
-  # widgets = ["ddg-search", "recent", "categories", "taglist", "social", "languages"]
+home = "right" # Configure layout for home page
+list = "right"  # Configure layout for list pages
+single = true # Configure layout for single pages
+# Enable widgets in given order
+widgets = ["search", "recent", "categories", "taglist", "social", "languages"]
+# alternatively "ddg-search" can be used, to search via DuckDuckGo
+# widgets = ["ddg-search", "recent", "categories", "taglist", "social", "languages"]
 
 [Params.widgets]
-  recent_num = 5 # Set the number of articles in the "Recent articles" widget
-  tags_counter = false # Enable counter for each tag in "Tags" widget
+recent_num = 5 # Set the number of articles in the "Recent articles" widget
+tags_counter = false # Enable counter for each tag in "Tags" widget
 
 # [Params.widgets.social]
-  # Enable parts of social widget
-  # github = "username"
-  # email = "example@example.com"
+# Enable parts of social widget
+# github = "username"
+# email = "example@example.com"
 
 # Custom social links
 # [[Params.widgets.social.custom]]
-  # title = "My Home Page"
-  # url = "http://example.com"
+# title = "My Home Page"
+# url = "http://example.com"
 
 # 没有作用
 [[Params.social]]
-  name = "CSDN"
-  link = "https://neojos.blog.csdn.net/?type=blog"
+name = "CSDN"
+link = "https://neojos.blog.csdn.net/?type=blog"
 
 [Params.comments]
-  enabled = true
+enabled = true

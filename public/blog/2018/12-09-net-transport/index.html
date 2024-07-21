@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> Net Transport | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2018/12-09-net-transport/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="Net Transport" />
-<meta property="og:description" content="在调用第三方请求时，正确使用Client也不是一件非常容易的事。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2018/12-09-net-transport/" />
-<meta property="article:published_time" content="2018-12-08T00:00:00+00:00" />
-<meta property="article:modified_time" content="2018-12-08T00:00:00+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2018/12-09-net-transport/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="Net Transport">
+  <meta property="og:description" content="在调用第三方请求时，正确使用Client也不是一件非常容易的事。">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2018-12-08T00:00:00+00:00">
+    <meta property="article:modified_time" content="2018-12-08T00:00:00+00:00">
+    <meta property="article:tag" content="Golang">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Net Transport"/>
-<meta name="twitter:description" content="在调用第三方请求时，正确使用Client也不是一件非常容易的事。"/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Net Transport">
+  <meta name="twitter:description" content="在调用第三方请求时，正确使用Client也不是一件非常容易的事。">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,47 +50,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#dial"><code>Dial</code></a></li>
-    <li><a href="#transport"><code>Transport</code></a></li>
-    <li><a href="#roundtripper">RoundTripper</a></li>
-    <li><a href="#缓存idle连接">缓存<code>Idle</code>连接</a></li>
-    <li><a href="#test-case"><code>Test Case</code></a></li>
-    <li><a href="#tcp-keepalive-timer"><code>TCP KeepAlive Timer</code></a></li>
-  </ul>
-</nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -84,8 +95,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -97,13 +110,9 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">Net Transport</h1>文章 565 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <p>在调用第三方请求时，正确使用<a href="https://godoc.org/net/http#Client"><code>Client</code></a>也不是一件非常容易的事。</p>
@@ -113,55 +122,55 @@
 </blockquote>
 <h2 id="dial"><code>Dial</code></h2>
 <p>关于<code>net</code>包的<a href="https://golang.org/src/net/dial.go?s=9799:9847#L306">Dial</a>方法，下面是文档是的例子：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestDial</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
-	<span style="color:#a6e22e">conn</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">Dial</span>(<span style="color:#e6db74">&#34;tcp&#34;</span>, <span style="color:#e6db74">&#34;baidu.com:80&#34;</span>)
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#75715e">// handle error
-</span><span style="color:#75715e"></span>	}
-	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Fprintf</span>(<span style="color:#a6e22e">conn</span>, <span style="color:#e6db74">&#34;GET /ping HTTP/1.0\r\n\r\n&#34;</span>)
-	<span style="color:#a6e22e">status</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">bufio</span>.<span style="color:#a6e22e">NewReader</span>(<span style="color:#a6e22e">conn</span>).<span style="color:#a6e22e">ReadString</span>(<span style="color:#e6db74">&#39;\n&#39;</span>)
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#a6e22e">err</span>)
-	}
-	<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Log</span>(<span style="color:#a6e22e">status</span>)
-}
-</code></pre></div><p>与<code>Dial</code>相关的是类型<a href="https://golang.org/src/net/dial.go?s=652:3413#L16">Dialer</a> ，用来配置<code>Dial</code>的属性，包括<code>Timeout</code>、<code>KeepAlive</code>等。当<code>Dialer</code>的每个<code>field</code>都是零值时，等同于直接调用<code>Dial</code>方法。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestDial</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">T</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">conn</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">Dial</span>(<span style="color:#e6db74">&#34;tcp&#34;</span>, <span style="color:#e6db74">&#34;baidu.com:80&#34;</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// handle error
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Fprintf</span>(<span style="color:#a6e22e">conn</span>, <span style="color:#e6db74">&#34;GET /ping HTTP/1.0\r\n\r\n&#34;</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">status</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">bufio</span>.<span style="color:#a6e22e">NewReader</span>(<span style="color:#a6e22e">conn</span>).<span style="color:#a6e22e">ReadString</span>(<span style="color:#e6db74">&#39;\n&#39;</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Log</span>(<span style="color:#a6e22e">status</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>与<code>Dial</code>相关的是类型<a href="https://golang.org/src/net/dial.go?s=652:3413#L16">Dialer</a> ，用来配置<code>Dial</code>的属性，包括<code>Timeout</code>、<code>KeepAlive</code>等。当<code>Dialer</code>的每个<code>field</code>都是零值时，等同于直接调用<code>Dial</code>方法。</p>
 <h2 id="transport"><code>Transport</code></h2>
 <p>类型<a href="https://golang.org/src/net/http/transport.go?s=3397:10477#L85">Transport</a>中包含<code>DialContext</code>，对它的注释如下：函数用来创建非加密的<code>TCP</code>连接，如果字段为<code>nil</code>，则使用<code>net</code>包的<code>Dial</code>方法。</p>
 <p>通过封装<code>dial</code>方法，我们可以手动<code>Debug</code>连接的创建过层。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">PrintLocalDial</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">network</span>, <span style="color:#a6e22e">addr</span> <span style="color:#66d9ef">string</span>) (<span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">Conn</span>, <span style="color:#66d9ef">error</span>) {
-	<span style="color:#a6e22e">dial</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">Dialer</span>{
-		<span style="color:#a6e22e">Timeout</span>:   <span style="color:#ae81ff">30</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>,
-		<span style="color:#a6e22e">KeepAlive</span>: <span style="color:#ae81ff">5</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>,
-	}
-	<span style="color:#a6e22e">conn</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dial</span>.<span style="color:#a6e22e">Dial</span>(<span style="color:#a6e22e">network</span>, <span style="color:#a6e22e">addr</span>)
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">conn</span>, <span style="color:#a6e22e">err</span>
-	}
-
-	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;connect done.&#34;</span>, <span style="color:#a6e22e">conn</span>.<span style="color:#a6e22e">LocalAddr</span>().<span style="color:#a6e22e">String</span>(), <span style="color:#a6e22e">conn</span>.<span style="color:#a6e22e">RemoteAddr</span>().<span style="color:#a6e22e">String</span>())
-	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">conn</span>, <span style="color:#a6e22e">err</span>
-}
-</code></pre></div><h2 id="roundtripper">RoundTripper</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">PrintLocalDial</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">network</span>, <span style="color:#a6e22e">addr</span> <span style="color:#66d9ef">string</span>) (<span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">Conn</span>, <span style="color:#66d9ef">error</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">dial</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">Dialer</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Timeout</span>:   <span style="color:#ae81ff">30</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">KeepAlive</span>: <span style="color:#ae81ff">5</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>,
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">conn</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dial</span>.<span style="color:#a6e22e">Dial</span>(<span style="color:#a6e22e">network</span>, <span style="color:#a6e22e">addr</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">conn</span>, <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;connect done.&#34;</span>, <span style="color:#a6e22e">conn</span>.<span style="color:#a6e22e">LocalAddr</span>().<span style="color:#a6e22e">String</span>(), <span style="color:#a6e22e">conn</span>.<span style="color:#a6e22e">RemoteAddr</span>().<span style="color:#a6e22e">String</span>())
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">conn</span>, <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="roundtripper">RoundTripper</h2>
 <p>如下是官方的简要描述。<code>Transport</code>字段在<code>Client</code>中被声明为接口类型，而实现这个接口的是<code>Transport</code>类型（略显绕）。在<code>net</code>包内部也提供了默认的实现变量：<code>DefaultTransport</code>。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Transport specifies the mechanism by which individual
-</span><span style="color:#75715e">// HTTP requests are made.
-</span><span style="color:#75715e">// If nil, DefaultTransport is used.
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">Transport</span> <span style="color:#a6e22e">RoundTripper</span>
-</code></pre></div><p>看一下<code>RoundTripper</code>这个接口，官方描述：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// Transport specifies the mechanism by which individual
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// HTTP requests are made.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// If nil, DefaultTransport is used.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">Transport</span> <span style="color:#a6e22e">RoundTripper</span>
+</span></span></code></pre></div><p>看一下<code>RoundTripper</code>这个接口，官方描述：</p>
 <blockquote>
 <p>RoundTripper is an interface representing the ability to execute a single HTTP transaction, obtaining the Response for a given Request.</p>
 </blockquote>
 <p>既然是一个接口类型，我们就有理由自己去实现它，我们可以自定义自己的<code>Transport</code>。比如客户端发起一个请求，我们可以先去查询缓存中是否存在。如果存在，则将缓存中的数据写回<code>response</code>。如果不存在，请求远端服务获取数据，并缓存。</p>
 <p>实现这样的功能，完全没有必要自定义一个<code>Transport</code>，我们也可以使用先请求缓存服务器，在请求远端服务器的方案来实现。但其实<code>Transport</code>就可以实现封装这些功能。</p>
-<pre><code>func cacheResponse(b []byte, r *http.Request) (*http.Response, error) {
+<pre tabindex="0"><code>func cacheResponse(b []byte, r *http.Request) (*http.Response, error) {
 	//NewBuffer is intended to prepare a Buffer to read existing data.
 	buf := bytes.NewBuffer(b)
 	return http.ReadResponse(bufio.NewReader(buf), r)
 }
 </code></pre><p>官方提供了默认的<code>Transport</code>。如果不明确指定，那么底层就使用默认值。所以，可能连你也没有意识到，你在使用长链接。</p>
 <p>另外：<strong>一定要记得当请求返回的<code>error</code>为空时，读取连接返回的数据，并明确调用<code>Close</code>关闭连接。否则连接会没法继续复用。</strong></p>
-<pre><code>func (c *Client) transport() RoundTripper {
+<pre tabindex="0"><code>func (c *Client) transport() RoundTripper {
 	if c.Transport != nil {
 		return c.Transport
 	}
@@ -169,35 +178,35 @@
 }
 </code></pre><h2 id="缓存idle连接">缓存<code>Idle</code>连接</h2>
 <p>首先了解缓存长链接的<code>Key</code>是什么，即用来唯一确定连接的<code>Key</code>。我们选来看看它如何从缓存池获取的空闲连接：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">//1. 获取的方法，截取其中一部分代码
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Transport</span>) <span style="color:#a6e22e">getIdleConn</span>(<span style="color:#a6e22e">cm</span> <span style="color:#a6e22e">connectMethod</span>) (<span style="color:#a6e22e">pconn</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">persistConn</span>, <span style="color:#a6e22e">idleSince</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Time</span>) {
-	<span style="color:#a6e22e">key</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">cm</span>.<span style="color:#a6e22e">key</span>()
-	<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">idleMu</span>.<span style="color:#a6e22e">Lock</span>()
-	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">idleMu</span>.<span style="color:#a6e22e">Unlock</span>()
-	<span style="color:#66d9ef">for</span> {
-		<span style="color:#a6e22e">pconns</span>, <span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">idleConn</span>[<span style="color:#a6e22e">key</span>]
-		<span style="color:#66d9ef">if</span> !<span style="color:#a6e22e">ok</span> {
-			<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Time</span>{}
-		}
-		<span style="color:#66d9ef">if</span> len(<span style="color:#a6e22e">pconns</span>) <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span> {
-			<span style="color:#a6e22e">pconn</span> = <span style="color:#a6e22e">pconns</span>[<span style="color:#ae81ff">0</span>]
-			delete(<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">idleConn</span>, <span style="color:#a6e22e">key</span>)
-		} <span style="color:#66d9ef">else</span> {
-			<span style="color:#75715e">// 2 or more cached connections; use the most
-</span><span style="color:#75715e"></span>			<span style="color:#75715e">// recently used one at the end.
-</span><span style="color:#75715e"></span>			<span style="color:#a6e22e">pconn</span> = <span style="color:#a6e22e">pconns</span>[len(<span style="color:#a6e22e">pconns</span>)<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]
-			<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">idleConn</span>[<span style="color:#a6e22e">key</span>] = <span style="color:#a6e22e">pconns</span>[:len(<span style="color:#a6e22e">pconns</span>)<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]
-		}
-		<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">idleLRU</span>.<span style="color:#a6e22e">remove</span>(<span style="color:#a6e22e">pconn</span>)
-		<span style="color:#75715e">//省略之后的代码......
-</span></code></pre></div><p>通过如下代码，可以确定<code>net</code>包通过当前请求的<code>proxy URL</code>、<code>Scheme</code>、<code>Addr</code>来缓存建立的连接。缓存的连接存储在一个<code>MAP</code>结构中：<code> map[connectMethodKey][]*persistConn</code>。<code>map</code>中的每一个<code>Key</code>对应了连接的<code>slice</code>数组，最新创建的连接会追加到<code>slice</code>的末尾。</p>
-<pre><code>func (cm *connectMethod) key() connectMethodKey {
-	proxyStr := &quot;&quot;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//1. 获取的方法，截取其中一部分代码
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Transport</span>) <span style="color:#a6e22e">getIdleConn</span>(<span style="color:#a6e22e">cm</span> <span style="color:#a6e22e">connectMethod</span>) (<span style="color:#a6e22e">pconn</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">persistConn</span>, <span style="color:#a6e22e">idleSince</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Time</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">key</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">cm</span>.<span style="color:#a6e22e">key</span>()
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">idleMu</span>.<span style="color:#a6e22e">Lock</span>()
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">idleMu</span>.<span style="color:#a6e22e">Unlock</span>()
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">for</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">pconns</span>, <span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">idleConn</span>[<span style="color:#a6e22e">key</span>]
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">if</span> !<span style="color:#a6e22e">ok</span> {
+</span></span><span style="display:flex;"><span>			<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Time</span>{}
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">if</span> len(<span style="color:#a6e22e">pconns</span>) <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span> {
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">pconn</span> = <span style="color:#a6e22e">pconns</span>[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>			delete(<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">idleConn</span>, <span style="color:#a6e22e">key</span>)
+</span></span><span style="display:flex;"><span>		} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>			<span style="color:#75715e">// 2 or more cached connections; use the most
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>			<span style="color:#75715e">// recently used one at the end.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>			<span style="color:#a6e22e">pconn</span> = <span style="color:#a6e22e">pconns</span>[len(<span style="color:#a6e22e">pconns</span>)<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">idleConn</span>[<span style="color:#a6e22e">key</span>] = <span style="color:#a6e22e">pconns</span>[:len(<span style="color:#a6e22e">pconns</span>)<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">idleLRU</span>.<span style="color:#a6e22e">remove</span>(<span style="color:#a6e22e">pconn</span>)
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">//省略之后的代码......
+</span></span></span></code></pre></div><p>通过如下代码，可以确定<code>net</code>包通过当前请求的<code>proxy URL</code>、<code>Scheme</code>、<code>Addr</code>来缓存建立的连接。缓存的连接存储在一个<code>MAP</code>结构中：<code> map[connectMethodKey][]*persistConn</code>。<code>map</code>中的每一个<code>Key</code>对应了连接的<code>slice</code>数组，最新创建的连接会追加到<code>slice</code>的末尾。</p>
+<pre tabindex="0"><code>func (cm *connectMethod) key() connectMethodKey {
+	proxyStr := &#34;&#34;
 	targetAddr := cm.targetAddr
 	if cm.proxyURL != nil {
 		proxyStr = cm.proxyURL.String()
-		if (cm.proxyURL.Scheme == &quot;http&quot; || cm.proxyURL.Scheme == &quot;https&quot;) &amp;&amp; cm.targetScheme == &quot;http&quot; {
-			targetAddr = &quot;&quot;
+		if (cm.proxyURL.Scheme == &#34;http&#34; || cm.proxyURL.Scheme == &#34;https&#34;) &amp;&amp; cm.targetScheme == &#34;http&#34; {
+			targetAddr = &#34;&#34;
 		}
 	}
 	return connectMethodKey{
@@ -209,7 +218,7 @@
 </code></pre><p>因为<code>Key</code>中存在了<code>Host</code>地址，所以<code>MaxIdleConnsPerHost</code>这个值就显得格外重要。当准备缓存连接时，如果检测到当前的空闲连接数大于<code>MaxIdleConnsPerHost</code>，系统便会主动将这个连接关闭。<strong>这可能会是一个坑，特别要注意这一点。</strong></p>
 <p>如果不指定<code>MaxIdleConnsPerHost</code>，那么程序使用默认的值：<code>DefaultMaxIdleConnsPerHost</code>，这个默认值好比<code>DefaultClient</code>，都是问题所在。前者的默认值是2，可能直接导致在并发的时候，长链接的效率还不如短链接。后者的默认超时时间是0，这可能导致一个连接永远的挂在了那里。</p>
 <p>使用<code>net</code>包提供的默认值，很多时候都不会是一件明智的事情。</p>
-<pre><code>func (t *Transport) tryPutIdleConn(pconn *persistConn) error {
+<pre tabindex="0"><code>func (t *Transport) tryPutIdleConn(pconn *persistConn) error {
     //省略之前的代码......
 	if t.idleConn == nil {
 		t.idleConn = make(map[connectMethodKey][]*persistConn)
@@ -231,22 +240,22 @@ func (t *Transport) putOrCloseIdleConn(pconn *persistConn) {
 <p>下面是测试使用的例子，首先判断客户端和服务器之间是否支持长链接，然后通过抓包可以分析服务端长链接的持续时间。上文也阐述了，长链接一般是服务端主动断开连接，而这个时间的长短需要服务端自己决定。</p>
 <p>首先我们声明一个<code>Dialer</code>用于创建连接。这里特别注意<code>Dialer</code>下的<code>KeepAlive</code>字段，这是<code>Client</code>为了维持长连接，主动发送<code>TCP keep-alive segment</code>的时间间隔，类比<code>ping-pong</code>模式。官方的解释是：<code>KeepAlive specifies the keep-alive period for an active network connection. If zero, keep-alives are not enabled. Network protocols that do not support keep-alives ignore this field.</code>。</p>
 <p>我们在每次创建连接的时候，都将本地<code>socket</code>地址和服务端<code>socket</code>地址打印出来。如果没有新的地址生成，说明当前连接复用了前面创建的连接。这也侧面证明了是否服务端支持<code>Keep-Alive</code>。但需要强调的是，默认情况下只存在<code>DefaultMaxIdleConnsPerHost</code>个长连接。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">PrintLocalDial</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">network</span>, <span style="color:#a6e22e">addr</span> <span style="color:#66d9ef">string</span>) (<span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">Conn</span>, <span style="color:#66d9ef">error</span>) {
-	<span style="color:#a6e22e">dial</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">Dialer</span>{
-		<span style="color:#a6e22e">Timeout</span>:   <span style="color:#ae81ff">30</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>,
-		<span style="color:#75715e">//指定的这个时间并没有生效，即使在请求完成后Sleep 30s连接仍然有效
-</span><span style="color:#75715e"></span>		<span style="color:#a6e22e">KeepAlive</span>: <span style="color:#ae81ff">5</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>,
-	}
-	<span style="color:#a6e22e">conn</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dial</span>.<span style="color:#a6e22e">Dial</span>(<span style="color:#a6e22e">network</span>, <span style="color:#a6e22e">addr</span>)
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">conn</span>, <span style="color:#a6e22e">err</span>
-	}
-
-	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;connect done, use &#34;</span>, <span style="color:#a6e22e">conn</span>.<span style="color:#a6e22e">LocalAddr</span>().<span style="color:#a6e22e">String</span>(), <span style="color:#a6e22e">conn</span>.<span style="color:#a6e22e">RemoteAddr</span>().<span style="color:#a6e22e">String</span>())
-	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">conn</span>, <span style="color:#a6e22e">err</span>
-}
-</code></pre></div><p>紧接着我们声明<code>Client</code>用于发送请求，<code>Transport</code>中使用上面声明的方法创建连接。并写测试用例用于测试。同时打开抓包工具，分析整个网络请求。</p>
-<pre><code>var client = &amp;http.Client{
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">PrintLocalDial</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">network</span>, <span style="color:#a6e22e">addr</span> <span style="color:#66d9ef">string</span>) (<span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">Conn</span>, <span style="color:#66d9ef">error</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">dial</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">Dialer</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Timeout</span>:   <span style="color:#ae81ff">30</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">//指定的这个时间并没有生效，即使在请求完成后Sleep 30s连接仍然有效
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		<span style="color:#a6e22e">KeepAlive</span>: <span style="color:#ae81ff">5</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>,
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">conn</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dial</span>.<span style="color:#a6e22e">Dial</span>(<span style="color:#a6e22e">network</span>, <span style="color:#a6e22e">addr</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">conn</span>, <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;connect done, use &#34;</span>, <span style="color:#a6e22e">conn</span>.<span style="color:#a6e22e">LocalAddr</span>().<span style="color:#a6e22e">String</span>(), <span style="color:#a6e22e">conn</span>.<span style="color:#a6e22e">RemoteAddr</span>().<span style="color:#a6e22e">String</span>())
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">conn</span>, <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>紧接着我们声明<code>Client</code>用于发送请求，<code>Transport</code>中使用上面声明的方法创建连接。并写测试用例用于测试。同时打开抓包工具，分析整个网络请求。</p>
+<pre tabindex="0"><code>var client = &amp;http.Client{
 	Transport: &amp;http.Transport{
 		DialContext: PrintLocalDial,
 	},
@@ -254,7 +263,7 @@ func (t *Transport) putOrCloseIdleConn(pconn *persistConn) {
 
 func TestRequestBaiDu(t *testing.T) {
 	for i := 0; i &lt; 3; i ++ {
-		resp, err := client.Get(&quot;http://xxxx.com&quot;)
+		resp, err := client.Get(&#34;http://xxxx.com&#34;)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -268,7 +277,6 @@ func TestRequestBaiDu(t *testing.T) {
 		time.Sleep(time.Second * 20)
 	}
 }
-
 </code></pre><p>通过截取到的请求可以得出：首先，<code>client</code>端每间隔<code>5s</code>发送<code>keep-alive segment</code>，其次，如果连接在<code>15s</code>内不活跃，服务端会关闭连接。通过分析图中的时间轴就可以得出。</p>
 <p><img src="https://note.youdao.com/yws/public/resource/3d6862c45f647283a5312d81e986f0d2/xmlnote/WEBRESOURCE4fb32d413b7a1ecec3af0e45c07d4add/67978" alt="image"></p>
 <h2 id="tcp-keepalive-timer"><code>TCP KeepAlive Timer</code></h2>
@@ -276,7 +284,7 @@ func TestRequestBaiDu(t *testing.T) {
 <p>保活探测报文为一个空报文段（或只含有一个字节）它的序列号等于对方主机发送的ACK报文的最大的序列号减1，因为这一序列号的数据段已经被成功接受，所以不会对到达的报文段产生影响。</p>
 <p>如图所示，第一个<code>keep-alive segment</code>的<code>Seq=302</code>，而它最近一次的<code>Seq=303</code>。这样整个保活过程都不会对<code>data transfer</code>产生影响。</p>
 <p>下面便是设置<code>keep-alive</code>时间间隔的代码：</p>
-<pre><code>if tc, ok := c.(*TCPConn); ok &amp;&amp; d.KeepAlive &gt; 0 {
+<pre tabindex="0"><code>if tc, ok := c.(*TCPConn); ok &amp;&amp; d.KeepAlive &gt; 0 {
 	setKeepAlive(tc.fd, true)
 	setKeepAlivePeriod(tc.fd, d.KeepAlive)
 	testHookSetKeepAlive()
@@ -289,20 +297,19 @@ func TestRequestBaiDu(t *testing.T) {
 </ol>
 
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -313,9 +320,8 @@ func TestRequestBaiDu(t *testing.T) {
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>

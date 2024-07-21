@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> 包管理工具 | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2018/03-31-%E5%8C%85%E7%AE%A1%E7%90%86/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="包管理工具" />
-<meta property="og:description" content="反思之前的过程，一直没有试图跟上技术的发展。恍然觉得，其实技术比买股票更能让我找到快乐。新的技术越来越多，能做的便是，持续保持蜗牛锲而不舍的精神，慢慢爬！" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://neojos.com/blog/2018/03-31-%E5%8C%85%E7%AE%A1%E7%90%86/" />
-<meta property="article:published_time" content="2018-03-30T00:00:00+00:00" />
-<meta property="article:modified_time" content="2018-03-30T00:00:00+00:00" />
+  <meta property="og:url" content="http://localhost:1313/blog/2018/03-31-%E5%8C%85%E7%AE%A1%E7%90%86/">
+  <meta property="og:site_name" content="渐行渐远">
+  <meta property="og:title" content="包管理工具">
+  <meta property="og:description" content="反思之前的过程，一直没有试图跟上技术的发展。恍然觉得，其实技术比买股票更能让我找到快乐。新的技术越来越多，能做的便是，持续保持蜗牛锲而不舍的精神，慢慢爬！">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2018-03-30T00:00:00+00:00">
+    <meta property="article:modified_time" content="2018-03-30T00:00:00+00:00">
+    <meta property="article:tag" content="Npm">
 
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="包管理工具"/>
-<meta name="twitter:description" content="反思之前的过程，一直没有试图跟上技术的发展。恍然觉得，其实技术比买股票更能让我找到快乐。新的技术越来越多，能做的便是，持续保持蜗牛锲而不舍的精神，慢慢爬！"/>
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="包管理工具">
+  <meta name="twitter:description" content="反思之前的过程，一直没有试图跟上技术的发展。恍然觉得，其实技术比买股票更能让我找到快乐。新的技术越来越多，能做的便是，持续保持蜗牛锲而不舍的精神，慢慢爬！">
 
   
   
     
   
   
-  <link rel="stylesheet" href="https://neojos.com/css/style-white.css">
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
   
   
   
@@ -35,60 +50,43 @@
   
 
   
-<link rel="icon" type="image/png" href="https://neojos.com/images/favicon.ico" />
+<link rel="icon" type="image/png" href="http://localhost:1313/images/favicon.ico" />
 
   
   
+  
+    
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=false"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'false');
+        }
+      </script>
+    
+  
 
-  <style>
-    :root {
-      font-size: 1em;
-      --main-font: orange;
-    }
 
-    .featured {
-      width: 20em;
-      height: calc(6em - 16px);
-      font-size: 1rem;
-      border-radius: .15em;
-      background-color: var(--main-font);
-      box-shadow: .45em .25em #6f9090;
-    }
-  </style>
+  
+  
 </head>
 
-<body class="column mx-auto px3 ltr">
-  <div class="column-left">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#npm包管理">npm包管理</a>
-      <ul>
-        <li><a href="#包的版本">包的版本</a></li>
-        <li><a href="#管理依赖">管理依赖</a></li>
-        <li><a href="#版本管理">版本管理</a></li>
-      </ul>
-    </li>
-    <li><a href="#composer管理">Composer管理</a>
-      <ul>
-        <li><a href="#installupdate">install/update</a></li>
-        <li><a href="#版本管理-1">版本管理</a></li>
-      </ul>
-    </li>
-    <li><a href="#go下的版本管理工具"><code>Go</code>下的版本管理工具</a>
-      <ul>
-        <li><a href="#glide"><code>glide</code></a></li>
-        <li><a href="#govendor"><code>govendor</code></a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-  </div>
-  <div class="column-middle">
-    <div class="content max-width index py4">
-      <header id="header">
-  <a href="https://neojos.com/">
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+    <header id="header">
+  <a href="http://localhost:1313/">
   
-    <div id="logo" style="background-image: url(https://neojos.com/img/mifeng.jpeg)"></div>
+    <div id="logo" style="background-image: url(http://localhost:1313/img/mifeng.jpeg)"></div>
   
   <div id="title">
     <h1>渐行渐远</h1>
@@ -97,8 +95,10 @@
   <div id="nav">
     <ul>
       <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
+      
+        <li><a href="/readbook">读书笔记</a></li>
       
         <li><a href="/blog">思考</a></li>
       
@@ -110,13 +110,9 @@
 
 
 
-      
+    
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 id="title">包管理工具</h1>文章 92 字
-  <aside>
-
-  </aside>
   <div class="content" itemprop="articleBody">
   
     <p>反思之前的过程，一直没有试图跟上技术的发展。恍然觉得，其实技术比买股票更能让我找到快乐。新的技术越来越多，能做的便是，持续保持蜗牛锲而不舍的精神，慢慢爬！</p>
@@ -137,13 +133,13 @@
 <p>有时候，项目和项目之间存在引用依赖关系。比如将多个项目间共同使用的类在<code>common</code>项目下维护，然后其他项目<code>project-1</code>和<code>project-2</code>分别引用项目<code>common</code>。当<code>project</code>项目变得越来越多时，每次新的项目都需要手动拷贝<code>common</code>代码。</p>
 <p>可以将<code>common</code>做为一个包来管理。创建<code>package.json</code>文件，将<code>common</code>项目托管到git仓库。执行<code>npm install git_url</code>就可以将common作为依赖包进行安装了。</p>
 <p>npm除了安装git仓库的代码，也可以安装本地的代码。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">npm install file:local-package-path
-</code></pre></div><h3 id="版本管理">版本管理</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>npm install file:local-package-path
+</span></span></code></pre></div><h3 id="版本管理">版本管理</h3>
 <p><code>svn</code>或者<code>git</code>只需要提交<code>package.json</code>, <code>package-lock.json</code>, 不需要提交<code>node_modules</code>目录。</p>
 <p>每次升级或降级版本，执行如下代码，相应的<code>package.json</code>，<code>package-lock.json</code>会自动更新：</p>
-<pre><code>npm install &lt;package-name&gt;@&lt;version&gt;
+<pre tabindex="0"><code>npm install &lt;package-name&gt;@&lt;version&gt;
 </code></pre><p>删除依赖包：</p>
-<pre><code>npm uninstall &lt;package&gt;
+<pre tabindex="0"><code>npm uninstall &lt;package&gt;
 </code></pre><h2 id="composer管理">Composer管理</h2>
 <p><code>Composer</code>生成的包管理目录叫<code>vendor</code>，它也是生成两个文件<code>composer.lock</code>和<code>composer.json</code>。<code>composer.lock</code>描述了项目的依赖以及其它的一些元信息。</p>
 <p><code>composer.lock</code>用来明确锁定安装包的具体版本信息，包证所有人安装的版本都是一致的。具体的原因在于：</p>
@@ -156,7 +152,7 @@
 <p><code>install</code>主要用来安装新包。当安装新包的时候，需要首先查看<code>.lock</code>文件是否存在，如果存在，安装<code>.lock</code>中指定的具体版本。如果不存在，直接安装。同时更新<code>.json</code>和<code>.lock</code>两个文件。</p>
 <p><code>update</code>主要用来更新<code>.lock</code>中安装的包。随着时间的推移，<code>.json</code>中的包可能又发布了新版本，所以<code>update</code>就是用来检查<code>.json</code>中包的新版本，更新<code>.lock</code>文件用的。</p>
 <p>我在使用的过程中，比较倾向于使用下面的单个包操作的方式：</p>
-<pre><code>php composer.phar update monolog/monolog [...]
+<pre tabindex="0"><code>php composer.phar update monolog/monolog [...]
 </code></pre><h3 id="版本管理-1">版本管理</h3>
 <p>在<code>git</code>环境中<code>.json</code>和<code>.lock</code>都需要被提交的版本控制。<code>vendor</code>目录就不需要啦。</p>
 <h2 id="go下的版本管理工具"><code>Go</code>下的版本管理工具</h2>
@@ -167,7 +163,7 @@
 <h3 id="govendor"><code>govendor</code></h3>
 <p>另一个版本管理工具是<a href="https://github.com/kardianos/govendor"><code>govendor</code></a>。它做的只是对包的管理工作，如果编译过程中缺少了引用的包，我们需要先执行<code>go get</code>下载该包，然后通过<code>govendor add +external</code>将包拷贝到<code>vendor</code>目录。</p>
 <p>比较实用的指令：</p>
-<pre><code># 外部包，即被 $GOPATH 管理，但不在 vendor 目录下
+<pre tabindex="0"><code># 外部包，即被 $GOPATH 管理，但不在 vendor 目录下
 govendor add +e 
 
 # 从线上远端库添加或更新标签或分支等于v1的依赖包
@@ -177,20 +173,19 @@ govendor fetch golang.org/x/net/context@=v1
 govendor sync -v
 </code></pre>
   
-
-    
-    
   </div>
 </article>
 
 
-      <footer id="footer">
+    <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2023  渐行渐远 
+    Copyright  &copy; 2024  渐行渐远 
   </div>
   <div class="footer-right">
     <nav>
       <ul>
+         
+        <li><a href="/readbook">读书笔记</a></li>
          
         <li><a href="/blog">思考</a></li>
          
@@ -201,9 +196,8 @@ govendor sync -v
   </div>
 </footer>
 
-    </div>
+
   </div>
-  <div class="column-right"></div>
 </body>
 
 <link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
