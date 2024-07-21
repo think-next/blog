@@ -21,21 +21,21 @@
   <meta property="og:url" content="http://localhost:1313/">
   <meta property="og:site_name" content="渐行渐远">
   <meta property="og:title" content="渐行渐远">
-  <meta property="og:description" content="2014年毕业至今，做着码农的开发工作，年龄越大，越是感觉到空虚，35岁是码农的一道坎，现在离这道坎越来越近了。">
+  <meta property="og:description" content="《剑来》中有提到：">
   <meta property="og:locale" content="en_us">
   <meta property="og:type" content="website">
 
   
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="渐行渐远">
-  <meta name="twitter:description" content="2014年毕业至今，做着码农的开发工作，年龄越大，越是感觉到空虚，35岁是码农的一道坎，现在离这道坎越来越近了。">
+  <meta name="twitter:description" content="《剑来》中有提到：">
 
   
   
     
   
   
-  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.72a235e5c6dd9cc0ae131957afffbdb6ce9d72f556c788d8f112ed053a677884fb82f801304e3a09b3275b2c00348c22613611edb8d968bc197ed27d53186954.css" integrity="sha512-cqI15cbdnMCuExlXr/&#43;9ts6dcvVWx4jY8RLtBTpneIT7gvgBME46CbMnWywANIwiYTYR7bjZaLwZftJ9UxhpVA=="> 
 
   
   
@@ -76,6 +76,99 @@
   
   
 </head>
+
+<style>
+  .timeline {
+    position: relative;
+    padding: 0;
+    list-style-type: none;
+    margin-left: 20px;
+  }
+  
+  .timeline:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #ccc;
+    left: 0;
+  }
+  
+  .timeline li {
+    position: relative;
+    padding: 1rem 0;
+  }
+  
+  .timeline li .timeline-badge {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    font-size: 1.0em;
+    text-align: center;
+    position: absolute;
+    top: 16px;
+    left: -10px;
+    background-color: #999;
+    border-radius: 50%;
+    z-index: 100;
+  }
+  
+  .timeline li .timeline-panel {
+    width: calc(100% - 40px);
+    float: right;
+    padding: 1rem;
+    position: relative;
+    text-align: left;
+    background-color: #fff;
+    border: 1px solid #d4d4d4;
+    border-radius: 2px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .timeline li .timeline-panel:before {
+    right: auto;
+    left: -15px;
+    border-top: 15px solid transparent;
+    border-left: 15px solid #ccc;
+    border-right: 0 solid #ccc;
+    border-bottom: 15px solid transparent;
+    position: absolute;
+    top: 26px;
+  }
+  
+  .timeline li .timeline-panel:after {
+    right: auto;
+    left: -14px;
+    border-top: 14px solid transparent;
+    border-left: 14px solid #fff;
+    border-right: 0 solid #fff;
+    border-bottom: 14px solid transparent;
+    position: absolute;
+    top: 27px;
+  }
+
+   
+  .timeline li:nth-child(odd) .timeline-badge {
+    background-color: #f0ad4e;
+  }
+  
+  .timeline li:nth-child(even) .timeline-badge {
+    background-color: #5cb85c;
+  }
+
+   
+  :root {
+    --color-array: #f0ad4e, #5cb85c, #5bc0de, #d9534f, #337ab7;
+  }
+
+   
+  .timeline li:nth-child(1) .timeline-badge { background-color: #f0ad4e; }
+  .timeline li:nth-child(2) .timeline-badge { background-color: #5cb85c; }
+  .timeline li:nth-child(3) .timeline-badge { background-color: #5bc0de; }
+  .timeline li:nth-child(4) .timeline-badge { background-color: #d9534f; }
+  .timeline li:nth-child(5) .timeline-badge { background-color: #337ab7; }
+</style>
 
 <body class="max-width mx-auto px3 ltr">
   <div class="content index py4">
@@ -160,17 +253,20 @@
 <div class="container">
     <img class="avatar" src="https://wanx.alicdn.com/wanx/1484461767598484/text_to_image/ccd20cb42a3e4bf48a610e1c4a019151_0.png?x-oss-process=image/watermark,image_d2FueC93YXRlcm1hcmsvcWlhbndlbl93YXRlcm1hcmsucG5n,t_80,g_se,x_30,y_30/format,webp" alt="个人头像">
     <h2> 渐行渐远 · Golang / Java / PHP</h2>
-    <p><p>2014年毕业至今，做着码农的开发工作，年龄越大，越是感觉到空虚，35岁是码农的一道坎，现在离这道坎越来越近了。</p>
-<p>一路走开，情商变得越来越低，职商变得越来越低，技术上越来越追求小细节，这些年，老黄牛精神的兢兢业业，换来的也只是小幅的月薪涨幅。</p>
-<p>现在的口头禅是：接纳躺平的事实，行动一点点</p>
-<p>所谓的行动一点点，包括锻炼、写笔记、沟通断联的朋友、表现自己，还包括很多让自己感到痛苦的事情。我不想一直让自己备受精神的自我折磨，每天有一点点的行动就可以了。</p>
-<p>有道是</p>
+    <p><p>《剑来》中有提到：</p>
+<blockquote>
+<p>于事，不问收获问耕耘，莫向外求。于心，勤勉修行戒定慧，与天祈福。该是你的就抓好，不是你的就想也别想。</p>
+</blockquote>
+<p>《高效能人士的七个习惯》中有提到：</p>
+<blockquote>
+<p>刺激于回应之间存在一段距离，成长和幸福的关键就在于我们如何利用这段距离</p>
+</blockquote>
 </p>
 </div>
   </section>
 
   <section id="writing">
-    <span class="h1"><a href="http://localhost:1313/blog">Writings</a></span>
+    <span class="h1"><a href="http://localhost:1313/blog">最近更新</a></span>
     
 
     
@@ -180,11 +276,29 @@
     
     
     
-    <ul class="post-list">
+    <ul class="post-list timeline">
       
       
         
       
+      
+        <li class="post-item">
+          <div class="timeline-badge"></div>
+          <div class="meta"><time datetime="2023-01-29 00:00:00 &#43;0000 UTC" itemprop="datePublished">2023-01-29</time></div>
+          <span class=""><a href="http://localhost:1313/blog/2023/01.29_%E5%A4%A9%E9%81%93/">天道</a></span>
+        </li>
+      
+        <li class="post-item">
+          <div class="timeline-badge"></div>
+          <div class="meta"><time datetime="2022-10-01 00:00:00 &#43;0000 UTC" itemprop="datePublished">2022-10-01</time></div>
+          <span class=""><a href="http://localhost:1313/blog/2022/1001-redis%E9%9B%86%E7%BE%A4%E9%80%89%E4%B8%BE/">Redis 集群选举</a></span>
+        </li>
+      
+        <li class="post-item">
+          <div class="timeline-badge"></div>
+          <div class="meta"><time datetime="2022-09-04 00:00:00 &#43;0000 UTC" itemprop="datePublished">2022-09-04</time></div>
+          <span class=""><a href="http://localhost:1313/blog/2022/0904-dockerfile-entrypoint-%E5%8E%9F%E8%AF%AD/">Dockerfile ENTRYPOINT 原语</a></span>
+        </li>
       
     </ul>
     
@@ -201,7 +315,7 @@
     
   <section id="projects">
     <span class="h1"><a href="">Projects</a></span>
-    <ul class="project-list">
+    <ul class="project-list" >
         
         <li class="project-item">
           <a href="https://github.com/think-next">github</a>: &hellip;
