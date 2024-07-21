@@ -58,12 +58,13 @@ customCSS = ["css/custom.css"] # Include custom CSS files
 customJS = ["js/custom.js"] # Include custom JS files
 colortheme = "white" # dark, light, white, or classic
 mainSection = "blog"
-postsOnHomePage = 0
+postsOnHomePage = 3
 tagsOverview = false
 #showProjectsList = true
 projectsUrl = ""
 logo = "img/mifeng.jpeg"
 showallpostsonhomepage = false
+mainSectionTitle = "最近更新"
 
 # [Params.logo]
 # image = "img/mifeng.jpeg" # Logo image. Path relative to "static"
