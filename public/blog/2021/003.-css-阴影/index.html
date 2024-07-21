@@ -20,7 +20,7 @@
   <meta property="og:url" content="http://localhost:1313/blog/2021/003.-css-%E9%98%B4%E5%BD%B1/">
   <meta property="og:site_name" content="渐行渐远">
   <meta property="og:title" content="CSS阴影">
-  <meta property="og:description" content="别小看下面的 CSS 代码，对于一个 CSS 门外汉来说，隐藏的信息是足够丰富的。比如属性的长度单位，一些人可能还不知道 px、em、rem 的区别。简单来说， em 是基于 font-size 的继承属性，rem 是在 em 的基础上重新定义了一个参照标准。默认情况下，1 em = 16 px。一般来说，使用 rem 设置字号，em 设置其他大部分的属性">
+  <meta property="og:description" content="别">
   <meta property="og:locale" content="en_us">
   <meta property="og:type" content="article">
     <meta property="article:section" content="blog">
@@ -30,14 +30,14 @@
   
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="CSS阴影">
-  <meta name="twitter:description" content="别小看下面的 CSS 代码，对于一个 CSS 门外汉来说，隐藏的信息是足够丰富的。比如属性的长度单位，一些人可能还不知道 px、em、rem 的区别。简单来说， em 是基于 font-size 的继承属性，rem 是在 em 的基础上重新定义了一个参照标准。默认情况下，1 em = 16 px。一般来说，使用 rem 设置字号，em 设置其他大部分的属性">
+  <meta name="twitter:description" content="别">
 
   
   
     
   
   
-  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.dcec1d679f130468430e713aaa52d0eda82310e8cb61730bf67f408221cfda0be536a449e711e772dfc87490c88fcd6939e2ebeadc6c0f858ff69d0ceeb799ce.css" integrity="sha512-3OwdZ58TBGhDDnE6qlLQ7agjEOjLYXML9n9AgiHP2gvlNqRJ5xHnct/IdJDIj81pOeLr6txsD4WP9p0M7reZzg=="> 
 
   
   
@@ -158,6 +158,18 @@
   .timeline li:nth-child(even) .timeline-badge {
     background-color: #5cb85c;
   }
+
+   
+  :root {
+    --color-array: #f0ad4e, #5cb85c, #5bc0de, #d9534f, #337ab7;
+  }
+
+   
+  .timeline li:nth-child(1) .timeline-badge { background-color: #f0ad4e; }
+  .timeline li:nth-child(2) .timeline-badge { background-color: #5cb85c; }
+  .timeline li:nth-child(3) .timeline-badge { background-color: #5bc0de; }
+  .timeline li:nth-child(4) .timeline-badge { background-color: #d9534f; }
+  .timeline li:nth-child(5) .timeline-badge { background-color: #337ab7; }
 </style>
 
 <body class="max-width mx-auto px3 ltr">
@@ -178,9 +190,13 @@
         <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
       
+        <li><a href="/hugo">我的博客</a></li>
+      
         <li><a href="/readbook">读书笔记</a></li>
       
-        <li><a href="/blog">思考</a></li>
+        <li><a href="/blog">技术</a></li>
+      
+        <li><a href="/greatperson">生活</a></li>
       
         <li><a href="/">About</a></li>
       
@@ -192,6 +208,11 @@
 
     
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <h1 class="subheading">CSS阴影</h1>
+  <span  class="blog-single-desc">Posted by 渐行渐远 on Wednesday, December 1, 2021
+    共701字
+  <div class="separator"></div>
+</span>
 
   <div class="content" itemprop="articleBody">
   
@@ -274,9 +295,13 @@ em 是基于 font-size 的继承属性，rem 是在 em 的基础上重新定义�
     <nav>
       <ul>
          
+        <li><a href="/hugo">我的博客</a></li>
+         
         <li><a href="/readbook">读书笔记</a></li>
          
-        <li><a href="/blog">思考</a></li>
+        <li><a href="/blog">技术</a></li>
+         
+        <li><a href="/greatperson">生活</a></li>
          
         <li><a href="/">About</a></li>
         

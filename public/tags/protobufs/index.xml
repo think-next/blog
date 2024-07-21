@@ -13,7 +13,7 @@
       <link>http://localhost:1313/blog/2018/01-30-protobufs%E5%9C%A8logstash%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/</link>
       <pubDate>Tue, 30 Jan 2018 20:10:33 +0000</pubDate>
       <guid>http://localhost:1313/blog/2018/01-30-protobufs%E5%9C%A8logstash%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/</guid>
-      <description>ELK 分别是Elasticsearch、Logstash、Kibana技术栈的结合。主要解决的问题在于：系统服务器多，日志数据分散难以查找，日志数据量大，查询速度慢，或者不够实时。</description>
+      <description>ELK</description>
     </item>
   </channel>
 </rss>

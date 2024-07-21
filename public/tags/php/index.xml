@@ -13,7 +13,7 @@
       <link>http://localhost:1313/blog/2018/04-05-%E4%BA%86%E8%A7%A3laravel%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/</link>
       <pubDate>Thu, 05 Apr 2018 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2018/04-05-%E4%BA%86%E8%A7%A3laravel%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/</guid>
-      <description>随笔 突然想了解一下Laravel，然后发现：它没有我想象的那么简单，很多的调用都找不到入口。加载view的逻辑，看了很长时间，还是没有搞明白：一个值传递的参数，怎么好好的就变了呢？下面都是看别的的文章的总结，我还要继续完善，直到搞清楚这个view是怎么实现的。</description>
+      <description>随</description>
     </item>
   </channel>
 </rss>

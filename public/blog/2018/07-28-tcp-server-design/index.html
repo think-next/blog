@@ -20,7 +20,7 @@
   <meta property="og:url" content="http://localhost:1313/blog/2018/07-28-tcp-server-design/">
   <meta property="og:site_name" content="渐行渐远">
   <meta property="og:title" content="Tcp Server Design">
-  <meta property="og:description" content="绝大多数的TCP服务都是支持并发的。当一个连接请求到达时，服务端接收这个连接，然后创建一个新的线程(或进程)来处理这个连接。">
+  <meta property="og:description" content="绝">
   <meta property="og:locale" content="en_us">
   <meta property="og:type" content="article">
     <meta property="article:section" content="blog">
@@ -32,14 +32,14 @@
   
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Tcp Server Design">
-  <meta name="twitter:description" content="绝大多数的TCP服务都是支持并发的。当一个连接请求到达时，服务端接收这个连接，然后创建一个新的线程(或进程)来处理这个连接。">
+  <meta name="twitter:description" content="绝">
 
   
   
     
   
   
-  <link rel="stylesheet" href="http://localhost:1313/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+  <link rel="stylesheet" href="http://localhost:1313/css/styles.dcec1d679f130468430e713aaa52d0eda82310e8cb61730bf67f408221cfda0be536a449e711e772dfc87490c88fcd6939e2ebeadc6c0f858ff69d0ceeb799ce.css" integrity="sha512-3OwdZ58TBGhDDnE6qlLQ7agjEOjLYXML9n9AgiHP2gvlNqRJ5xHnct/IdJDIj81pOeLr6txsD4WP9p0M7reZzg=="> 
 
   
   
@@ -160,6 +160,18 @@
   .timeline li:nth-child(even) .timeline-badge {
     background-color: #5cb85c;
   }
+
+   
+  :root {
+    --color-array: #f0ad4e, #5cb85c, #5bc0de, #d9534f, #337ab7;
+  }
+
+   
+  .timeline li:nth-child(1) .timeline-badge { background-color: #f0ad4e; }
+  .timeline li:nth-child(2) .timeline-badge { background-color: #5cb85c; }
+  .timeline li:nth-child(3) .timeline-badge { background-color: #5bc0de; }
+  .timeline li:nth-child(4) .timeline-badge { background-color: #d9534f; }
+  .timeline li:nth-child(5) .timeline-badge { background-color: #337ab7; }
 </style>
 
 <body class="max-width mx-auto px3 ltr">
@@ -180,9 +192,13 @@
         <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
       </li>
       
+        <li><a href="/hugo">我的博客</a></li>
+      
         <li><a href="/readbook">读书笔记</a></li>
       
-        <li><a href="/blog">思考</a></li>
+        <li><a href="/blog">技术</a></li>
+      
+        <li><a href="/greatperson">生活</a></li>
       
         <li><a href="/">About</a></li>
       
@@ -194,6 +210,11 @@
 
     
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <h1 class="subheading">Tcp Server Design</h1>
+  <span  class="blog-single-desc">Posted by 付辉 on Saturday, July 28, 2018
+    共650字
+  <div class="separator"></div>
+</span>
 
   <div class="content" itemprop="articleBody">
   
@@ -230,9 +251,13 @@ tcp46      0      0  *.3900                 *.*                    LISTEN
     <nav>
       <ul>
          
+        <li><a href="/hugo">我的博客</a></li>
+         
         <li><a href="/readbook">读书笔记</a></li>
          
-        <li><a href="/blog">思考</a></li>
+        <li><a href="/blog">技术</a></li>
+         
+        <li><a href="/greatperson">生活</a></li>
          
         <li><a href="/">About</a></li>
         

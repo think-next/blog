@@ -13,210 +13,210 @@
       <link>http://localhost:1313/blog/2022/0102-go-net-%E8%B6%85%E6%97%B6%E5%A4%84%E7%90%86/</link>
       <pubDate>Sun, 02 Jan 2022 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2022/0102-go-net-%E8%B6%85%E6%97%B6%E5%A4%84%E7%90%86/</guid>
-      <description>序 这篇文章详细介绍了，net/http包中对应HTTP的各个阶段，如何使用timeout来进行读/写超时控制以及服务端和客户端支持设置的timeout类型。本质上，这些timeout都是代码层面对各个函数设置的处理时间。比如，读取客户端读取请求头、读取响应体的时间，本质上都是响应函数的超时时间。</description>
+      <description>序</description>
     </item>
     <item>
       <title>Go test基础用法</title>
       <link>http://localhost:1313/blog/2022/0101-go-test%E5%9F%BA%E7%A1%80%E7%94%A8%E6%B3%95/</link>
       <pubDate>Sat, 01 Jan 2022 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2022/0101-go-test%E5%9F%BA%E7%A1%80%E7%94%A8%E6%B3%95/</guid>
-      <description>当直接使用IDE进行单元测试时，有没有好奇它时如何实现的？比如GoLand写的测试用例。</description>
+      <description>当</description>
     </item>
     <item>
       <title>go.1.13中的Modules</title>
       <link>http://localhost:1313/blog/2019/blog.015-go.1.13%E4%B8%AD%E7%9A%84modules.2019.11.12/</link>
       <pubDate>Tue, 12 Nov 2019 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2019/blog.015-go.1.13%E4%B8%AD%E7%9A%84modules.2019.11.12/</guid>
-      <description>环境变量GOPRIVATE</description>
+      <description>环</description>
     </item>
     <item>
       <title>runtime中P的理解</title>
       <link>http://localhost:1313/blog/2019/blog.014-runtime%E4%B8%ADp%E7%9A%84%E7%90%86%E8%A7%A3.2019.11.11/</link>
       <pubDate>Mon, 11 Nov 2019 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2019/blog.014-runtime%E4%B8%ADp%E7%9A%84%E7%90%86%E8%A7%A3.2019.11.11/</guid>
-      <description>P是在Go1.1引入的概念，初始默认等于CPU核的数量。P只是一个逻辑概念，跟CPU也没有任何关系。</description>
+      <description>P</description>
     </item>
     <item>
       <title>MySQL增量数据订阅和消费</title>
       <link>http://localhost:1313/blog/2019/2019-10-01-mysql%E5%A2%9E%E9%87%8F%E6%95%B0%E6%8D%AE%E8%AE%A2%E9%98%85%E5%92%8C%E6%B6%88%E8%B4%B9/</link>
       <pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2019/2019-10-01-mysql%E5%A2%9E%E9%87%8F%E6%95%B0%E6%8D%AE%E8%AE%A2%E9%98%85%E5%92%8C%E6%B6%88%E8%B4%B9/</guid>
-      <description>在订单交付系统中，做到保证权益数据的实时一致性非常难，很多都选择保证数据的最终一致性。在我们的生产环境中，为了保证数据的最终一致性，专门有一个微服务来处理检验异常订单、发告警通知、及时补偿修复异常订单。</description>
+      <description>在</description>
     </item>
     <item>
       <title>分布式会话跟踪系统架构设计与实践</title>
       <link>http://localhost:1313/blog/2019/19-08-25-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BC%9A%E8%AF%9D%E8%B7%9F%E8%B8%AA%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E8%B7%B5/</link>
       <pubDate>Sun, 25 Aug 2019 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2019/19-08-25-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BC%9A%E8%AF%9D%E8%B7%9F%E8%B8%AA%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E8%B7%B5/</guid>
-      <description>调用链trace系统可以帮助技术人员快速的定位问题，查看整个请求的调用链路，及各个链路的耗时情况。方便技术人员针对性的对服务进行性能优化。</description>
+      <description>调</description>
     </item>
     <item>
       <title>故障排查</title>
       <link>http://localhost:1313/blog/2019/19-07-28-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/</link>
       <pubDate>Sun, 28 Jul 2019 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2019/19-07-28-%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/</guid>
-      <description>测试提Bug的基本要素，主要包括：</description>
+      <description>测</description>
     </item>
     <item>
       <title>database.sql.driver</title>
       <link>http://localhost:1313/blog/2019/19-07-17-database.sql.driver/</link>
       <pubDate>Wed, 17 Jul 2019 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2019/19-07-17-database.sql.driver/</guid>
-      <description>在事务操作中，要求事务的各个阶段都使用一个Conn连接。在连接被关闭之前，还需要执行rollback操作。</description>
+      <description>在</description>
     </item>
     <item>
       <title>里氏替换&amp;开放关闭</title>
       <link>http://localhost:1313/blog/2019/19-06-06-%E9%87%8C%E6%B0%8F%E6%9B%BF%E6%8D%A2%E5%BC%80%E6%94%BE%E5%85%B3%E9%97%AD/</link>
       <pubDate>Thu, 06 Jun 2019 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2019/19-06-06-%E9%87%8C%E6%B0%8F%E6%9B%BF%E6%8D%A2%E5%BC%80%E6%94%BE%E5%85%B3%E9%97%AD/</guid>
-      <description>里氏替换 Let Φ(x) be a property provable about objects x of type T.</description>
+      <description>里</description>
     </item>
     <item>
       <title>database package</title>
       <link>http://localhost:1313/blog/2019/19-06-03-database-package/</link>
       <pubDate>Mon, 03 Jun 2019 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2019/19-06-03-database-package/</guid>
-      <description>清除无效连接 在database库下清除过期连接时，使用了如下的代码逻辑。其中freeConn是空闲连接池，d是连接可被重复使用的最长时间，nowFunc返回的是当前时间。最新生成的连接在freeConn的末尾，而清除的过程则是使用最新的、次新的连接依次替换最早过期的、次早过期的连接。</description>
+      <description>清</description>
     </item>
     <item>
       <title>mongo EOF（二）</title>
       <link>http://localhost:1313/blog/2019/19-05-11-mongo-eof%E4%BA%8C/</link>
       <pubDate>Sat, 11 May 2019 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2019/19-05-11-mongo-eof%E4%BA%8C/</guid>
-      <description>任何事情的成功都需要掐准时间</description>
+      <description>任</description>
     </item>
     <item>
       <title>Go 调度模型（二）</title>
       <link>http://localhost:1313/blog/2019/19-03-30-go-%E8%B0%83%E5%BA%A6%E6%A8%A1%E5%9E%8B%E4%BA%8C/</link>
       <pubDate>Sat, 30 Mar 2019 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2019/19-03-30-go-%E8%B0%83%E5%BA%A6%E6%A8%A1%E5%9E%8B%E4%BA%8C/</guid>
-      <description>真的猛士，敢于直面惨淡的人生，敢于正视淋漓的鲜血。这是怎样的哀痛者和幸福者？然而造化又常常为庸人设计，以时间的流驶，来洗涤旧迹，仅使留下淡红的血色和微漠的悲哀。在这淡红的血色和微漠的悲哀中，又给人暂得偷生，维持着这似人非人的世界。我不知道这样的世界何时是一个尽头！ 有一种感觉，Go调度模型可能还得再来几篇博客，才能真正读出感觉来。现在还是一个门外汉。越是深入了解，越觉得知之甚少，后背发凉。</description>
+      <description>真</description>
     </item>
     <item>
       <title>基于Go的Cron Job实现</title>
       <link>http://localhost:1313/blog/2019/19-03-25-%E5%9F%BA%E4%BA%8Ego%E7%9A%84cron-job%E5%AE%9E%E7%8E%B0/</link>
       <pubDate>Mon, 25 Mar 2019 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2019/19-03-25-%E5%9F%BA%E4%BA%8Ego%E7%9A%84cron-job%E5%AE%9E%E7%8E%B0/</guid>
-      <description>随风要稳，逆风要浪</description>
+      <description>随</description>
     </item>
     <item>
       <title>Go 调度模型（一）</title>
       <link>http://localhost:1313/blog/2019/19-03-24-go-%E8%B0%83%E5%BA%A6%E6%A8%A1%E5%9E%8B%E4%B8%80/</link>
       <pubDate>Sun, 24 Mar 2019 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2019/19-03-24-go-%E8%B0%83%E5%BA%A6%E6%A8%A1%E5%9E%8B%E4%B8%80/</guid>
-      <description>想清楚了就去做，做的时候不要再回头想。</description>
+      <description>想</description>
     </item>
     <item>
       <title>新年彩蛋之中大奖</title>
       <link>http://localhost:1313/blog/2019/19-02-08-%E6%96%B0%E5%B9%B4%E5%BD%A9%E8%9B%8B%E4%B9%8B%E4%B8%AD%E5%A4%A7%E5%A5%96/</link>
       <pubDate>Sat, 09 Feb 2019 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2019/19-02-08-%E6%96%B0%E5%B9%B4%E5%BD%A9%E8%9B%8B%E4%B9%8B%E4%B8%AD%E5%A4%A7%E5%A5%96/</guid>
-      <description>2019年计划通过福利彩票发家致富的，可以好好看一看这篇博客。作为新年彩蛋来送给大家，也希望大家能真的中大奖。—— 新年快乐，给每个有梦想的程序员</description>
+      <description>2</description>
     </item>
     <item>
       <title>垃圾回收之引用计数</title>
       <link>http://localhost:1313/blog/2019/19-02-01-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E4%B9%8B%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0/</link>
       <pubDate>Fri, 01 Feb 2019 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2019/19-02-01-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E4%B9%8B%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0/</guid>
-      <description>思来想去，决定总结一下垃圾回收机制。引用计数与我结缘最早，也比较简单、基础，遂决定从引用计数入手。</description>
+      <description>思</description>
     </item>
     <item>
       <title>gRPC入门</title>
       <link>http://localhost:1313/blog/2019/19-01-26-grpc%E5%85%A5%E9%97%A8/</link>
       <pubDate>Sat, 26 Jan 2019 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2019/19-01-26-grpc%E5%85%A5%E9%97%A8/</guid>
-      <description>时间飞逝 如一名携带信息的邮差 但那只不过是我们的比喻 人物是杜撰的 匆忙是假装的 携带的也不是人的讯息</description>
+      <description>时</description>
     </item>
     <item>
       <title>Float的基本介绍</title>
       <link>http://localhost:1313/blog/2019/19-01-16-float%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/</link>
       <pubDate>Wed, 16 Jan 2019 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2019/19-01-16-float%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/</guid>
-      <description>关于浮点数，为什么它生来就可能存在误差？带着好奇查阅了一些介绍，然后做了简单汇总。这只是一段知识的开始，后续还会继续完善。</description>
+      <description>关</description>
     </item>
     <item>
       <title>探讨分布式ID生成系统</title>
       <link>http://localhost:1313/blog/2019/19-01-11-%E6%8E%A2%E8%AE%A8%E5%88%86%E5%B8%83%E5%BC%8Fid%E7%94%9F%E6%88%90%E7%B3%BB%E7%BB%9F/</link>
       <pubDate>Fri, 11 Jan 2019 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2019/19-01-11-%E6%8E%A2%E8%AE%A8%E5%88%86%E5%B8%83%E5%BC%8Fid%E7%94%9F%E6%88%90%E7%B3%BB%E7%BB%9F/</guid>
-      <description>全称Universally Unique Identifier，UUID占128bit，也就是16个英文字符的长度（16byte），需要强调的是，它的生成无需中心处理程序。</description>
+      <description>全</description>
     </item>
     <item>
       <title>Gin使用</title>
       <link>http://localhost:1313/blog/2019/19-01-06-gin%E4%BD%BF%E7%94%A8/</link>
       <pubDate>Sat, 05 Jan 2019 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2019/19-01-06-gin%E4%BD%BF%E7%94%A8/</guid>
-      <description>Gin对net/http包做了封装，支持路由、中间件等特性，极大的方便对Http Server的开发。文章通过一个Test例子，来简要介绍。对于特别基础的部分，请阅读参考文章。</description>
+      <description>G</description>
     </item>
     <item>
       <title>How to use godog</title>
       <link>http://localhost:1313/blog/2018/12-29-how-to-use-godog/</link>
       <pubDate>Sat, 29 Dec 2018 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2018/12-29-how-to-use-godog/</guid>
-      <description>首先访问Git的地址：Godog，它也是用来做Go Test一样的事情，只是换了一种形式。引入了一个概念：BDD。通俗的讲，就是虚拟现实场景，完成一个业务的测试。</description>
+      <description>首</description>
     </item>
     <item>
       <title>Net Transport</title>
       <link>http://localhost:1313/blog/2018/12-09-net-transport/</link>
       <pubDate>Sat, 08 Dec 2018 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2018/12-09-net-transport/</guid>
-      <description>在调用第三方请求时，正确使用Client也不是一件非常容易的事。</description>
+      <description>在</description>
     </item>
     <item>
       <title>singleton pattern</title>
       <link>http://localhost:1313/blog/2018/11-03-singleton-pattern/</link>
       <pubDate>Sat, 03 Nov 2018 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2018/11-03-singleton-pattern/</guid>
-      <description>版本 0.</description>
+      <description>版</description>
     </item>
     <item>
       <title>Go Interface 类型</title>
       <link>http://localhost:1313/blog/2018/10-12-go-interface-%E7%B1%BB%E5%9E%8B/</link>
       <pubDate>Fri, 12 Oct 2018 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2018/10-12-go-interface-%E7%B1%BB%E5%9E%8B/</guid>
-      <description>introduction duck typing 很形象的解释了interface的本意。它是一种特别的数据类型，内部声明了一组要实现的方法集合，任何实现了这些方法的数据类型都可以认为实现了这个interface。这跟其他语言中的抽象类有异曲同工之处，但却不需要去明确声明实现这个interface。</description>
+      <description>introduction</description>
     </item>
     <item>
       <title>sync.Once</title>
       <link>http://localhost:1313/blog/2018/09-03-sync.once/</link>
       <pubDate>Mon, 03 Sep 2018 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2018/09-03-sync.once/</guid>
-      <description>草稿0.0</description>
+      <description>草</description>
     </item>
     <item>
       <title>本地缓存BigCache</title>
       <link>http://localhost:1313/blog/2018/08-19-%E6%9C%AC%E5%9C%B0%E7%BC%93%E5%AD%98bigcache/</link>
       <pubDate>Sun, 19 Aug 2018 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2018/08-19-%E6%9C%AC%E5%9C%B0%E7%BC%93%E5%AD%98bigcache/</guid>
-      <description>BigCache的作者做了详细的阐述，尽在这里：Writing a very fast cache service with millions of entries in Go。不得不说，作者的表述非常完美，给它点赞。GitHub地址在：github.</description>
+      <description>B</description>
     </item>
     <item>
       <title>Golang下的Error</title>
       <link>http://localhost:1313/blog/2018/08-11-golang%E4%B8%8B%E7%9A%84error/</link>
       <pubDate>Sat, 11 Aug 2018 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2018/08-11-golang%E4%B8%8B%E7%9A%84error/</guid>
-      <description>感觉error确实没啥可说的，这个简单到极致的package总共也不超过10行有效代码。而且常用的fmt也提供了很方便的返回error的方法：</description>
+      <description>感</description>
     </item>
     <item>
       <title>Go反射</title>
       <link>http://localhost:1313/blog/2018/05-31-go%E5%8F%8D%E5%B0%84/</link>
       <pubDate>Thu, 31 May 2018 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2018/05-31-go%E5%8F%8D%E5%B0%84/</guid>
-      <description>人生的挫折感并不取决于境遇本身，而取决于境遇和自我期待之间的落差。</description>
+      <description>人</description>
     </item>
     <item>
       <title>xorm使用reverse指令创建模版</title>
       <link>http://localhost:1313/blog/2018/04-19-xorm%E4%BD%BF%E7%94%A8reverse%E6%8C%87%E4%BB%A4%E5%88%9B%E5%BB%BA%E6%A8%A1%E7%89%88/</link>
       <pubDate>Thu, 19 Apr 2018 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2018/04-19-xorm%E4%BD%BF%E7%94%A8reverse%E6%8C%87%E4%BB%A4%E5%88%9B%E5%BB%BA%E6%A8%A1%E7%89%88/</guid>
-      <description>这只能算作一次小的功能介绍</description>
+      <description>这</description>
     </item>
     <item>
       <title>Using context cancellation in Go</title>
       <link>http://localhost:1313/blog/2019/19-06-23-using-context-cancellation-in-go/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/blog/2019/19-06-23-using-context-cancellation-in-go/</guid>
-      <description>爱因斯坦曾说过：“每当我的头脑没有问题思考时，我就喜欢将知道的定理重新验证一番，这样做并没有什么目的，只是让自己有机会重新享受一下专心思考的快乐”</description>
+      <description>爱</description>
     </item>
   </channel>
 </rss>

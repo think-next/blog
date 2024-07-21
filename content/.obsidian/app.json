@@ -1,4 +1,6 @@
 {
   "defaultViewMode": "source",
-  "livePreview": false
+  "livePreview": false,
+  "attachmentFolderPath": "./",
+  "alwaysUpdateLinks": true
 }

@@ -8,12 +8,12 @@
         "type": "tabs",
         "children": [
           {
-            "id": "43b2ed82e150cb76",
+            "id": "e68a7569182cb544",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_index.md",
+                "file": "hugo/产品迭代/index.md",
                 "mode": "source",
                 "source": true
               }
@@ -69,7 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 354.5
   },
   "right": {
     "id": "8d000694e1bb185b",
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_index.md",
+                "file": "hugo/产品迭代/index.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_index.md",
+                "file": "hugo/产品迭代/index.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_index.md"
+                "file": "hugo/产品迭代/index.md"
               }
             }
           }
@@ -146,14 +146,34 @@
       "table-editor-obsidian:Advanced Tables Toolbar": false
     }
   },
-  "active": "43b2ed82e150cb76",
+  "active": "e68a7569182cb544",
   "lastOpenFiles": [
+    "hugo/产品迭代/change.png",
+    "hugo/产品迭代/index.md",
+    "hugo/重新整整博客/index.md",
+    "hugo/重新整整博客/blog-auto.png",
+    "hugo/产品迭代",
+    "hugo/Untitled.md",
+    "hugo/重新整整博客/warehouse_struct.png",
+    "hugo/重新整整博客/obsidian-image.png",
+    "hugo/重新整整博客/images",
+    "greatperson/2022.03.12.股票投资.md",
+    "blog/2023/01.29_天道.md",
+    "hugo/重新整整博客",
+    "hugo",
+    "blog/_index.md",
+    "blog/2024/数据统计/index.md",
+    "blog/2024/数据统计/ss.png",
+    "blog/2024/数据统计/Untitled.md",
+    "blog/2024/数据统计",
+    "_index.md",
+    "index.md",
+    "images",
+    "blog/2024",
     "about.md",
     "greatperson/秘密项目.md",
     "greatperson/2022.03.12.知识焦虑.md",
     "greatperson/2022.03.12.结构话思维.md",
-    "greatperson/2022.03.12.坚持习惯.md",
-    "greatperson/2022.03.12.股票投资.md",
-    "_index.md"
+    "greatperson/2022.03.12.坚持习惯.md"
   ]
 }

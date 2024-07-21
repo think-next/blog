@@ -7,6 +7,7 @@ theme = "hugo-theme-cactus"
 disqusShortname = "" # Enable Disqus comments by entering your Disqus shortname
 GoogleAnalytics = false # Enable Google Analytics by entering your tracking id
 summaryLength = 1
+hasCJKLanguage = true
 
 [Author] # Used in authorbox
 name = "Neojos"
@@ -17,25 +18,31 @@ avatar = "img/mifeng.jpeg"
 identifier = "ReadBook"
 name = "读书笔记"
 url = "/readbook"
-weight = 1
+weight = 2
 
 [[menu.main]]
 identifier = "Blog"
-name = "思考"
+name = "技术"
 url = "/blog"
-weight = 2
+weight = 3
 
-#[[menu.main]]
-#    identifier = "emotion"
-#    name = "生活"
-#    url = "/greatperson"
-#    weight = 3
+[[menu.main]]
+identifier = "emotion"
+name = "生活"
+url = "/greatperson"
+weight = 4
+
+[[menu.main]]
+identifier = "hugo"
+name = "我的博客"
+url = "/hugo"
+weight = 1
 
 [[menu.main]]
 identifier = "about"
 name = "About"
 url = "/"
-weight = 4
+weight = 5
 
 [Params]
 description = "" # Site description. Used in meta description
