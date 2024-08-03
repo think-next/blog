@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "hugo/产品迭代/index.md",
+                "file": "blog/2024/数据统计/index.md",
                 "mode": "source",
                 "source": true
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "hugo/产品迭代/index.md",
+                "file": "blog/2024/数据统计/index.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "hugo/产品迭代/index.md",
+                "file": "blog/2024/数据统计/index.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "hugo/产品迭代/index.md"
+                "file": "blog/2024/数据统计/index.md"
               }
             }
           }
@@ -148,8 +148,17 @@
   },
   "active": "e68a7569182cb544",
   "lastOpenFiles": [
-    "hugo/产品迭代/change.png",
+    "blog/2024/数据统计/api_key.png",
+    "blog/2024/数据统计/ss.png",
+    "blog/2024/数据统计/index.md",
+    "blog/2023/01. go 中 string 并发写导致的 panic/index.md",
+    "blog/2023/01. go 中 string 并发写导致的 panic/panic.png",
+    "blog/2023/01. go 中 string 并发写导致的 panic",
+    "blog/2023/Untitled.md",
+    "blog/2022/0101-Go test基础用法.md",
+    "blog/_index.md",
     "hugo/产品迭代/index.md",
+    "hugo/产品迭代/change.png",
     "hugo/重新整整博客/index.md",
     "hugo/重新整整博客/blog-auto.png",
     "hugo/产品迭代",
@@ -158,12 +167,8 @@
     "hugo/重新整整博客/obsidian-image.png",
     "hugo/重新整整博客/images",
     "greatperson/2022.03.12.股票投资.md",
-    "blog/2023/01.29_天道.md",
     "hugo/重新整整博客",
     "hugo",
-    "blog/_index.md",
-    "blog/2024/数据统计/index.md",
-    "blog/2024/数据统计/ss.png",
     "blog/2024/数据统计/Untitled.md",
     "blog/2024/数据统计",
     "_index.md",
