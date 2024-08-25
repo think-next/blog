@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "blog/2024/数据统计/index.md",
+                "file": "blog/2024/rust模块/index.md",
                 "mode": "source",
                 "source": true
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "blog/2024/数据统计/index.md",
+                "file": "blog/2024/rust模块/index.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "blog/2024/数据统计/index.md",
+                "file": "blog/2024/rust模块/index.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "blog/2024/数据统计/index.md"
+                "file": "blog/2024/rust模块/index.md"
               }
             }
           }
@@ -148,9 +148,20 @@
   },
   "active": "e68a7569182cb544",
   "lastOpenFiles": [
-    "blog/2024/数据统计/api_key.png",
-    "blog/2024/数据统计/ss.png",
     "blog/2024/数据统计/index.md",
+    "blog/2024/数据统计/api_key.png",
+    "blog/2024/rust模块/index.md",
+    "blog/2024/discordgo/index.md",
+    "blog/2024/rust模块",
+    "blog/2024/rust gui 设计/index.md",
+    "blog/2024/rust gui 设计/Pasted image 20240812002219.png",
+    "blog/2024/rust gui 设计",
+    "blog/2024/discordgo/Pasted image 20240811221149.png",
+    "blog/2024/discordgo",
+    "blog/2024/数据统计/Pasted image 20240804220823.png",
+    "blog/2024/数据统计/pyhthon.png",
+    "hugo/重新整整博客/blog-auto.png",
+    "blog/2024/数据统计/ss.png",
     "blog/2023/01. go 中 string 并发写导致的 panic/index.md",
     "blog/2023/01. go 中 string 并发写导致的 panic/panic.png",
     "blog/2023/01. go 中 string 并发写导致的 panic",
@@ -160,11 +171,9 @@
     "hugo/产品迭代/index.md",
     "hugo/产品迭代/change.png",
     "hugo/重新整整博客/index.md",
-    "hugo/重新整整博客/blog-auto.png",
     "hugo/产品迭代",
     "hugo/Untitled.md",
     "hugo/重新整整博客/warehouse_struct.png",
-    "hugo/重新整整博客/obsidian-image.png",
     "hugo/重新整整博客/images",
     "greatperson/2022.03.12.股票投资.md",
     "hugo/重新整整博客",
@@ -174,7 +183,6 @@
     "_index.md",
     "index.md",
     "images",
-    "blog/2024",
     "about.md",
     "greatperson/秘密项目.md",
     "greatperson/2022.03.12.知识焦虑.md",
