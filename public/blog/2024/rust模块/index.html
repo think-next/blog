@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
-	<meta name="generator" content="Hugo 0.129.0"><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
   <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
   <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
@@ -12,23 +11,26 @@
   
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>渐行渐远</title>
-  <link rel = 'canonical' href = 'http://localhost:1313/'>
+  <title> rust 模块笔记 | 渐行渐远</title>
+  <link rel = 'canonical' href = 'http://localhost:1313/blog/2024/rust%E6%A8%A1%E5%9D%97/'>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
   <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:url" content="http://localhost:1313/">
+  <meta property="og:url" content="http://localhost:1313/blog/2024/rust%E6%A8%A1%E5%9D%97/">
   <meta property="og:site_name" content="渐行渐远">
-  <meta property="og:title" content="渐行渐远">
-  <meta property="og:description" content="《">
+  <meta property="og:title" content="rust 模块笔记">
+  <meta property="og:description" content="模">
   <meta property="og:locale" content="en_us">
-  <meta property="og:type" content="website">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2024-08-25T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-08-25T00:00:00+00:00">
 
   
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="渐行渐远">
-  <meta name="twitter:description" content="《">
+  <meta name="twitter:title" content="rust 模块笔记">
+  <meta name="twitter:description" content="模">
 
   
   
@@ -205,137 +207,69 @@
 
 
     
-  <section id="about">
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <h1 class="subheading">rust 模块笔记</h1>
+  <span  class="blog-single-desc">Posted by 付辉 on Sunday, August 25, 2024
+    共619字
+  <div class="separator"></div>
+</span>
+
+  <div class="content" itemprop="articleBody">
   
-    
-  
-  
-  <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-         
-    }
-    .container {
-        max-width: 960px;
-        margin: auto;
-        padding: 8px;
-        background-color: #ffffff;
-         
-    }
-    img.avatar {
-        margin-top: 2rem;
-        width: 200px;
-        height: 200px;
-        border-radius: 50%;
-        float: left;
-        margin-right: 20px;
-        margin-bottom: 20px;
-    }
-    h1 {
-        color: #333333;
-    }
-    p {
-        line-height: 1.6;
-        color: #555555;
-    }
-    ul.skills {
-        list-style-type: none;
-        padding-left: 0;
-    }
-    ul.skills li:before {
-        content: "\2022";
-        color: #007BFF;
-        display: inline-block;
-        width: 1em;
-        margin-left: -1em;
-    }
-</style>
+    <h3 id="模块-mod-的作用">模块 mod 的作用</h3>
+<ul>
+<li>rust 通过模块来进行访问控制，功能类似 C++语言中的 class。可以控制模块成员的访问属性，公有属性或者私有属性</li>
+<li>模块的依赖关系，它也包含父模块和子模块的关系。子模块可以访问父模块中的私有属性，但必须显示进行导入
+<ul>
+<li>有两个关键字 self 和 super 可以用来表示这两种关系</li>
+</ul>
+</li>
+</ul>
+<p>下面是一个简单的demo，包含 main.rs 和 people.rs 两个文件，其中 people.rs 中实现了两个方法，然后，在 main.rs 中进行了调用。可以看出 mod 的声明效果，通过 mod 的声明来实现模块的查找并使用。</p>
+<pre tabindex="0"><code>// people.rs:
+pub struct Person {
+    name: String,
+    age: u8,
+}
 
+impl Person {
+    pub fn new(name: String, age: u8) -&gt; Self {
+        Person { name, age }
+    }
 
-<div class="container">
-    <img class="avatar" src="https://wanx.alicdn.com/wanx/1484461767598484/text_to_image/ccd20cb42a3e4bf48a610e1c4a019151_0.png?x-oss-process=image/watermark,image_d2FueC93YXRlcm1hcmsvcWlhbndlbl93YXRlcm1hcmsucG5n,t_80,g_se,x_30,y_30/format,webp" alt="个人头像">
-    <h2> 渐行渐远 · Golang / Java / PHP</h2>
-    <p><p>《剑来》中有提到：</p>
-<blockquote>
-<p>于事，不问收获问耕耘，莫向外求。于心，勤勉修行戒定慧，与天祈福。该是你的就抓好，不是你的就想也别想。</p>
-</blockquote>
-<p>《高效能人士的七个习惯》中有提到：</p>
-<blockquote>
-<p>刺激于回应之间存在一段距离，成长和幸福的关键就在于我们如何利用这段距离</p>
-</blockquote>
-</p>
-</div>
-  </section>
+    pub fn greet(&amp;self) {
+        println!(&#34;Hello, my name is {} and I am {} years old.&#34;, self.name, self.age);
+    }
+}
+</code></pre><pre tabindex="0"><code>// main.rs
+mod people;
 
-  <section id="writing">
-    <span class="h1"><a href="http://localhost:1313/blog">最近更新</a></span>
-    
-
-    
-    
-      
-    
-    
-    
-    
-    <ul class="post-list timeline">
-      
-      
-        
-      
-      
-        <li class="post-item">
-          <div class="timeline-badge"></div>
-          <div class="meta"><time datetime="2024-11-09 00:00:00 &#43;0000 UTC" itemprop="datePublished">2024-11-09</time></div>
-          <span class=""><a href="http://localhost:1313/blog/2024/rust-option/">rust option的处理</a></span>
-        </li>
-      
-        <li class="post-item">
-          <div class="timeline-badge"></div>
-          <div class="meta"><time datetime="2024-11-04 00:00:00 &#43;0000 UTC" itemprop="datePublished">2024-11-04</time></div>
-          <span class=""><a href="http://localhost:1313/blog/2024/%E5%AF%B8%E5%89%91/">寸剑</a></span>
-        </li>
-      
-        <li class="post-item">
-          <div class="timeline-badge"></div>
-          <div class="meta"><time datetime="2024-08-25 00:00:00 &#43;0000 UTC" itemprop="datePublished">2024-08-25</time></div>
-          <span class=""><a href="http://localhost:1313/blog/2024/rust%E6%A8%A1%E5%9D%97/">rust 模块笔记</a></span>
-        </li>
-      
-    </ul>
-    
-  </section>
+fn main() {
+    let person = people::Person::new(&#34;Alice&#34;.to_string(), 30);
+    person.greet();
+}
+</code></pre><h3 id="self-和-super">self 和 super</h3>
+<p>提供了相对路径的模块导入，结合模块声明和模块使用来最终确认使用哪个关键字：关注的点其实是声明和使用两个动作</p>
+<ul>
+<li>use mod super::utils; 表示模块导入</li>
+<li>mod utils; 表示模块声明</li>
+</ul>
+<p>有模块声明，就有三方依赖的外部模块，这里需要使用另外的关键字：extern</p>
+<h3 id="文件路径和-mod-的关系">文件路径和 mod 的关系</h3>
+<p>文件系统的文件和目录结构与模块具有绑定的对应关系，utils/mod.rs 就属于这种绑定关系的代表，它表示了 mod utils 的模块。</p>
+<h3 id="workspace">workspace</h3>
+<p>同一个项目下可以有多个子项目，主要是指文件夹下包含 Cargo.toml 的目录。主项目下可以包含多个这样的目录，然后在存储库的根目录下创建一个 Cargo.toml 来进行统一编辑管理</p>
+<p>终于再来再来</p>
+<h2 id="构建-websocket-服务">构建 websocket 服务</h2>
+<p>参考文档：https://blog.logrocket.com/build-websocket-server-with-rust/</p>
+<ol>
+<li><code>uuid</code> crate will be used to create unique connection IDs</li>
+<li><code>futures</code> crate will be helpful when dealing with the asynchronous data streams of the WebSocket.</li>
+</ol>
 
   
-  
-    
-  
-  
-    
-    
-      
-    
-  <section id="projects">
-    <span class="h1"><a href="">Projects</a></span>
-    <ul class="project-list">
-        
-        <li class="project-item">
-          <a href="https://github.com/think-next">github</a>: &hellip;
-        </li>
-        
-        <li class="project-item">
-          <a href="https://neojos.blog.csdn.net/?type=blog">csdn</a>: 冷静观察，稳住阵脚，沉着应对，韬光养晦，善于守拙，决不当头，所有作为
-        </li>
-        
-        <li class="project-item">
-          <a href="https://segmentfault.com/u/neojos/articles">segmentfault</a>: 说好的东风爽约了，我在雾霾中，等下一阵风
-        </li>
-        
-    </ul>
-  </section>
-  
+  </div>
+</article>
 
 
     <footer id="footer">
